@@ -1,10 +1,12 @@
 package io.github.tsgrissom.testpluginkt
 
-import io.github.tsgrissom.testpluginkt.command.GamemodeCommand
-import io.github.tsgrissom.testpluginkt.command.PingCommand
-import io.github.tsgrissom.testpluginkt.listener.JoinAndQuitListener
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+
+import io.github.tsgrissom.testpluginkt.command.GamemodeCommand
+import io.github.tsgrissom.testpluginkt.command.PingCommand
+import io.github.tsgrissom.testpluginkt.listener.ChatListener
+import io.github.tsgrissom.testpluginkt.listener.JoinAndQuitListener
 
 class TestPluginKT : JavaPlugin() {
 
@@ -22,6 +24,7 @@ class TestPluginKT : JavaPlugin() {
         getCommand("ping").executor = PingCommand()
         getCommand("gamemode").executor = GamemodeCommand()
 
+        Bukkit.getPluginManager().registerEvents(ChatListener(), this)
         Bukkit.getPluginManager().registerEvents(JoinAndQuitListener(), this)
     }
 }

@@ -64,33 +64,43 @@ class GamemodeCommand : CommandBase() {
 
         if (args.isEmpty())
             return sender.sendMessage(
-                "${RED}Usage: /${label} <adventure|creative|survival|spectator>"
+                "${RED}Usage: /gm <adventure|creative|survival|spectator> [Target]"
             )
 
         val sub = args[0]
-        var target: Player
 
-        if (args.size == 1) {
+        val target: Player = if (args.size == 1) {
+            if (sender !is Player)
+                return sender.sendMessage(
+                    "${DARK_RED}Console Usage: ${RED}/${label} <adventure|creative|survival|spectator> <Target>"
+                )
 
+            sender
         } else {
             val targetName = args[1]
+            val p = Bukkit.getPlayer(targetName)
+                ?: return sender.sendMessage("${DARK_RED}Could not find player $RED$targetName")
 
+            p
         }
 
-        when (sub) {
-            "adventure", "adv", "a", "2" -> {
-
-            }
-            "survival", "sur", "s", "0" -> {
-
-            }
-            "creative", "crt", "crtv", "c", "1" -> {
-
-            }
-            "spectator", "spect", "spec", "sp" -> {
-
-            }
+        val mode: GameMode = when (sub.lowercase()) {
+            "adventure", "adv", "a", "2" -> ADVENTURE
+            "survival", "surv", "sur", "s", "0" -> SURVIVAL
+            "creative", "creat", "crt", "crtv", "c", "1" -> CREATIVE
+            "spectator", "spect", "spec", "sp" -> SPECTATOR
+            else -> return sender.sendMessage("${DARK_RED}Options: ${RED}adventure, creative, survival, spectator")
         }
+
+        val targetName = target.name
+        val modeName = getGameModeName(mode)
+
+        setGameMode(target, mode)
+
+        if (sender != target)
+            sender.sendMessage("${GOLD}You set $RED$targetName's ${GOLD}gamemode to $RED$modeName")
+
+        target.sendMessage("${GOLD}Your gamemode has been set to $RED$modeName")
     }
 
     override fun execute(context: CommandContext) {
@@ -108,9 +118,7 @@ class GamemodeCommand : CommandBase() {
         when (label.lowercase()) {
             "gma", "gmc", "gms", "gmsp" -> handleShorthandLabel(context)
             "gamemode", "gm" -> handleExtendedLabel(context)
-            else -> {
-                sender.sendMessage("${RED}Alternate gamemode command form detected")
-            }
+            else -> sender.sendMessage("${RED}Alternate gamemode command form detected")
         }
     }
 
@@ -120,22 +128,6 @@ class GamemodeCommand : CommandBase() {
             CREATIVE -> "Creative"
             SPECTATOR -> "Spectator"
             SURVIVAL -> "Survival"
-        }
-    }
-
-    private fun sendSetMessages(mode: GameMode, sender: CommandSender, altered: Player, self: Boolean = false) {
-        fun getMessageForSelf(mode: GameMode) : String =
-            "${GOLD}Your gamemode is set to $RED${getGameModeName(mode)}$RESET"
-        fun getMessageForOtherToSender(mode: GameMode, altered: Player) : String =
-            "${GOLD}You set $RED${altered.name}'s$GOLD gamemode to $RED${getGameModeName(mode)}$RESET"
-        fun getMessageForOtherToAltered(mode: GameMode, altered: Player, sender: CommandSender) : String {
-            return if (sender == altered)
-                "${GOLD}You set your own gamemode to ${RED}${getGameModeName(mode)}$RESET"
-            else
-                if (false) // TODO If user's gamemode is externally altered and they have permissions to change gamemode, display who changed it
-                    "${GOLD}Your gamemode was set to ${RED}${getGameModeName(mode)} ${GOLD}by ${RED}${altered.name}$RESET"
-                else
-                    "${GOLD}Your gamemode was set to ${RED}${getGameModeName(mode)}$RESET"
         }
     }
 
