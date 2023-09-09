@@ -1,0 +1,10 @@
+name: "TestPluginKT"
+main: "io.github.tsgrissom.testpluginkt.Main"
+version: "1.0.0"
+
+commands:
+  ping:
+    description: "View your ping to the server"
+  gamemode:
+    description: "Alter a player's gamemode"
+    aliases: ["gm", gma", "gmc", "gms", "gmsp"]
