@@ -1,5 +1,7 @@
 package io.github.tsgrissom.testpluginkt.command
 
+import io.github.tsgrissom.pluginapi.command.CommandBase
+import io.github.tsgrissom.pluginapi.command.CommandContext
 import org.bukkit.ChatColor
 import org.bukkit.command.ConsoleCommandSender
 

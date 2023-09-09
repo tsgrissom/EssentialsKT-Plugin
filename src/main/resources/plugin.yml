@@ -1,5 +1,5 @@
 name: "TestPluginKT"
-main: "io.github.tsgrissom.testpluginkt.Main"
+main: "io.github.tsgrissom.testpluginkt.TestPluginKT"
 version: "1.0.0"
 
 commands:

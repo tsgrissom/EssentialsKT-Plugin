@@ -1,0 +1,4 @@
+messages:
+  events:
+    join: "&a&l+ &e%player% has joined the server"
+    quit: "&c&l- &e%player% has left the server"

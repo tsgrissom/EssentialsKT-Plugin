@@ -1,5 +1,6 @@
-package io.github.tsgrissom.testpluginkt.command
+package io.github.tsgrissom.pluginapi.command
 
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -14,8 +15,11 @@ abstract class CommandBase : CommandExecutor {
         label: String?,
         args: Array<out String>?
     ): Boolean {
-        if (sender == null || command == null || label == null)
+        if (sender == null || command == null || label == null || args == null) {
+            Bukkit.getLogger().warning("CommandBase command \"$label\" returned false!")
+            Bukkit.getLogger().warning("SHOULDN'T HAPPEN")
             return false
+        }
 
         val context = CommandContext(sender=sender, command=command, label=label, args=args)
 
