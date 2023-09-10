@@ -8,23 +8,38 @@ description: "A lightweight Essentials replacer written in Kotlin"
 website: "https://github.com/tsgrissom/TestPluginKT"
 
 commands:
+  day:
+    description: "Sets a world's time to day"
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["gm", "gma", "gmc", "gms", "gmsp"]
   heal:
     description: "Restores a player's health"
-    aliases: ["eheal", "restorehealth", "erestorehealth"]
+    aliases: ["eheal"]
+  midnight:
+    description: "Sets a world's time to midnight"
+  night:
+    description: "Sets a world's time to night"
+  noon:
+    description: "Sets a world's time to noon"
   ping:
     description: "Check how long it takes to receive a response from the server"
     aliases: ["eping", "epong", "pong"]
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
+  sunset:
+    description: "Sets a world's time to sunset"
+    aliases: ["dusk"]
+  sunrise:
+    description: "Sets a world's time to sunrise"
+    aliases: ["dawn"]
   whois:
     description: "Displays a bunch of player-related information"
     aliases: ["ewhoami", "ewhoami", "whoami"]
 
 permissions:
+  # Wildcard Permissions
   essentials.*:
     description: "Grants all permissions for the plugin"
     children:
@@ -38,15 +53,28 @@ permissions:
       essentials.command.heal.other: true
       essentials.command.ping: true
       essentials.command.suicide: true
+      essentials.command.timeset.*: true
       essentials.command.whois: true
       essentials.command.whoami: true
+  essentials.command.gamemode.*:
+    description: "Grants all gamemode-related permissions for the plugin"
+    children:
+      essentials.command.gamemode: true
+      essentials.command.gamemode.other: true
+  essentials.command.timeset.*:
+    description: "Grants all time setting-related permissions"
+    children:
+      essentials.command.timeset.day: true
+      essentials.command.timeset.midnight: true
+      essentials.command.timeset.night: true
+      essentials.command.timeset.noon: true
+      essentials.command.timeset.sunset: true
+      essentials.command.timeset.sunrise: true
+  # Command Permissions
   essentials.command.gamemode:
     description: "Allows you to alter your own gamemode"
   essentials.command.gamemode.other:
     description: "Allows you to alter another player's gamemode"
-  essentials.command.gamemode.noalter:
-    description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
-    default: false
   essentials.command.heal:
     description: "Allows you to restore your own health"
   essentials.command.heal.other:
@@ -55,7 +83,23 @@ permissions:
     description: "Allows you to view your ping to the server"
   essentials.command.suicide:
     description: "Allows you to forcibly end your player's life"
+  essentials.command.timeset.day:
+    description: "Allows you to set the time to day"
+  essentials.command.timeset.midnight:
+    description: "Allows you to set the time to midnight"
+  essentials.command.timeset.night:
+    description: "Allows you to set the time to night"
+  essentials.command.timeset.noon:
+    description: "Allows you to set the time to noon"
+  essentials.command.timeset.sunset:
+    description: "Allows you to set the time to sunset"
+  essentials.command.timeset.sunrise:
+    description: "Allows you to set the time to sunrise"
   essentials.command.whois:
     description: "Allows you view a player's /whois profile"
   essentials.command.whoami:
     description: "Allows you to view your own /whois profile"
+  # Special Permissions
+  essentials.command.gamemode.noalter:
+    description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
+    default: false
