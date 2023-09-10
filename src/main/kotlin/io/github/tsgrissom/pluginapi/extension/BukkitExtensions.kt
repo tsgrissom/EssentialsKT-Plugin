@@ -1,8 +1,6 @@
 package io.github.tsgrissom.pluginapi.extension
 
-import org.bukkit.attribute.Attribute
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permission
 

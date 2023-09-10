@@ -1,4 +1,4 @@
-package io.github.tsgrissom.testpluginkt.command
+package io.github.tsgrissom.essentialskt.command
 
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -8,7 +8,6 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.attribute.Attribute
-import org.bukkit.entity.LivingEntity
 
 class WhoIsCommand : CommandBase() {
 
@@ -71,7 +70,7 @@ class WhoIsCommand : CommandBase() {
             " &8- &7World: &e${target.world.name}",
             " &8- &7Location &cX&aY&9Z&7: &c${x} &a${y} &9${z}",
             " &8- &7Is OP: &e${target.isOp.palatable(withColor=true)}",
-            " &8- &7Health: &e${target.health} &8/ &7Max: &e${target.getAttribute(Attribute.GENERIC_MAX_HEALTH).value}",
+            " &8- &7Health: &e${target.health} &8/ &7Max: &e${target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value}",
             " &8- &7Food Level: &e${target.foodLevel} &8+ &7Remaining Air: &e${target.remainingAir}",
             fireLine,
             " &8- &7Flying Speed: &e${target.flySpeed} &8+ &7Walking Speed: &e${target.walkSpeed}",

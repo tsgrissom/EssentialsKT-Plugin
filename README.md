@@ -1,4 +1,4 @@
-# TestPluginKT
+# EssentialsKT
 
 A test plugin for CraftBukkit servers written in the Kotlin programming language
 

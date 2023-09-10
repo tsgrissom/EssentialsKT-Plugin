@@ -5,22 +5,18 @@ plugins {
     application
 }
 
-group = "io.github.tsgrissom.testpluginkt"
+group = "io.github.tsgrissom.essentialskt"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/central")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    compileOnly(group="org.spigotmc", name="plugin-annotations", version="1.2.3-SNAPSHOT")
-    annotationProcessor(group="org.spigotmc", name="plugin-annotations", version="1.2.3-SNAPSHOT")
-}
-
-tasks.test {
-    useJUnitPlatform()
+    compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
 }
 
 kotlin {
@@ -28,5 +24,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("EssentialsKTPlugin")
 }

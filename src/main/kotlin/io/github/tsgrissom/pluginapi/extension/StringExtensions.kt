@@ -33,7 +33,7 @@ fun String.equalsAny(vararg matches: String) : Boolean =
 /* ChatColor Related */
 
 fun String.translateColor() : String = ChatColor.translateAlternateColorCodes('&', this)
-fun String.stripColor() : String = ChatColor.stripColor(this)
+fun String.stripColor() : String = ChatColor.stripColor(this)!!
 fun String.translateAndStripColorCodes() : String = this.translateColor().stripColor()
 
 fun String.capitalize() : String {

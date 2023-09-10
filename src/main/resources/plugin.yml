@@ -1,11 +1,11 @@
-name: "TestPluginKT"
-main: "io.github.tsgrissom.testpluginkt.TestPluginKT"
+name: "EssentialsKT"
+main: "io.github.tsgrissom.essentialskt.EssentialsKTPlugin"
 version: "1.0.0"
 api-version: "1.20"
 
 author: "tsgrissom"
 description: "A lightweight Essentials replacer written in Kotlin"
-website: "https://github.com/tsgrissom/TestPluginKT"
+website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
   # General (A-Z)

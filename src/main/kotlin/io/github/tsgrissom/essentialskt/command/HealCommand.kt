@@ -1,10 +1,10 @@
-package io.github.tsgrissom.testpluginkt.command
+package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
-import io.github.tsgrissom.testpluginkt.TestPluginKT
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.CommandSender
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
 class HealCommand : CommandBase() {
 
     private fun shouldRestoreFoodLevel() : Boolean {
-        val plugin = TestPluginKT.instance ?: return true
+        val plugin = EssentialsKTPlugin.instance ?: return true
         val config = plugin.config ?: return true
         return config.getBoolean("Commands.HealRestoresFoodLevel", true)
     }
@@ -65,7 +65,7 @@ class HealCommand : CommandBase() {
 
     fun restoreHealth(sender: CommandSender, target: Player) {
         val shouldSate = shouldRestoreFoodLevel()
-        val maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH).value
+        val maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value!!
 
         target.health = maxHealth
         if (shouldSate)

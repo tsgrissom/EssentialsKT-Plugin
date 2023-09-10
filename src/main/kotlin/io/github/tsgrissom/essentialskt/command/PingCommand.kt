@@ -1,9 +1,8 @@
-package io.github.tsgrissom.testpluginkt.command
+package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
 
 class PingCommand : CommandBase() {
 
