@@ -18,7 +18,7 @@ class ChatListener : Listener {
     @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
         e.message = getConfiguration()
-            .getString("messages.events.chat")
+            .getString("Messages.ChatEvent")
             .translateColor()
             .replace("%player%", e.player.displayName)
             .replace("%message%", e.message)

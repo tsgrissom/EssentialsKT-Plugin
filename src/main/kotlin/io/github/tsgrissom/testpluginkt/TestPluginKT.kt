@@ -1,11 +1,9 @@
 package io.github.tsgrissom.testpluginkt
 
+import io.github.tsgrissom.testpluginkt.command.*
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
-import io.github.tsgrissom.testpluginkt.command.GamemodeCommand
-import io.github.tsgrissom.testpluginkt.command.PingCommand
-import io.github.tsgrissom.testpluginkt.command.SuicideCommand
 import io.github.tsgrissom.testpluginkt.listener.ChatListener
 import io.github.tsgrissom.testpluginkt.listener.JoinAndQuitListener
 
@@ -23,8 +21,10 @@ class TestPluginKT : JavaPlugin() {
         saveDefaultConfig()
 
         getCommand("gamemode").executor = GamemodeCommand()
+        getCommand("heal").executor = HealCommand()
         getCommand("ping").executor = PingCommand()
         getCommand("suicide").executor = SuicideCommand()
+        getCommand("whois").executor = WhoIsCommand()
 
         Bukkit.getPluginManager().registerEvents(ChatListener(), this)
         Bukkit.getPluginManager().registerEvents(JoinAndQuitListener(), this)

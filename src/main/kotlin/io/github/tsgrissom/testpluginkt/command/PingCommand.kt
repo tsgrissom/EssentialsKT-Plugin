@@ -15,7 +15,7 @@ class PingCommand : CommandBase() {
             return sender.sendColored("&4You do not have permission to do that")
 
         val resp = when (label) {
-            "pong" -> "Ping!"
+            "pong", "epong" -> "Ping!"
             else -> "Pong!"
         }
 

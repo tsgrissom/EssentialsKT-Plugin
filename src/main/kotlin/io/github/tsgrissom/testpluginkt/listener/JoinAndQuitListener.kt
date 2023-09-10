@@ -18,7 +18,7 @@ class JoinAndQuitListener : Listener {
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         e.joinMessage = getConfiguration()
-            .getString("messages.events.join")
+            .getString("Messages.JoinEvent")
             .translateColor()
             .replace("%player%", e.player.displayName)
     }
@@ -26,7 +26,7 @@ class JoinAndQuitListener : Listener {
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
         e.quitMessage = getConfiguration()
-            .getString("messages.events.quit")
+            .getString("Messages.QuitEvent")
             .translateColor()
             .replace("%player%", e.player.displayName)
     }

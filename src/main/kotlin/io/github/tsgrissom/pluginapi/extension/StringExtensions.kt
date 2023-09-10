@@ -2,6 +2,8 @@ package io.github.tsgrissom.pluginapi.extension
 
 import org.bukkit.ChatColor
 
+fun Double.roundToDigits(i: Int) : Double = String.format("%.${i}f", this).toDouble()
+
 /* Equality */
 
 /**
@@ -28,6 +30,23 @@ fun String.equalsIc(vararg matches: String) : Boolean =
 fun String.equalsAny(vararg matches: String) : Boolean =
     matches.firstOrNull { this == it } != null
 
+/* ChatColor Related */
+
 fun String.translateColor() : String = ChatColor.translateAlternateColorCodes('&', this)
 fun String.stripColor() : String = ChatColor.stripColor(this)
 fun String.translateAndStripColorCodes() : String = this.translateColor().stripColor()
+
+fun String.capitalize() : String {
+    if (this.isEmpty())
+        return this
+
+    var str = this.substring(0, 1).uppercase()
+
+    if (this.length == 1)
+        return str
+
+    str += (this.substring(1, this.length)).lowercase()
+    return str
+}
+
+fun String.capitalizeAllCaps() : String = this.lowercase().capitalize()

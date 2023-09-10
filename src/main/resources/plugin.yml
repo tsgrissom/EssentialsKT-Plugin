@@ -11,12 +11,18 @@ commands:
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["gm", "gma", "gmc", "gms", "gmsp"]
+  heal:
+    description: "Restores a player's health"
+    aliases: ["eheal", "restorehealth", "erestorehealth"]
   ping:
     description: "Check how long it takes to receive a response from the server"
-    aliases: ["pong"]
+    aliases: ["eping", "epong", "pong"]
   suicide:
     description: "Kills your player by force"
-    aliases: ["seppuku", "selfdestruct"]
+    aliases: ["esuicide", "seppuku", "selfdestruct"]
+  whois:
+    description: "Displays a bunch of player-related information"
+    aliases: ["ewhoami", "ewhoami", "whoami"]
 
 permissions:
   essentials.*:
@@ -28,8 +34,12 @@ permissions:
     children:
       essentials.command.gamemode: true
       essentials.command.gamemode.other: true
+      essentials.command.heal: true
+      essentials.command.heal.other: true
       essentials.command.ping: true
       essentials.command.suicide: true
+      essentials.command.whois: true
+      essentials.command.whoami: true
   essentials.command.gamemode:
     description: "Allows you to alter your own gamemode"
   essentials.command.gamemode.other:
@@ -37,7 +47,15 @@ permissions:
   essentials.command.gamemode.noalter:
     description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
     default: false
+  essentials.command.heal:
+    description: "Allows you to restore your own health"
+  essentials.command.heal.other:
+    description: "Allows you to restore another player's health"
   essentials.command.ping:
     description: "Allows you to view your ping to the server"
   essentials.command.suicide:
     description: "Allows you to forcibly end your player's life"
+  essentials.command.whois:
+    description: "Allows you view a player's /whois profile"
+  essentials.command.whoami:
+    description: "Allows you to view your own /whois profile"

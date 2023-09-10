@@ -2,6 +2,7 @@ package io.github.tsgrissom.testpluginkt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
@@ -15,11 +16,11 @@ import org.bukkit.entity.Player
  * TODO Per-gamemode permissions
  */
 
-const val PERMISSION_ALTER_SELF = "essentials.command.gamemode"
-const val PERMISSION_ALTER_OTHER = "essentials.command.other"
-const val PERMISSION_DEFENSIVE = "essentials.command.gamemode.noalter"
-
 class GamemodeCommand : CommandBase() {
+
+    val PERMISSION_ALTER_SELF = "essentials.command.gamemode"
+    val PERMISSION_ALTER_OTHER = "essentials.command.other"
+    val PERMISSION_DEFENSIVE = "essentials.command.gamemode.noalter"
 
     private fun handleShorthandLabel(context: CommandContext) {
         /*
@@ -50,24 +51,25 @@ class GamemodeCommand : CommandBase() {
             || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
             return sender.sendColored("&4You do not have permission to do that")
 
-        when (label) {
-            "gma", "gm2" -> {
-                setGameMode(sender, target, ADVENTURE)
-                target.sendColored("&6Your gamemode is set to &cAdventure")
-            }
-            "gmc", "gm1" -> {
-                setGameMode(sender, target, CREATIVE)
-                target.sendColored("&6Your gamemode is set to &cCreative")
-            }
-            "gms", "gm0" -> {
-                setGameMode(sender, target, SURVIVAL)
-                target.sendColored("&6Your gamemode is set to &cSurvival")
-            }
-            "gmsp" -> {
-                setGameMode(sender, target, SPECTATOR)
-                target.sendColored("&6Your gamemode is set to &cSpectator")
-            }
+        if (target is ConsoleCommandSender)
+            return sender.sendColored("&4Console does not have a gamemode to alter")
+
+        val mode = when (label) {
+            "gm0", "gms" -> SURVIVAL
+            "gm1", "gmc" -> CREATIVE
+            "gm2", "gma" -> ADVENTURE
+            "gmsp" -> SPECTATOR
+            else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
         }
+
+        setGameMode(sender, target, mode)
+
+        val mn = mode.name.capitalizeAllCaps()
+        val tn = target.name
+
+        target.sendColored("&6Your gamemode is set to &c$mn")
+        if (sender != target)
+            sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
     }
 
     private fun handleExtendedLabel(context: CommandContext) {
@@ -96,52 +98,40 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
-        val mode: GameMode = when (sub.lowercase()) {
-            "adventure", "adv", "a", "2" -> ADVENTURE
-            "survival", "surv", "sur", "s", "0" -> SURVIVAL
-            "creative", "creat", "crt", "crtv", "c", "1" -> CREATIVE
-            "spectator", "spect", "spec", "sp" -> SPECTATOR
-            else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
-        }
-
         if ((target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
             || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
             return sender.sendColored("&4You do not have permission to do that")
 
-        val targetName = target.name
-        val modeName = getGameModeName(mode)
+        if (target is ConsoleCommandSender)
+            return sender.sendColored("&4Console does not have a gamemode to alter")
+
+
+        val mode = when (sub.lowercase()) {
+            "0", "survival", "surv", "sur", "s" -> SURVIVAL
+            "1", "creative", "create", "creat", "crtv", "crt", "c" -> CREATIVE
+            "2", "adventure", "adv", "a" -> ADVENTURE
+            "spectator", "spect", "spec", "sp" -> SPECTATOR
+            else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
+        }
 
         setGameMode(sender, target, mode)
 
-        if (sender != target)
-            sender.sendColored("&6You set &c$targetName's &6gamemode to &c$modeName")
+        val mn = mode.name.capitalizeAllCaps()
+        val tn = target.name
 
-        target.sendColored("&6Your gamemode has been set to &c$modeName")
+        target.sendColored("&6Your gamemode has been set to &c$mn")
+        if (sender != target)
+            sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
     }
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val label = context.label
 
-        if (sender is ConsoleCommandSender)
-            return sender.sendColored("&4Console does not have a gamemode to alter")
-
-        if (sender !is Player)
-            return
-
         when (label.lowercase()) {
-            "gma", "gmc", "gms", "gmsp" -> handleShorthandLabel(context)
-            "gamemode", "gm" -> handleExtendedLabel(context)
+            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp" -> handleShorthandLabel(context)
+            "gamemode", "gm", "egamemode", "egm" -> handleExtendedLabel(context)
             else -> sender.sendColored("&4Alternate gamemode command form detected")
-        }
-    }
-
-    private fun getGameModeName(mode: GameMode) : String {
-        return when (mode) {
-            ADVENTURE -> "Adventure"
-            CREATIVE -> "Creative"
-            SPECTATOR -> "Spectator"
-            SURVIVAL -> "Survival"
         }
     }
 
