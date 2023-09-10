@@ -8,35 +8,37 @@ description: "A lightweight Essentials replacer written in Kotlin"
 website: "https://github.com/tsgrissom/TestPluginKT"
 
 commands:
-  day:
-    description: "Sets a world's time to day"
+  # General (A-Z)
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["gm", "gma", "gmc", "gms", "gmsp"]
   heal:
     description: "Restores a player's health"
     aliases: ["eheal"]
-  midnight:
-    description: "Sets a world's time to midnight"
-  night:
-    description: "Sets a world's time to night"
-  noon:
-    description: "Sets a world's time to noon"
   ping:
     description: "Check how long it takes to receive a response from the server"
     aliases: ["eping", "epong", "pong"]
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
-  sunset:
-    description: "Sets a world's time to sunset"
-    aliases: ["dusk"]
-  sunrise:
-    description: "Sets a world's time to sunrise"
-    aliases: ["dawn"]
   whois:
     description: "Displays a bunch of player-related information"
     aliases: ["ewhoami", "ewhoami", "whoami"]
+  # Time Setting (Earliest-Latest)
+  day:
+    description: "Sets a world's time to day"
+  midnight:
+    description: "Sets a world's time to midnight"
+  night:
+    description: "Sets a world's time to night"
+  noon:
+    description: "Sets a world's time to noon"
+  sunset:
+    description: "Sets a world's time to sunset"
+    aliases: [ "dusk" ]
+  sunrise:
+    description: "Sets a world's time to sunrise"
+    aliases: [ "dawn" ]
 
 permissions:
   # Wildcard Permissions
