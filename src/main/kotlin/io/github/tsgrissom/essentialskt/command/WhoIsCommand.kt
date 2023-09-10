@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
+import org.bukkit.WorldType
 import org.bukkit.attribute.Attribute
 
 class WhoIsCommand : CommandBase() {
@@ -54,6 +55,12 @@ class WhoIsCommand : CommandBase() {
         val y = target.location.y.roundToDigits(2)
         val z = target.location.z.roundToDigits(2)
 
+        val worldType: WorldType? = target.world.worldType
+        var worldLine = " &8- &7World: &e${target.world.name}"
+
+        if (worldType != null)
+            worldLine += " &8+ &7World Type: &b${worldType.name.capitalizeAllCaps()}"
+
         var fireLine = " &8- &7On Fire: "
 
         fireLine += if (target.fireTicks > 0)
@@ -61,17 +68,20 @@ class WhoIsCommand : CommandBase() {
         else
             false.palatable(withColor=true)
 
+        val hunger = 20 - target.foodLevel
+
         sender.sendColored(
             "&6/whois for &e${target.name}",
             " &8- &7Username: &e${target.name} &8+ &7Display Name: &r${target.displayName}",
             " &8- &7Unique ID: &e${target.uniqueId?.toString()}",
             " &8- &7IP Address: &e${target.getIPString()}",
             " &8- &7Gamemode: &b${target.gameMode.name.capitalizeAllCaps()}",
-            " &8- &7World: &e${target.world.name}",
-            " &8- &7Location &cX&aY&9Z&7: &c${x} &a${y} &9${z}",
+            worldLine,
+            " &8- &7Location &cX&aY&bZ&7: &c${x} &a${y} &b${z}",
             " &8- &7Is OP: &e${target.isOp.palatable(withColor=true)}",
             " &8- &7Health: &e${target.health} &8/ &7Max: &e${target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value}",
-            " &8- &7Food Level: &e${target.foodLevel} &8+ &7Remaining Air: &e${target.remainingAir}",
+            " &8- &7Food Level: &e${target.foodLevel}&8/&e20 &8+ &7Hunger: &e$hunger",
+            " &8- &7Oxygen: &e${target.remainingAir}&8/&e300",
             fireLine,
             " &8- &7Flying Speed: &e${target.flySpeed} &8+ &7Walking Speed: &e${target.walkSpeed}",
             " &8- &7Can Fly: &e${target.allowFlight.palatable(withColor=true)} &8+ &7Is Flying: &e${target.isFlying.palatable(withColor=true)}",

@@ -58,7 +58,9 @@ class FeedCommand : CommandBase() {
         val tn = target.name
 
         target.foodLevel = 20
-        sender.sendColored("&6You fed &c$tn")
+
+        if (sender != target)
+            sender.sendColored("&6You fed &c$tn")
         target.sendColored("&6Your hunger was sated")
     }
 }
