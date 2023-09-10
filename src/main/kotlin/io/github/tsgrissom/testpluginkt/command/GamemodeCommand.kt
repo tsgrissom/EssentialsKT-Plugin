@@ -2,11 +2,10 @@ package io.github.tsgrissom.testpluginkt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor.*
 import org.bukkit.GameMode
 import org.bukkit.GameMode.*
-import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
@@ -24,15 +23,15 @@ class GamemodeCommand : CommandBase() {
 
         val target: Player = if (args.isEmpty()) {
             if (sender !is Player)
-                return sender.sendMessage(
-                    "${DARK_RED}Console Usage: ${RED}/${label} <adventure|creative|survival|spectator>"
+                return sender.sendColored(
+                    "&4Console Usage: &c/$label <adventure|creative|survival|spectator>"
                 )
 
             sender
         } else {
             val targetName = args[0]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendMessage("${DARK_RED}Could not find player $RED$targetName")
+                ?: return sender.sendColored("&4Could not find player &c$targetName")
 
             p
         }
@@ -40,19 +39,19 @@ class GamemodeCommand : CommandBase() {
         when (label) {
             "gma", "gm2" -> {
                 setGameMode(target, ADVENTURE)
-                target.sendMessage("${GOLD}Your gamemode is set to ${RED}Adventure${RESET}")
+                target.sendColored("&6Your gamemode is set to &cAdventure")
             }
             "gmc", "gm1" -> {
                 setGameMode(target, CREATIVE)
-                target.sendMessage("${GOLD}Your gamemode is set to ${RED}Creative${RESET}")
+                target.sendColored("&6Your gamemode is set to &cCreative")
             }
             "gms", "gm0" -> {
                 setGameMode(target, SURVIVAL)
-                target.sendMessage("${GOLD}Your gamemode is set to ${RED}Survival${RESET}")
+                target.sendColored("&6Your gamemode is set to &cSurvival")
             }
             "gmsp" -> {
                 setGameMode(target, SPECTATOR)
-                target.sendMessage("${GOLD}Your gamemode is set to ${RED}Spectator${RESET}")
+                target.sendColored("&6Your gamemode is set to &cSpectator")
             }
         }
     }
@@ -63,23 +62,23 @@ class GamemodeCommand : CommandBase() {
         val args = context.args
 
         if (args.isEmpty())
-            return sender.sendMessage(
-                "${RED}Usage: /gm <adventure|creative|survival|spectator> [Target]"
+            return sender.sendColored(
+                "&4Usage: &c/gm <adventure|creative|survival|spectator> [Target]"
             )
 
         val sub = args[0]
 
         val target: Player = if (args.size == 1) {
             if (sender !is Player)
-                return sender.sendMessage(
-                    "${DARK_RED}Console Usage: ${RED}/${label} <adventure|creative|survival|spectator> <Target>"
+                return sender.sendColored(
+                    "&4Console Usage: &c/gm <adventure|creative|survival|spectator> <Target>"
                 )
 
             sender
         } else {
             val targetName = args[1]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendMessage("${DARK_RED}Could not find player $RED$targetName")
+                ?: return sender.sendColored("&4Could not find player &c$targetName")
 
             p
         }
@@ -89,7 +88,7 @@ class GamemodeCommand : CommandBase() {
             "survival", "surv", "sur", "s", "0" -> SURVIVAL
             "creative", "creat", "crt", "crtv", "c", "1" -> CREATIVE
             "spectator", "spect", "spec", "sp" -> SPECTATOR
-            else -> return sender.sendMessage("${DARK_RED}Options: ${RED}adventure, creative, survival, spectator")
+            else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
         }
 
         val targetName = target.name
@@ -98,19 +97,17 @@ class GamemodeCommand : CommandBase() {
         setGameMode(target, mode)
 
         if (sender != target)
-            sender.sendMessage("${GOLD}You set $RED$targetName's ${GOLD}gamemode to $RED$modeName")
+            sender.sendColored("&6You set &c$targetName's &6gamemode to &c$modeName")
 
-        target.sendMessage("${GOLD}Your gamemode has been set to $RED$modeName")
+        target.sendColored("&6Your gamemode has been set to &c$modeName")
     }
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val label = context.label
 
-        if (sender is ConsoleCommandSender) {
-            sender.sendMessage("Console does not have a gamemode to alter")
-            return
-        }
+        if (sender is ConsoleCommandSender)
+            return sender.sendColored("&4Console does not have a gamemode to alter")
 
         if (sender !is Player)
             return
@@ -118,7 +115,7 @@ class GamemodeCommand : CommandBase() {
         when (label.lowercase()) {
             "gma", "gmc", "gms", "gmsp" -> handleShorthandLabel(context)
             "gamemode", "gm" -> handleExtendedLabel(context)
-            else -> sender.sendMessage("${RED}Alternate gamemode command form detected")
+            else -> sender.sendColored("&4Alternate gamemode command form detected")
         }
     }
 

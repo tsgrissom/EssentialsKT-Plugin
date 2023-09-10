@@ -1,8 +1,7 @@
 package io.github.tsgrissom.testpluginkt.listener
 
+import io.github.tsgrissom.pluginapi.extension.translateColor
 import io.github.tsgrissom.testpluginkt.TestPluginKT
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -18,21 +17,17 @@ class JoinAndQuitListener : Listener {
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
-        var message = getConfiguration().getString("messages.events.join")
-
-        message = ChatColor.translateAlternateColorCodes('&', message)
-        message = message.replace("%player%", e.player.name)
-
-        e.joinMessage = message
+        e.joinMessage = getConfiguration()
+            .getString("messages.events.join")
+            .translateColor()
+            .replace("%player%", e.player.displayName)
     }
 
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
-        var message = getConfiguration().getString("messages.events.quit")
-
-        message = ChatColor.translateAlternateColorCodes('&', message)
-        message = message.replace("%player%", e.player.name)
-
-        e.quitMessage = message
+        e.quitMessage = getConfiguration()
+            .getString("messages.events.quit")
+            .translateColor()
+            .replace("%player%", e.player.displayName)
     }
 }

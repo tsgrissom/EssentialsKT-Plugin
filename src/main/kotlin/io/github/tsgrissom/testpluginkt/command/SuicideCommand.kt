@@ -4,21 +4,23 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
 
-class PingCommand : CommandBase() {
+class SuicideCommand : CommandBase() {
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
-        val label = context.label
 
-        if (sender.lacksPermission("essentials.command.ping"))
+        if (sender.lacksPermission("essentials.command.suicide"))
             return sender.sendColored("&4You do not have permission to do that")
 
-        val resp = when (label) {
-            "pong" -> "Ping!"
-            else -> "Pong!"
-        }
+        if (sender is ConsoleCommandSender)
+            return sender.sendColored("&4Console cannot kill itself")
+        if (sender !is Player)
+            return
 
-        sender.sendMessage(resp)
+        val p: Player = sender
+        p.damage(Double.MAX_VALUE)
     }
 }

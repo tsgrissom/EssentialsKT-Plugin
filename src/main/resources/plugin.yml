@@ -3,8 +3,36 @@ main: "io.github.tsgrissom.testpluginkt.TestPluginKT"
 version: "1.0.0"
 
 commands:
-  ping:
-    description: "View your ping to the server"
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["gm", gma", "gmc", "gms", "gmsp"]
+  ping:
+    description: "Check how long it takes to receive a response from the server"
+    aliases: ["pong"]
+  suicide:
+    description: "Kills your player by force"
+    aliases: ["seppuku", "selfdestruct"]
+
+permissions:
+  essentials.*:
+    description: Grants all permissions for the plugin
+    children:
+      essentials.command.*: true
+  essentials.command.*:
+    description: Grants all command-related permissions for the plugin
+    children:
+      essentials.command.gamemode: true
+      essentials.command.gamemode.other: true
+      essentials.command.ping: true
+      essentials.command.suicide: true
+  essentials.command.gamemode:
+    description: Allows you to alter your own gamemode
+  essentials.command.gamemode.other:
+    description: Allows you to alter another player's gamemode
+  essentials.command.gamemode.noalter:
+    description: Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions
+    default: false
+  essentials.command.ping:
+    description: Allows you to view your ping to the server
+  essentials.command.suicide:
+    description: Allows you to forcibly end your player's life

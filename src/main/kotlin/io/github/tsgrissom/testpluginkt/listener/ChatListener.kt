@@ -1,6 +1,6 @@
 package io.github.tsgrissom.testpluginkt.listener
 
-import org.bukkit.ChatColor
+import io.github.tsgrissom.pluginapi.extension.translateColor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,17 +15,12 @@ class ChatListener : Listener {
         return plugin.config ?: throw IllegalStateException("config is null")
     }
 
-    private fun getMessage() : String = getConfiguration().getString("messages.events.chat")
-
-    private fun translateColorsAndMakeSubstitutions(e: AsyncPlayerChatEvent) : String {
-        var new = ChatColor.translateAlternateColorCodes('&', getMessage())
-        new = new.replace("%player%", e.player.name)
-        new = new.replace("%message%", e.message)
-        return new
-    }
-
     @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
-        e.message = translateColorsAndMakeSubstitutions(e)
+        e.message = getConfiguration()
+            .getString("messages.events.chat")
+            .translateColor()
+            .replace("%player%", e.player.displayName)
+            .replace("%message%", e.message)
     }
 }
