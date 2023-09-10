@@ -1,25 +1,15 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
-import org.bukkit.attribute.Attribute
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
-class HealCommand : CommandBase() {
-
-    private fun shouldRestoreFoodLevel() : Boolean {
-        val plugin = EssentialsKTPlugin.instance ?: return true
-        val config = plugin.config ?: return true
-        return config.getBoolean("Commands.HealRestoresFoodLevel", true)
-    }
-
-    private fun getActionString() : String = if (shouldRestoreFoodLevel()) "health and hunger" else "health"
+class FeedCommand : CommandBase() {
 
     private fun handleEmptyArgs(context: CommandContext) {
         val label = context.label
@@ -30,12 +20,11 @@ class HealCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val perm = "essentials.heal"
+        val perm = "essentials.feed"
         if (sender.lacksPermission(perm))
             return context.sendNoPermission(sender, perm)
 
-        restoreHealth(sender, sender)
-        // TODO Heal sender
+        feed(sender, sender)
     }
 
     private fun handleArgs(context: CommandContext) {
@@ -46,36 +35,30 @@ class HealCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        val permSelf = "essentials.heal"
-        val permOthers = "essentials.heal.others"
+        val permSelf = "essentials.feed"
+        val permOthers = "essentials.feed.others"
         if (target == sender && sender.lacksPermission(permSelf))
             return context.sendNoPermission(sender, permSelf)
         if (target != sender && sender.lacksPermission(permOthers))
             return context.sendNoPermission(sender, permOthers)
 
-        restoreHealth(sender, target)
+        feed(sender, target)
     }
 
     override fun execute(context: CommandContext) {
-        if (context.args.isEmpty())
+        val args = context.args
+
+        if (args.isEmpty())
             handleEmptyArgs(context)
         else
             handleArgs(context)
     }
 
-    private fun restoreHealth(sender: CommandSender, target: Player) {
-        val shouldSate = shouldRestoreFoodLevel()
-        val maxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value!!
+    private fun feed(sender: CommandSender, target: Player) {
+        val tn = target.name
 
-        target.health = maxHealth
-        if (shouldSate)
-            target.foodLevel = 20
-
-        val postfix = getActionString()
-
-        if (sender == target)
-            sender.sendColored("&6You restored your own $postfix")
-        else
-            sender.sendColored("&6You restored &c${target.name}'s &6$postfix")
+        target.foodLevel = 20
+        sender.sendColored("&6You fed &c$tn")
+        target.sendColored("&6Your hunger was sated")
     }
 }
