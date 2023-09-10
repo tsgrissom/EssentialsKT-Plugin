@@ -18,16 +18,11 @@ import org.bukkit.entity.Player
 
 class GamemodeCommand : CommandBase() {
 
-    val PERMISSION_ALTER_SELF = "essentials.command.gamemode"
-    val PERMISSION_ALTER_OTHER = "essentials.command.other"
-    val PERMISSION_DEFENSIVE = "essentials.command.gamemode.noalter"
+    val PERMISSION_ALTER_SELF = "essentials.gamemode"
+    val PERMISSION_ALTER_OTHER = "essentials.gamemode.others"
+    val PERMISSION_DEFENSIVE = "essentials.gamemode.noalter"
 
     private fun handleShorthandLabel(context: CommandContext) {
-        /*
-         * /gmc - Target self (sender must be player)
-         * /gmc [TargetPlayer] - Target another (sender can be anyone)
-         */
-
         val label = context.label
         val sender = context.sender
         val args = context.args
@@ -47,18 +42,40 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
-        if ((target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
-            || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
-            return sender.sendColored("&4You do not have permission to do that")
+        if (target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
+            return context.sendNoPermission(sender, PERMISSION_ALTER_SELF)
+
+        if (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER))
+            return context.sendNoPermission(sender, PERMISSION_ALTER_OTHER)
 
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
         val mode = when (label) {
-            "gm0", "gms" -> SURVIVAL
-            "gm1", "gmc" -> CREATIVE
-            "gm2", "gma" -> ADVENTURE
-            "gmsp" -> SPECTATOR
+            "gm0", "gms" -> {
+                val perm = "essentials.gamemode.survival"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                SURVIVAL
+            }
+            "gm1", "gmc" -> {
+                val perm = "essentials.gamemode.creative"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                CREATIVE
+            }
+            "gm2", "gma" -> {
+                val perm = "essentials.gamemode.adventure"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                ADVENTURE
+            }
+            "gmsp" -> {
+                val perm = "essentials.gamemode.spectator"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                SPECTATOR
+            }
             else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
         }
 
@@ -98,19 +115,41 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
-        if ((target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
-            || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
-            return sender.sendColored("&4You do not have permission to do that")
+        if (target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
+            return context.sendNoPermission(sender, PERMISSION_ALTER_SELF)
+
+        if (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER))
+            return context.sendNoPermission(sender, PERMISSION_ALTER_OTHER)
 
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
 
         val mode = when (sub.lowercase()) {
-            "0", "survival", "surv", "sur", "s" -> SURVIVAL
-            "1", "creative", "create", "creat", "crtv", "crt", "c" -> CREATIVE
-            "2", "adventure", "adv", "a" -> ADVENTURE
-            "spectator", "spect", "spec", "sp" -> SPECTATOR
+            "0", "survival", "surv", "sur", "s" -> {
+                val perm = "essentials.gamemode.survival"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                SURVIVAL
+            }
+            "1", "creative", "create", "creat", "crtv", "crt", "c" -> {
+                val perm = "essentials.gamemode.creative"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                CREATIVE
+            }
+            "2", "adventure", "adv", "a" -> {
+                val perm = "essentials.gamemode.adventure"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                ADVENTURE
+            }
+            "spectator", "spect", "spec", "sp" -> {
+                val perm = "essentials.gamemode.spectator"
+                if (sender.lacksPermission(perm))
+                    return context.sendNoPermission(sender, perm)
+                SPECTATOR
+            }
             else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
         }
 
@@ -129,7 +168,7 @@ class GamemodeCommand : CommandBase() {
         val label = context.label
 
         when (label.lowercase()) {
-            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp" -> handleShorthandLabel(context)
+            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2" -> handleShorthandLabel(context)
             "gamemode", "gm", "egamemode", "egm" -> handleExtendedLabel(context)
             else -> sender.sendColored("&4Alternate gamemode command form detected")
         }

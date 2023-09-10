@@ -11,9 +11,10 @@ class SuicideCommand : CommandBase() {
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
+        val perm = "essentials.suicide"
 
-        if (sender.lacksPermission("essentials.command.suicide"))
-            return sender.sendColored("&4You do not have permission to do that")
+        if (sender.lacksPermission(perm))
+            return context.sendNoPermission(sender, perm)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console cannot kill itself")

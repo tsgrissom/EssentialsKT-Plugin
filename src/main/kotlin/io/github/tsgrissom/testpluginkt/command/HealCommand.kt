@@ -30,8 +30,9 @@ class HealCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        if (sender.lacksPermission("essentials.command.heal"))
-            return sender.sendColored("&4You do not have permission to do that")
+        val perm = "essentials.heal"
+        if (sender.lacksPermission(perm))
+            return context.sendNoPermission(sender, perm)
 
         restoreHealth(sender, sender)
         // TODO Heal sender
@@ -45,10 +46,12 @@ class HealCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        if (target == sender && sender.lacksPermission("essentials.command.heal"))
-            return sender.sendColored("&4You do not have permission to do that")
-        if (target != sender && sender.lacksPermission("essentials.command.heal.other"))
-            return sender.sendColored("&4You do not have permission to do that")
+        val permSelf = "essentials.heal"
+        val permOthers = "essentials.heal.others"
+        if (target == sender && sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
+        if (target != sender && sender.lacksPermission(permOthers))
+            return context.sendNoPermission(sender, permOthers)
 
         restoreHealth(sender, target)
     }

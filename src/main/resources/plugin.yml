@@ -49,59 +49,80 @@ permissions:
   essentials.command.*:
     description: "Grants all command-related permissions for the plugin"
     children:
-      essentials.command.gamemode: true
-      essentials.command.gamemode.other: true
-      essentials.command.heal: true
-      essentials.command.heal.other: true
-      essentials.command.ping: true
-      essentials.command.suicide: true
-      essentials.command.timeset.*: true
-      essentials.command.whois: true
-      essentials.command.whoami: true
-  essentials.command.gamemode.*:
+      essentials.gamemode: true
+      essentials.gamemode.other: true
+      essentials.gamemode.all: true
+      essentials.heal: true
+      essentials.heal.other: true
+      essentials.ping: true
+      essentials.suicide: true
+      essentials.time.quick.*: true
+      essentials.whois: true
+      essentials.whoami: true
+  essentials.gamemode.*:
     description: "Grants all gamemode-related permissions for the plugin"
     children:
-      essentials.command.gamemode: true
-      essentials.command.gamemode.other: true
-  essentials.command.timeset.*:
-    description: "Grants all time setting-related permissions"
+      essentials.gamemode: true
+      essentials.gamemode.others: true
+      essentials.gamemode.all: true
+  essentials.gamemode.all:
+    description: "Grants access to all gamemodes in /gamemode"
     children:
-      essentials.command.timeset.day: true
-      essentials.command.timeset.midnight: true
-      essentials.command.timeset.night: true
-      essentials.command.timeset.noon: true
-      essentials.command.timeset.sunset: true
-      essentials.command.timeset.sunrise: true
-  # Command Permissions
-  essentials.command.gamemode:
+      essentials.gamemode.adventure: true
+      essentials.gamemode.creative: true
+      essentials.gamemode.survival: true
+      essentials.gamemode.spectator: true
+  essentials.time.quick.*:
+    description: "Grants all quick time setting permissions"
+    children:
+      essentials.time.quick.day: true
+      essentials.time.quick.midnight: true
+      essentials.time.quick.night: true
+      essentials.time.quick.noon: true
+      essentials.time.quick.sunset: true
+      essentials.time.quick.sunrise: true
+  # New Command Permissions
+  essentials.gamemode:
     description: "Allows you to alter your own gamemode"
-  essentials.command.gamemode.other:
+  essentials.gamemode.others:
     description: "Allows you to alter another player's gamemode"
-  essentials.command.heal:
+  essentials.gamemode.adventure:
+    description: "Allows you to set your gamemode to Adventure"
+  essentials.gamemode.creative:
+    description: "Allows you to set your gamemode to Creative"
+  essentials.gamemode.survival:
+    description: "Allows you to set your gamemode to Survival"
+  essentials.gamemode.spectator:
+    description: "Allows you to set your gamemode to Spectator"
+  essentials.heal:
     description: "Allows you to restore your own health"
-  essentials.command.heal.other:
+  essentials.heal.others:
     description: "Allows you to restore another player's health"
-  essentials.command.ping:
+  essentials.ping:
     description: "Allows you to view your ping to the server"
-  essentials.command.suicide:
+  essentials.suicide:
     description: "Allows you to forcibly end your player's life"
-  essentials.command.timeset.day:
+  essentials.time.quick.day:
     description: "Allows you to set the time to day"
-  essentials.command.timeset.midnight:
+  essentials.time.quick.midnight:
     description: "Allows you to set the time to midnight"
-  essentials.command.timeset.night:
+  essentials.time.quick.night:
     description: "Allows you to set the time to night"
-  essentials.command.timeset.noon:
+  essentials.time.quick.noon:
     description: "Allows you to set the time to noon"
-  essentials.command.timeset.sunset:
+  essentials.time.quick.sunset:
     description: "Allows you to set the time to sunset"
-  essentials.command.timeset.sunrise:
+  essentials.time.quick.sunrise:
     description: "Allows you to set the time to sunrise"
-  essentials.command.whois:
+  essentials.whois:
     description: "Allows you view a player's /whois profile"
-  essentials.command.whoami:
+  essentials.whoami:
     description: "Allows you to view your own /whois profile"
+
   # Special Permissions
-  essentials.command.gamemode.noalter:
+  essentials.gamemode.noalter:
     description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
     default: false
+  essentials.disclosepermission:
+    description: "Displays missing permission "
+    default: op

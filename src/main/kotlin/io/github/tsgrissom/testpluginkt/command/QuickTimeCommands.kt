@@ -8,17 +8,17 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 
 class DayCommand
-    : QuickTimeCommand("essentials.command.timeset.day", 1000, "Day")
+    : QuickTimeCommand("essentials.time.quick.day", 1000, "Day")
 class NoonCommand
-    : QuickTimeCommand("essentials.command.timeset.noon", 6000, "Noon")
+    : QuickTimeCommand("essentials.time.quick.noon", 6000, "Noon")
 class SunsetCommand
-    : QuickTimeCommand("essentials.command.timeset.sunset", 12000, "Dusk")
+    : QuickTimeCommand("essentials.time.quick.sunset", 12000, "Dusk")
 class NightCommand
-    : QuickTimeCommand("essentials.command.timeset.night", 15000, "Night")
+    : QuickTimeCommand("essentials.time.quick.night", 15000, "Night")
 class MidnightCommand
-    : QuickTimeCommand("essentials.command.timeset.midnight", 18000, "Midnight")
+    : QuickTimeCommand("essentials.time.quick.midnight", 18000, "Midnight")
 class SunriseCommand
-    : QuickTimeCommand("essentials.command.timeset.sunrise", 23000, "Dawn")
+    : QuickTimeCommand("essentials.time.quick.sunrise", 23000, "Dawn")
 
 fun getTimeSetMessage(w: World, tn: String) =
     "&6You set world &c${w.name}'s &6time to &c$tn"
@@ -34,7 +34,7 @@ open class QuickTimeCommand(
         val sender = context.sender
 
         if (sender.lacksPermission(permission))
-            return sender.sendColored("&4You do not have permission to do that")
+            return context.sendNoPermission(sender, permission)
 
         var world = Bukkit.getWorlds()[0]
 
