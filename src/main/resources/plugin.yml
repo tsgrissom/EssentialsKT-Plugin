@@ -1,11 +1,12 @@
 name: "TestPluginKT"
 main: "io.github.tsgrissom.testpluginkt.TestPluginKT"
 version: "1.0.0"
+api-version: "1.20"
 
 commands:
   gamemode:
     description: "Alter a player's gamemode"
-    aliases: ["gm", gma", "gmc", "gms", "gmsp"]
+    aliases: ["gm", "gma", "gmc", "gms", "gmsp"]
   ping:
     description: "Check how long it takes to receive a response from the server"
     aliases: ["pong"]

@@ -2,12 +2,22 @@ package io.github.tsgrissom.testpluginkt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.GameMode.*
+import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+
+/*
+ * TODO Per-gamemode permissions
+ */
+
+const val PERMISSION_ALTER_SELF = "essentials.command.gamemode"
+const val PERMISSION_ALTER_OTHER = "essentials.command.other"
+const val PERMISSION_DEFENSIVE = "essentials.command.gamemode.noalter"
 
 class GamemodeCommand : CommandBase() {
 
@@ -36,28 +46,31 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
+        if ((target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
+            || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
+            return sender.sendColored("&4You do not have permission to do that")
+
         when (label) {
             "gma", "gm2" -> {
-                setGameMode(target, ADVENTURE)
+                setGameMode(sender, target, ADVENTURE)
                 target.sendColored("&6Your gamemode is set to &cAdventure")
             }
             "gmc", "gm1" -> {
-                setGameMode(target, CREATIVE)
+                setGameMode(sender, target, CREATIVE)
                 target.sendColored("&6Your gamemode is set to &cCreative")
             }
             "gms", "gm0" -> {
-                setGameMode(target, SURVIVAL)
+                setGameMode(sender, target, SURVIVAL)
                 target.sendColored("&6Your gamemode is set to &cSurvival")
             }
             "gmsp" -> {
-                setGameMode(target, SPECTATOR)
+                setGameMode(sender, target, SPECTATOR)
                 target.sendColored("&6Your gamemode is set to &cSpectator")
             }
         }
     }
 
     private fun handleExtendedLabel(context: CommandContext) {
-        val label = context.label
         val sender = context.sender
         val args = context.args
 
@@ -91,10 +104,14 @@ class GamemodeCommand : CommandBase() {
             else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
         }
 
+        if ((target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
+            || (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER)))
+            return sender.sendColored("&4You do not have permission to do that")
+
         val targetName = target.name
         val modeName = getGameModeName(mode)
 
-        setGameMode(target, mode)
+        setGameMode(sender, target, mode)
 
         if (sender != target)
             sender.sendColored("&6You set &c$targetName's &6gamemode to &c$modeName")
@@ -128,7 +145,17 @@ class GamemodeCommand : CommandBase() {
         }
     }
 
-    private fun setGameMode(p: Player, mode: GameMode) {
-        p.gameMode = mode
+    private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {
+        if (sender != target && target.hasPermission(PERMISSION_DEFENSIVE)) {
+            val s = sender.name
+            val t = target.name
+            Bukkit.getLogger().info(
+                "$s attempted to set ${t}'s gamemode but the target had \"$PERMISSION_DEFENSIVE\""
+            )
+            sender.sendColored("&4You are not able to set &c${t}'s &4gamemode")
+            return
+        }
+
+        target.gameMode = mode
     }
 }
