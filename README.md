@@ -5,11 +5,11 @@ A test plugin for CraftBukkit servers written in the Kotlin programming language
 Tested on PaperMC with Minecraft version 1.20.1
 
 ### Features
-*Lightweight Essentials replacer written in Kotlin
+* Lightweight Essentials replacer written in Kotlin
 * Supports any flavor of Bukkit server: Spigot, Paper, etc.
 * Commands with intelligent user feedback
 * Configurable messages for join, quit, and chat events
-* A plugin API powering the plugin features
+* A [plugin API](https://github.com/tsgrissom/EssentialsKT/tree/main/src/main/kotlin/io/github/tsgrissom/pluginapi) powering the plugin features
 
 ### Commands
 * EssentialsKT imitates the command structure of EssentialsX, including supporting aliases prefixed with `e`
@@ -25,4 +25,4 @@ Tested on PaperMC with Minecraft version 1.20.1
 
 ### Permissions
 * Permissions are structured differently between EssentialsX and EssentialsKT
-* See `plugin.yml` until Permissions page on the wiki is built-out
+* See [`plugin.yml`](https://github.com/tsgrissom/EssentialsKT/blob/main/src/main/resources/plugin.yml) until Permissions page on the wiki is built-out
