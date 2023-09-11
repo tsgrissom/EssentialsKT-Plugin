@@ -21,6 +21,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         config.options().copyDefaults(true)
         saveDefaultConfig()
 
+        getCommand("ntime")?.setExecutor(TimeCommand())
+
         /* Command Setup (General; A->Z) */
         getCommand("feed")?.setExecutor(FeedCommand())
         getCommand("gamemode")?.setExecutor(GamemodeCommand())

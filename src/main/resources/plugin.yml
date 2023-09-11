@@ -8,6 +8,7 @@ description: "A lightweight Essentials replacer written in Kotlin"
 website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
+  ntime:
   # General (A-Z)
   feed:
     description: "Restore a player's food level"

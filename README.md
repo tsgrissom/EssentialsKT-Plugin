@@ -24,6 +24,33 @@ Tested on PaperMC with Minecraft version 1.20.1
 #### Time Setting
 * Quick-time commands: `/day`, `/midnight`, `/night`, `/noon`, `/sunset`, & `/sunrise`
 
+## Upcoming Commands
+* weather
+* time
+* repair
+* kickall
+* tpall
+* tprequest
+* tpaccept
+* tpdeny
+* tphere
+* tprandom
+* tpauto
+* realname
+* nickname
+* compass
+* world
+* me
+* list
+* kill
+* invsee
+* god
+* broadcast
+* afk
+* burn
+* exp
+* 
+
 ## Permissions
 * Permissions are structured differently between EssentialsX and EssentialsKT
 * See [`plugin.yml`](https://github.com/tsgrissom/EssentialsKT/blob/main/src/main/resources/plugin.yml) until Permissions page on the wiki is built-out
