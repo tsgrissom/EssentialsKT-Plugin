@@ -1,6 +1,10 @@
 Commands:
   HealRestoresFoodLevel: true
 
+Features:
+  CheckAfkInterval: 100
+  NotifyAfkAfter: 600
+
 Messages:
   JoinEvent: "&a&l+ &e%player% has joined the server"
   QuitEvent: "&c&l- &e%player% has left the server"

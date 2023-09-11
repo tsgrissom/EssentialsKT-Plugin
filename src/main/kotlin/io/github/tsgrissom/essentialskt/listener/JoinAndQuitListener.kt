@@ -10,25 +10,33 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class JoinAndQuitListener : Listener {
 
-    private fun getConfiguration() : FileConfiguration {
-        val plugin = EssentialsKTPlugin.instance ?: throw IllegalStateException("plugin instance is null")
-        return plugin.config ?: throw IllegalStateException("config is null")
-    }
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getAFKManager() = getPlugin().afkManager
+    private fun getConfiguration() : FileConfiguration = getPlugin().config
 
     private fun getJoinMessage() = getConfiguration().getString("Messages.JoinEvent", "&a&l+ &e%player% has joined the server")!!
     private fun getQuitMessage() = getConfiguration().getString("Messages.QuitEvent", "&c&l- &e%player% has left the server")!!
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
+        val p = e.player
+
         e.joinMessage = getJoinMessage()
             .translateColor()
-            .replace("%player%", e.player.displayName)
+            .replace("%player%", p.displayName)
+
+        getAFKManager().storeMovement(p)
     }
 
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
+        val p = e.player
+
         e.quitMessage = getQuitMessage()
             .translateColor()
-            .replace("%player%", e.player.displayName)
+            .replace("%player%", p.displayName)
+
+        getAFKManager().lastMovementTrackingMap.remove(p.uniqueId.toString())
     }
 }

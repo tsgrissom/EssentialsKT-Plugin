@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
@@ -10,6 +11,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class TimeCommand : CommandBase() {
+
+    private fun getPlugin() = EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
     /*
      * /time add <long>
@@ -87,7 +90,7 @@ class TimeCommand : CommandBase() {
 
     private fun handleQuerySubcommand(context: CommandContext) {
         // TODO
-        context.sender.sendColored("Feature is in the works")
+        getPlugin().afkManager.lastMovementTrackingMap.forEach { context.sender.sendMessage("${it.key} -> ${it.value}") }
     }
 
     private fun handleSetSubcommand(context: CommandContext) {

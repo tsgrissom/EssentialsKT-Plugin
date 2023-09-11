@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -9,8 +10,13 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.WorldType
 import org.bukkit.attribute.Attribute
+import org.bukkit.configuration.file.FileConfiguration
 
 class WhoIsCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getAfkManager() = getPlugin().afkManager
 
     private fun whoAmI(context: CommandContext) {
         val sender = context.sender
@@ -61,6 +67,8 @@ class WhoIsCommand : CommandBase() {
         if (worldType != null)
             worldLine += " &8+ &7World Type: &b${worldType.name.capitalizeAllCaps()}"
 
+        val isAfk = getAfkManager().isAfk(target)
+
         var fireLine = " &8- &7On Fire: "
 
         fireLine += if (target.fireTicks > 0)
@@ -78,6 +86,7 @@ class WhoIsCommand : CommandBase() {
             " &8- &7Gamemode: &b${target.gameMode.name.capitalizeAllCaps()}",
             worldLine,
             " &8- &7Location &cX&aY&bZ&7: &c${x} &a${y} &b${z}",
+            " &8- &7Is AFK: &e${isAfk.palatable(withColor=true)}",
             " &8- &7Is OP: &e${target.isOp.palatable(withColor=true)}",
             " &8- &7Health: &e${target.health} &8/ &7Max: &e${target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value}",
             " &8- &7Food Level: &e${target.foodLevel}&8/&e20 &8+ &7Hunger: &e$hunger",
