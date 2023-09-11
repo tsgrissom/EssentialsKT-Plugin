@@ -1,0 +1,14 @@
+Player:
+  LastKnownUsername: "Notch"
+  LastIPAddress: ""
+  LastLoggedOut: 10000
+Home:
+  world: "world"
+  x: 100
+  y: 100
+  z: 100
+  pitch: 0
+  yaw: 0
+IgnoredPlayers: []
+Teleportation:
+  AutoRejectRequests: false

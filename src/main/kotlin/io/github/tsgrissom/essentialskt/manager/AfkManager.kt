@@ -1,6 +1,8 @@
 package io.github.tsgrissom.essentialskt.manager
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.event.PlayerAfkChangeEvent
+import io.github.tsgrissom.pluginapi.extension.getUniqueString
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
@@ -10,28 +12,61 @@ class AfkManager {
 
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getAFKManager() = getPlugin().afkManager
     private fun getConfiguration() : FileConfiguration = getPlugin().config
 
-    fun getCheckAfkInterval() : Long = getConfiguration().getLong("Features.CheckAfkInterval", 100)
-    fun getNotifyAfterDuration() : Long = getConfiguration().getLong("Features.NotifyAfkAfter", 600)
+    fun getCheckAfkInterval() : Long =
+        getConfiguration().getLong("Features.CheckAfkInterval", 100)
+    fun getNotifyAfterDuration() : Long =
+        getConfiguration().getLong("Features.NotifyAfkAfter", 600)
+    fun shouldCameraMovementCountForAfkTracking() : Boolean =
+        getConfiguration().getBoolean("Features.CameraMovementCountsForAfk", false)
+    fun getAfkMessage() : String =
+        getConfiguration().getString("Messages.Afk", "&c%pn% &6is AFK...")!!
+    fun getNotAfkMessage() : String =
+        getConfiguration().getString("Messages.NotAfk", "&c%pn% &6is no longer AFK")!!
 
     val lastMovementTrackingMap: MutableMap<String, Long> = mutableMapOf()
-    val afkSet: MutableSet<String> = mutableSetOf()
+    private val afkSet: MutableSet<String> = mutableSetOf()
+
+    fun toggleAfk(p: Player) {
+        if (isAfk(p)) {
+            removeAfk(p)
+        } else {
+            makeAfk(p)
+        }
+    }
 
     fun makeAfk(p: Player) {
-        if (!afkSet.contains(p.uniqueId.toString())) {
+        if (afkSet.contains(p.getUniqueString()))
+            return
+
+        val message = getAfkMessage()
+            .replace("%pn%", p.name)
+            .replace("%pd%", p.displayName)
+            .translateColor()
+        val event = PlayerAfkChangeEvent(p, goneAfk=true)
+        Bukkit.getPluginManager().callEvent(event)
+
+        if (!event.isCancelled()) {
             afkSet.add(p.uniqueId.toString())
-            Bukkit.broadcastMessage("&c${p.name} &6is AFK...".translateColor())
+            Bukkit.broadcastMessage(message)
         }
-        // TODO Fire custom event
     }
 
     fun removeAfk(p: Player) {
         val isAfk = isAfk(p)
-        afkSet.remove(p.uniqueId.toString())
-        if (isAfk)
-            Bukkit.broadcastMessage("&c${p.name} &6is no longer AFK".translateColor())
+        val event = PlayerAfkChangeEvent(p, goneAfk=false)
+
+        Bukkit.getPluginManager().callEvent(event)
+
+        if (isAfk && !event.isCancelled()) {
+            afkSet.remove(p.getUniqueString())
+            val message = getNotAfkMessage()
+                .replace("%pn%", p.name)
+                .replace("%pd%", p.displayName)
+                .translateColor()
+            Bukkit.broadcastMessage(message)
+        }
     }
 
     fun isAfk(p: Player) = afkSet.contains(p.uniqueId.toString())

@@ -13,8 +13,15 @@ class MovementListener : Listener {
 
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
+        fun isCameraMovement() =
+            (e.from.x == e.to?.x && e.from.y == e.to?.y && e.from.z == e.to?.z)
+
+        val afkTrackCamera = getAfkManager().shouldCameraMovementCountForAfkTracking()
         val p = e.player
-        getAfkManager().storeMovement(p)
-        getAfkManager().removeAfk(p)
+
+        if ((isCameraMovement() && afkTrackCamera) || !isCameraMovement()) {
+            getAfkManager().storeMovement(p)
+            getAfkManager().removeAfk(p)
+        }
     }
 }

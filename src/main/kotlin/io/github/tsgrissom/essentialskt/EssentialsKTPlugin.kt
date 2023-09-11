@@ -39,6 +39,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         getCommand("ntime")?.setExecutor(TimeCommand())
 
         /* Command Setup (General; A->Z) */
+        getCommand("afk")?.setExecutor(AfkCommand())
         getCommand("feed")?.setExecutor(FeedCommand())
         getCommand("gamemode")?.setExecutor(GamemodeCommand())
         getCommand("heal")?.setExecutor(HealCommand())

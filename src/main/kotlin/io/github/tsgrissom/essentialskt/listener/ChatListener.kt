@@ -9,17 +9,22 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 
 class ChatListener : Listener {
 
-    private fun getConfiguration() : FileConfiguration {
-        val plugin = EssentialsKTPlugin.instance ?: throw IllegalStateException("plugin instance is null")
-        return plugin.config ?: throw IllegalStateException("config is null")
-    }
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfiguration() = getPlugin().config
+    private fun getAfkManager() = getPlugin().afkManager
 
     @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
+        val p = e.player
+
         e.message = getConfiguration()
             .getString("Messages.ChatEvent", "&e%player% &7: &f%message%")!!
             .translateColor()
-            .replace("%player%", e.player.displayName)
+            .replace("%player%", p.displayName)
             .replace("%message%", e.message)
+
+        getAfkManager().storeMovement(p)
+        getAfkManager().removeAfk(p)
     }
 }

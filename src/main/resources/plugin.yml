@@ -10,6 +10,9 @@ website: "https://github.com/tsgrissom/EssentialsKT"
 commands:
   ntime:
   # General (A-Z)
+  afk:
+    description: "Toggle your AFK status"
+    aliases: ["eafk", "away", "eaway"]
   feed:
     description: "Restore a player's food level"
     aliases: ["efeed", "eat", "eeat", "sate"]
@@ -53,6 +56,7 @@ permissions:
   essentials.command.*:
     description: "Grants all command-related permissions for the plugin"
     children:
+      essentials.afk: true
       essentials.feed: true
       essentials.feed.others: true
       essentials.gamemode: true
@@ -88,6 +92,8 @@ permissions:
       essentials.time.quick.sunset: true
       essentials.time.quick.sunrise: true
   # New Command Permissions
+  essentials.afk:
+    description: "Allows you to toggle your AFK status"
   essentials.feed:
     description: "Allows you to restore your own hunger"
   essentials.feed.others:
