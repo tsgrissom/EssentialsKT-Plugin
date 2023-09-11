@@ -40,11 +40,15 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         /* Command Setup (General; A->Z) */
         getCommand("afk")?.setExecutor(AfkCommand())
+        getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
         getCommand("feed")?.setExecutor(FeedCommand())
         getCommand("gamemode")?.setExecutor(GamemodeCommand())
         getCommand("heal")?.setExecutor(HealCommand())
+        getCommand("nickname")?.setExecutor(NicknameCommand())
         getCommand("ping")?.setExecutor(PingCommand())
+        getCommand("rain")?.setExecutor(RainCommand())
         getCommand("suicide")?.setExecutor(SuicideCommand())
+        getCommand("toggledownfall")?.setExecutor(ToggleDownfallCommand())
         getCommand("whois")?.setExecutor(WhoIsCommand())
 
         /* Time Setting (Early->Late) */

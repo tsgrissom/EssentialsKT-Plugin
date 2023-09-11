@@ -1,16 +1,15 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import org.bukkit.command.CommandSender
-import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.entity.Player
-
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
+import org.bukkit.Bukkit
 import org.bukkit.WorldType
 import org.bukkit.attribute.Attribute
-import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
 
 class WhoIsCommand : CommandBase() {
 
@@ -19,7 +18,11 @@ class WhoIsCommand : CommandBase() {
     private fun getAfkManager() = getPlugin().afkManager
 
     private fun whoAmI(context: CommandContext) {
+        val perm = "essentials.whoami"
         val sender = context.sender
+
+        if (sender.lacksPermission(perm))
+            return context.sendNoPermission(sender, perm)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console Usage: &c/whois <Target>")
@@ -33,11 +36,24 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun whoIs(context: CommandContext) {
+        val perm = "essentials.whois"
+        val args = context.args
+        val sender = context.sender
 
+        if (args.isEmpty())
+            return sender.sendColored("&4Usage: &c/whois <Target>")
+
+        if (sender.lacksPermission(perm))
+            return context.sendNoPermission(sender, perm)
+
+        val sub = args[0]
+        val t = Bukkit.getPlayer(sub)
+            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+
+        displayWhoIs(sender, t)
     }
 
     override fun execute(context: CommandContext) {
-        val args = context.args
         val label = context.label
         val sender = context.sender
 
@@ -49,11 +65,11 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayWhoIsTemporary(sender: CommandSender, target: Player) {
-
+        // TODO Display temporary attributes
     }
 
     private fun displayWhoIsPermanent(sender: CommandSender, target: Player) {
-
+        // TODO Display permanent attributes
     }
 
     private fun displayWhoIs(sender: CommandSender, target: Player) {
@@ -78,10 +94,12 @@ class WhoIsCommand : CommandBase() {
 
         val hunger = 20 - target.foodLevel
 
+        // TODO essentials.whois.ip
+
         sender.sendColored(
             "&6/whois for &e${target.name}",
             " &8- &7Username: &e${target.name} &8+ &7Display Name: &r${target.displayName}",
-            " &8- &7Unique ID: &e${target.uniqueId?.toString()}",
+            " &8- &7Unique ID: &e${target.getUniqueString()}",
             " &8- &7IP Address: &e${target.getIPString()}",
             " &8- &7Gamemode: &b${target.gameMode.name.capitalizeAllCaps()}",
             worldLine,

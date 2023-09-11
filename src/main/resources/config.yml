@@ -7,8 +7,13 @@ Features:
   NotifyAfkAfter: 1200
 
 Messages:
-  Afk: "&c%pn% &6is AFK..."
-  NotAfk: "&c%pn% &6is no longer AFK"
+  Afk: "&c%pd% &6is AFK..."
+  NotAfk: "&c%pd% &6is no longer AFK"
   JoinEvent: "&a&l+ &e%player% has joined the server"
   QuitEvent: "&c&l- &e%player% has left the server"
   ChatEvent: "&e%player% &7: &f%message%"
+
+Data:
+  NicknameBlacklist:
+    - "uuid1"
+    - "uuid2"

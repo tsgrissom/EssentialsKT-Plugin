@@ -36,6 +36,11 @@ fun String.translateColor() : String = ChatColor.translateAlternateColorCodes('&
 fun String.stripColor() : String = ChatColor.stripColor(this)!!
 fun String.translateAndStripColorCodes() : String = this.translateColor().stripColor()
 
+fun String.containsChatColor() : Boolean {
+    val tas = this.translateAndStripColorCodes()
+    return this != tas
+}
+
 fun String.capitalize() : String {
     if (this.isEmpty())
         return this

@@ -9,10 +9,16 @@ website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
   ntime:
+  nickname:
+    description: "Set your display name to a custom nickname"
+    aliases: ["nick", "enickname", "enick"]
   # General (A-Z)
   afk:
     description: "Toggle your AFK status"
     aliases: ["eafk", "away", "eaway"]
+  clearweather:
+    description: "Clear a world's weather"
+    aliases: ["clearw", "unrain", "norain"]
   feed:
     description: "Restore a player's food level"
     aliases: ["efeed", "eat", "eeat", "sate"]
@@ -25,9 +31,14 @@ commands:
   ping:
     description: "Check how long it takes to receive a response from the server"
     aliases: ["eping", "epong", "pong"]
+  rain:
+    description: "Set a world's weather to be raining"
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
+  toggledownfall:
+    description: "Toggles weather in the current world"
+    aliases: ["tdf"]
   whois:
     description: "Displays a bunch of player-related information"
     aliases: ["ewhoami", "ewhoami", "whoami"]
@@ -67,6 +78,8 @@ permissions:
       essentials.ping: true
       essentials.suicide: true
       essentials.time.quick.*: true
+      essentials.toggledownfall: true
+      essentials.weather: true
       essentials.whois: true
       essentials.whoami: true
   essentials.gamemode.*:
@@ -130,6 +143,10 @@ permissions:
     description: "Allows you to set the time to sunset"
   essentials.time.quick.sunrise:
     description: "Allows you to set the time to sunrise"
+  essentials.toggledownfall:
+    description: "Allows you to toggle the weather"
+  essentials.weather:
+    description: "Allows you to set the weather"
   essentials.whois:
     description: "Allows you view a player's /whois profile"
   essentials.whoami:

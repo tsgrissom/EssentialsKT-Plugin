@@ -20,7 +20,7 @@ class MidnightCommand
 class SunriseCommand
     : QuickTimeCommand("essentials.time.quick.sunrise", 23000, "Dawn")
 
-fun getTimeSetMessage(w: World, tn: String) =
+private fun getTimeSetMessage(w: World, tn: String) =
     "&6You set world &c${w.name}'s &6time to &c$tn"
 
 open class QuickTimeCommand(
