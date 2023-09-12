@@ -21,9 +21,9 @@ class ChatListener : Listener {
         val p = e.player
 
         e.message = getConfiguration()
-            .getString("Messages.ChatEvent", "&e%player% &7: &f%message%")!!
+            .getString("Messages.ChatEvent", "&e%pd% &7: &f%message%")!!
             .translateColor()
-            .replace("%player%", p.displayName)
+            .replace("%pd%", p.displayName)
             .replace("%message%", e.message)
     }
 

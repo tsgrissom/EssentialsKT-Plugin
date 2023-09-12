@@ -4,8 +4,6 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
-import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
@@ -28,10 +26,13 @@ class NicknameCommand : CommandBase() {
     val permAllColors = "essentials.nick.color"
 
     private fun transformNickname(context: CommandContext, input: String) : String {
-        return if (context.sender.lacksPermission(permAllColors) && input.containsChatColor())
-            input.translateAndStripColorCodes()
-        else
-            input.translateColor()
+        val sender = context.sender
+        if (sender.lacksPermission(permAllColors) && input.containsChatColor()) {
+            context.sendNoPermission(sender, permAllColors)
+            return input.translateAndStripColorCodes()
+        }
+
+        return input.translateColor()
     }
 
     override fun execute(context: CommandContext) {

@@ -15,8 +15,8 @@ class JoinAndQuitListener : Listener {
     private fun getAFKManager() = getPlugin().afkManager
     private fun getConfiguration() : FileConfiguration = getPlugin().config
 
-    private fun getJoinMessage() = getConfiguration().getString("Messages.JoinEvent", "&a&l+ &e%player% has joined the server")!!
-    private fun getQuitMessage() = getConfiguration().getString("Messages.QuitEvent", "&c&l- &e%player% has left the server")!!
+    private fun getJoinMessage() = getConfiguration().getString("Messages.JoinEvent", "&a&l+ &e%pd% &6has joined the server")!!
+    private fun getQuitMessage() = getConfiguration().getString("Messages.QuitEvent", "&c&l- &e%pd% &6has left the server")!!
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
@@ -24,7 +24,8 @@ class JoinAndQuitListener : Listener {
 
         e.joinMessage = getJoinMessage()
             .translateColor()
-            .replace("%player%", p.displayName)
+            .replace("%pd%", p.displayName)
+            .replace("%pn%", p.name)
 
         getAFKManager().storeMovement(p)
     }
@@ -35,7 +36,8 @@ class JoinAndQuitListener : Listener {
 
         e.quitMessage = getQuitMessage()
             .translateColor()
-            .replace("%player%", p.displayName)
+            .replace("%pd%", p.displayName)
+            .replace("%pn%", p.name)
 
         getAFKManager().lastMovementTrackingMap.remove(p.uniqueId.toString())
     }

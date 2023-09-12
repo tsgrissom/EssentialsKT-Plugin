@@ -25,6 +25,7 @@ Tested on PaperMC with Minecraft version 1.20.1
 * Quick-time commands: `/day`, `/midnight`, `/night`, `/noon`, `/sunset`, & `/sunrise`
 
 ## Upcoming Commands
+* clearchat
 * weather
 * time
 * repair

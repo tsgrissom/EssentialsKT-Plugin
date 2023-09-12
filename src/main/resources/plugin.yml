@@ -16,6 +16,9 @@ commands:
   afk:
     description: "Toggle your AFK status"
     aliases: ["eafk", "away", "eaway"]
+  clearchat:
+    description: "Clear the visible chat messages of various players on the server"
+    aliases: ["clearc", "cc", "cls"]
   clearweather:
     description: "Clear a world's weather"
     aliases: ["clearw", "unrain", "norain"]
@@ -39,6 +42,9 @@ commands:
   toggledownfall:
     description: "Toggles weather in the current world"
     aliases: ["tdf"]
+  weather:
+    description: "Set various weather options for each world"
+    aliases: ["wthr"]
   whois:
     description: "Displays a bunch of player-related information"
     aliases: ["ewhoami", "ewhoami", "whoami"]
@@ -68,6 +74,7 @@ permissions:
     description: "Grants all command-related permissions for the plugin"
     children:
       essentials.afk: true
+      essentials.clearchat.*: true
       essentials.feed: true
       essentials.feed.others: true
       essentials.gamemode: true
@@ -75,6 +82,7 @@ permissions:
       essentials.gamemode.all: true
       essentials.heal: true
       essentials.heal.other: true
+      essentials.nick.*: true
       essentials.ping: true
       essentials.suicide: true
       essentials.time.quick.*: true
@@ -82,6 +90,13 @@ permissions:
       essentials.weather: true
       essentials.whois: true
       essentials.whoami: true
+  essentials.clearchat.*:
+    description: "Grants all permissions related to /cls"
+    children:
+      essentials.clearchat: true
+      essentials.clearchat.all: true
+      essentials.clearchat.others: true
+      essentials.clearchat.bypassall: true
   essentials.gamemode.*:
     description: "Grants all gamemode-related permissions for the plugin"
     children:
@@ -95,6 +110,13 @@ permissions:
       essentials.gamemode.creative: true
       essentials.gamemode.survival: true
       essentials.gamemode.spectator: true
+  essentials.nick.*:
+    description: "Grants access to all /nickname subcommands"
+    children:
+      essentials.nick: true
+      essentials.nick.blacklist.bypass: true
+      essentials.nick.color: true
+      essentials.nick.others: true
   essentials.time.quick.*:
     description: "Grants all quick time setting permissions"
     children:
@@ -107,6 +129,14 @@ permissions:
   # New Command Permissions
   essentials.afk:
     description: "Allows you to toggle your AFK status"
+  essentials.clearchat:
+    description: "Allows you to clear your own chat"
+  essentials.clearchat.all:
+    description: "Allows you clear the chats of everyone on the server"
+  essentials.clearchat.others:
+    description: "Allows you clear the chat of another player"
+  essentials.clearchat.bypassall:
+    description: "Allows you to bypass having your chat cleared when someone executes /cls all"
   essentials.feed:
     description: "Allows you to restore your own hunger"
   essentials.feed.others:
@@ -127,6 +157,14 @@ permissions:
     description: "Allows you to restore your own health"
   essentials.heal.others:
     description: "Allows you to restore another player's health"
+  essentials.nick:
+    description: "Allows you to change your own nickname"
+  essentials.nick.blacklist.bypass:
+    description: "Allows you to bypass being blacklisted from the nickname system"
+  essentials.nick.color:
+    description: "Allows you to add color codes to your nickname"
+  essentials.nick.others:
+    description: "Allows you to change another player's nickname"
   essentials.ping:
     description: "Allows you to view your ping to the server"
   essentials.suicide:
