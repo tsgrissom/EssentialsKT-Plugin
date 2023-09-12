@@ -22,21 +22,35 @@ class NicknameCommand : CommandBase() {
 
     val permBase = "essentials.nick"
     val permOthers = "essentials.nick.others"
-    val permBlacklistBypass = "essentials.nick.blacklist.bypass"
+    val permBlacklistBypass = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
     val permAllColors = "essentials.nick.color"
 
-    private fun transformNickname(context: CommandContext, input: String) : String {
+    private fun getHelpText() : Array<String> =
+        arrayOf(
+            "   &6Command Help for &e/nickname",
+            "&8&l> &e/nick <NewDisplayName> [Target] &8- &7Set a player's nickname",
+            "&8&l> &e/nick reset [Target] &8- &7Reset a player's nickname",
+            "&8&l> &e/nick of [Target] &8- &7View a player's nickname"
+        )
+
+    private fun transformNickname(context: CommandContext, input: String, target: Player) : String {
         val sender = context.sender
+
         if (sender.lacksPermission(permAllColors) && input.containsChatColor()) {
             context.sendNoPermission(sender, permAllColors)
             return input.translateAndStripColorCodes()
         }
 
-        return input.translateColor()
+        val new = if (input.isOnlyColorCodes())
+            input + target.name
+        else
+            input
+
+        return new.translateColor()
     }
 
     override fun execute(context: CommandContext) {
-        val usage = "&4Usage: &c/nick <Target> <NewDisplayName>"
+        val usage = "&4Usage: &c/nick <NewDisplayName> [Target]"
 
         val args = context.args
         val sender = context.sender
@@ -44,22 +58,22 @@ class NicknameCommand : CommandBase() {
         if (sender.lacksPermission(permBase))
             return context.sendNoPermission(sender, permBase)
 
-        if (args.isEmpty() || args.size == 1)
+        if (args.isEmpty())
             return sender.sendColored(usage)
 
         val sub = args[0]
-        val arg1 = args[1]
 
-        val t = if (sub.equalsIc("self")) {
+        val t: Player = if (args.size == 1) {
             if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console does not have a nickname to set")
+                return sender.sendColored("&4Console Usage: &c/nick <NewDisplayName> <Target>")
             if (sender !is Player)
                 return
-
             sender
         } else {
-            Bukkit.getPlayer(sub)
-                ?: return sender.sendColored("&4Could not find player \"$sub\"")
+            val arg1 = args[1]
+            val p = Bukkit.getPlayer(arg1)
+                ?: return sender.sendColored("&4Could not find player &c${arg1}")
+            p
         }
 
         val tn = t.name
@@ -69,13 +83,25 @@ class NicknameCommand : CommandBase() {
         if (t != sender && sender.lacksPermission(permOthers))
             return context.sendNoPermission(sender, permOthers)
 
-        if (arg1.equalsIc("reset")) {
+        if (sub.equalsIc("reset", "remove")) {
             t.setDisplayName(t.name)
-            sender.sendColored("&6You reset &c${tn}'s &6nickname to their username")
+            if (t == sender)
+                sender.sendColored("&6Your nickname has been reset")
+            else
+                sender.sendColored("&6You have reset &c${tn}'s &6nickname")
             return
+        } else if (sub.equalsIc("view", "of")) {
+            val dn = t.displayName
+            if (dn == tn)
+                sender.sendColored("&c${tn} &6does not have a nickname")
+            else
+                sender.sendColored("&c${tn}'s &6nickname is &r${dn}")
+            return
+        } else if (sub.equalsIc("help", "h", "?")) {
+            return getHelpText().forEach { sender.sendColored(it) }
         }
 
-        val newNickname = transformNickname(context, arg1)
+        val newNickname = transformNickname(context, sub, t)
 
         t.setDisplayName(newNickname)
 

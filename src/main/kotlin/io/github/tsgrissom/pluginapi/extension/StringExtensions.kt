@@ -41,6 +41,11 @@ fun String.containsChatColor() : Boolean {
     return this != tas
 }
 
+fun String.isOnlyColorCodes() : Boolean {
+    val stripped = this.translateAndStripColorCodes().trim()
+    return stripped == ""
+}
+
 fun String.capitalize() : String {
     if (this.isEmpty())
         return this

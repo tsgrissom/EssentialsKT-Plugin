@@ -2,7 +2,6 @@ plugins {
     id("idea")
     kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    application
 }
 
 group = "io.github.tsgrissom.essentialskt"
@@ -23,6 +22,19 @@ kotlin {
     jvmToolchain(8)
 }
 
-application {
-    mainClass.set("EssentialsKTPlugin")
+val devServerPluginsDir = file("${System.getProperty("user.home")}/Servers/Development/plugins")
+
+tasks.register("copyJarToDir", Copy::class) {
+    from(tasks.named("shadowJar"))
+    into(devServerPluginsDir)
+}
+
+tasks.named("copyJarToDir") {
+    dependsOn("shadowJar") // Task depends on shadowJar task
+    description = "Copy shadowJar JAR to external directory"
+}
+
+tasks.named("build") {
+    finalizedBy("copyJarToDir") // Execute after build task
+    description = "Build a fat JAR, then copy it to external directory"
 }
