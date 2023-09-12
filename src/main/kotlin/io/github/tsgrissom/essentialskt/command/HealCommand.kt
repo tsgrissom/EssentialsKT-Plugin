@@ -13,13 +13,17 @@ import org.bukkit.entity.Player
 
 class HealCommand : CommandBase() {
 
+    private val permSelf = "essentials.heal"
+    private val permOthers = "essentials.heal.others"
+
     private fun shouldRestoreFoodLevel() : Boolean {
         val plugin = EssentialsKTPlugin.instance ?: return true
-        val config = plugin.config ?: return true
+        val config = plugin.config
         return config.getBoolean("Commands.HealRestoresFoodLevel", true)
     }
 
-    private fun getActionString() : String = if (shouldRestoreFoodLevel()) "health and hunger" else "health"
+    private fun getActionString() : String =
+        if (shouldRestoreFoodLevel()) "health and hunger" else "health"
 
     private fun handleEmptyArgs(context: CommandContext) {
         val label = context.label
@@ -46,8 +50,6 @@ class HealCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        val permSelf = "essentials.heal"
-        val permOthers = "essentials.heal.others"
         if (target == sender && sender.lacksPermission(permSelf))
             return context.sendNoPermission(sender, permSelf)
         if (target != sender && sender.lacksPermission(permOthers))

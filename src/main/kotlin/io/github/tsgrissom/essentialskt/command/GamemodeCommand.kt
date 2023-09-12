@@ -18,9 +18,13 @@ import org.bukkit.entity.Player
 
 class GamemodeCommand : CommandBase() {
 
-    val PERMISSION_ALTER_SELF = "essentials.gamemode"
-    val PERMISSION_ALTER_OTHER = "essentials.gamemode.others"
-    val PERMISSION_DEFENSIVE = "essentials.gamemode.noalter"
+    private val permSelf = "essentials.gamemode"
+    private val permOthers = "essentials.gamemode.others"
+    private val permDefensive = "essentials.gamemode.noalter"
+    private val permAdventure = "essentials.gamemode.adventure"
+    private val permCreative = "essentials.gamemode.creative"
+    private val permSurvival = "essentials.gamemode.survival"
+    private val permSpectator = "essentials.gamemode.spectator"
 
     private fun handleShorthandLabel(context: CommandContext) {
         val label = context.label
@@ -42,38 +46,34 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
-        if (target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
-            return context.sendNoPermission(sender, PERMISSION_ALTER_SELF)
+        if (target == sender && sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
 
-        if (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER))
-            return context.sendNoPermission(sender, PERMISSION_ALTER_OTHER)
+        if (target != sender && sender.lacksPermission(permOthers))
+            return context.sendNoPermission(sender, permOthers)
 
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
         val mode = when (label) {
             "gm0", "gms" -> {
-                val perm = "essentials.gamemode.survival"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permSurvival))
+                    return context.sendNoPermission(sender, permSurvival)
                 SURVIVAL
             }
             "gm1", "gmc" -> {
-                val perm = "essentials.gamemode.creative"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permCreative))
+                    return context.sendNoPermission(sender, permCreative)
                 CREATIVE
             }
             "gm2", "gma" -> {
-                val perm = "essentials.gamemode.adventure"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permAdventure))
+                    return context.sendNoPermission(sender, permAdventure)
                 ADVENTURE
             }
             "gmsp" -> {
-                val perm = "essentials.gamemode.spectator"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permSpectator))
+                    return context.sendNoPermission(sender, permSpectator)
                 SPECTATOR
             }
             else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
@@ -115,39 +115,33 @@ class GamemodeCommand : CommandBase() {
             p
         }
 
-        if (target == sender && sender.lacksPermission(PERMISSION_ALTER_SELF))
-            return context.sendNoPermission(sender, PERMISSION_ALTER_SELF)
-
-        if (target != sender && sender.lacksPermission(PERMISSION_ALTER_OTHER))
-            return context.sendNoPermission(sender, PERMISSION_ALTER_OTHER)
+        if (target == sender && sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
+        if (target != sender && sender.lacksPermission(permOthers))
+            return context.sendNoPermission(sender, permOthers)
 
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
-
         val mode = when (sub.lowercase()) {
             "0", "survival", "surv", "sur", "s" -> {
-                val perm = "essentials.gamemode.survival"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permSurvival))
+                    return context.sendNoPermission(sender, permSurvival)
                 SURVIVAL
             }
             "1", "creative", "create", "creat", "crtv", "crt", "c" -> {
-                val perm = "essentials.gamemode.creative"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permCreative))
+                    return context.sendNoPermission(sender, permCreative)
                 CREATIVE
             }
             "2", "adventure", "adv", "a" -> {
-                val perm = "essentials.gamemode.adventure"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permAdventure))
+                    return context.sendNoPermission(sender, permAdventure)
                 ADVENTURE
             }
             "spectator", "spect", "spec", "sp" -> {
-                val perm = "essentials.gamemode.spectator"
-                if (sender.lacksPermission(perm))
-                    return context.sendNoPermission(sender, perm)
+                if (sender.lacksPermission(permSpectator))
+                    return context.sendNoPermission(sender, permSpectator)
                 SPECTATOR
             }
             else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
@@ -175,11 +169,11 @@ class GamemodeCommand : CommandBase() {
     }
 
     private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {
-        if (sender != target && target.hasPermission(PERMISSION_DEFENSIVE)) {
+        if (sender != target && target.hasPermission(permDefensive)) {
             val s = sender.name
             val t = target.name
             Bukkit.getLogger().info(
-                "$s attempted to set ${t}'s gamemode but the target had \"$PERMISSION_DEFENSIVE\""
+                "$s attempted to set ${t}'s gamemode but the target had \"$permDefensive\""
             )
             sender.sendColored("&4You are not able to set &c${t}'s &4gamemode")
             return

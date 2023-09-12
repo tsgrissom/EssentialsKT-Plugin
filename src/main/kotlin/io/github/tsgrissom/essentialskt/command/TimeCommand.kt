@@ -12,6 +12,8 @@ import org.bukkit.entity.Player
 
 class TimeCommand : CommandBase() {
 
+    // TODO Permissions
+
     private fun getPlugin() = EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
     /*
@@ -89,8 +91,7 @@ class TimeCommand : CommandBase() {
     }
 
     private fun handleQuerySubcommand(context: CommandContext) {
-        // TODO
-        getPlugin().afkManager.lastMovementTrackingMap.forEach { context.sender.sendMessage("${it.key} -> ${it.value}") }
+        // TODO Time query subcommand
     }
 
     private fun handleSetSubcommand(context: CommandContext) {

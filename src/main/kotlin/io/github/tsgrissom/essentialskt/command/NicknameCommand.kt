@@ -20,10 +20,10 @@ class NicknameCommand : CommandBase() {
      * - essentials.nick.others
      */
 
-    val permBase = "essentials.nick"
-    val permOthers = "essentials.nick.others"
-    val permBlacklistBypass = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
-    val permAllColors = "essentials.nick.color"
+    private val permBase = "essentials.nick"
+    private val permOthers = "essentials.nick.others"
+    private val permBlacklistBypass = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
+    private val permAllColors = "essentials.nick.color"
 
     private fun getHelpText() : Array<String> =
         arrayOf(
