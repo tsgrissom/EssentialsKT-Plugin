@@ -2,9 +2,7 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.GameMode.*
@@ -12,6 +10,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 /*
  * TODO Per-gamemode permissions
@@ -170,8 +169,26 @@ class GamemodeCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /gamemode tab completion
-        return mutableListOf()
+        val suggestGamemodes = mutableListOf("adventure", "creative", "survival", "spectator")
+        val tab = mutableListOf<String>()
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                if (!suggestGamemodes.contains(sub)) {
+                    StringUtil.copyPartialMatches(sub, suggestGamemodes, tab)
+                }
+            } else if (len == 2) {
+                if (sub.equalsIc(suggestGamemodes)) {
+                    StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 
     private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {

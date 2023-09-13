@@ -15,6 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.util.StringUtil
 
 class ListCommand : CommandBase() {
 
@@ -113,6 +114,26 @@ class ListCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        return arrayOf("players", "online", "mobs").toMutableList()
+        val suggestSub = mutableListOf("players", "online", "mobs")
+        val suggestPlayersArg1 = mutableListOf("--gui", "-g")
+        val tab = mutableListOf<String>()
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                if (!suggestSub.contains(sub)) {
+                    StringUtil.copyPartialMatches(sub, suggestSub, tab)
+                }
+            } else if (len == 2) {
+                if (sub.equalsIc("players", "online")) {
+                    StringUtil.copyPartialMatches(args[1], suggestPlayersArg1, tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

@@ -9,10 +9,11 @@ import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import org.bukkit.Bukkit
 import org.bukkit.Bukkit.*
+import org.bukkit.GameMode
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 
-fun EssentialsKTPlugin.register(label: String, impl: CommandBase) {
+fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
     val bukkitCommand = this.getCommand(label)!!
     bukkitCommand.setExecutor(impl)
     bukkitCommand.tabCompleter = impl
@@ -37,7 +38,8 @@ class EssentialsKTPlugin : JavaPlugin() {
     }
 
     private fun registerCommands() {
-        register("list", ListCommand())
+        registerCommand("gamemode", GamemodeCommand())
+        registerCommand("list", ListCommand())
     }
 
     override fun onEnable() {
@@ -57,7 +59,6 @@ class EssentialsKTPlugin : JavaPlugin() {
         getCommand("clearchat")?.setExecutor(ClearChatCommand())
         getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
         getCommand("feed")?.setExecutor(FeedCommand())
-        getCommand("gamemode")?.setExecutor(GamemodeCommand())
         getCommand("heal")?.setExecutor(HealCommand())
         getCommand("nickname")?.setExecutor(NicknameCommand())
         getCommand("ping")?.setExecutor(PingCommand())

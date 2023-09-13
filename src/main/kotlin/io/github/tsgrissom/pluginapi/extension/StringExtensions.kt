@@ -22,6 +22,9 @@ fun String.equalsIc(s: String) : Boolean =
 fun String.equalsIc(vararg matches: String) : Boolean =
     matches.firstOrNull { this.equalsIc(it) } != null
 
+fun String.equalsIc(matches: List<String>) : Boolean =
+    matches.firstOrNull { this.equalsIc(it) } != null
+
 /**
  * Checks for exact equality between one String and any number of other Strings with case-sensitivity
  * @param matches Any number of Strings to compare against
