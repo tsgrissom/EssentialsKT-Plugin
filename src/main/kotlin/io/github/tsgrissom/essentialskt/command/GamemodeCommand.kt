@@ -170,6 +170,8 @@ class GamemodeCommand : CommandBase() {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val suggestGamemodes = mutableListOf("adventure", "creative", "survival", "spectator")
+        val shortLabels = mutableListOf("gma", "gmc", "gms", "gmsp")
+
         val tab = mutableListOf<String>()
 
         val len = args.size
@@ -178,12 +180,16 @@ class GamemodeCommand : CommandBase() {
             val sub = args[0]
 
             if (len == 1) {
-                if (!suggestGamemodes.contains(sub)) {
+                if (shortLabels.contains(label.lowercase())) {
+                    if (sender.hasPermission(permOthers))
+                        StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+                } else {
                     StringUtil.copyPartialMatches(sub, suggestGamemodes, tab)
                 }
             } else if (len == 2) {
                 if (sub.equalsIc(suggestGamemodes)) {
-                    StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
+                    if (sender.hasPermission(permOthers))
+                        StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
                 }
             }
         }

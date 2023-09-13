@@ -38,6 +38,7 @@ class EssentialsKTPlugin : JavaPlugin() {
     }
 
     private fun registerCommands() {
+        registerCommand("clearchat", ClearChatCommand())
         registerCommand("gamemode", GamemodeCommand())
         registerCommand("list", ListCommand())
     }
@@ -56,7 +57,6 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         /* Command Setup (General; A->Z) */
         getCommand("afk")?.setExecutor(AfkCommand())
-        getCommand("clearchat")?.setExecutor(ClearChatCommand())
         getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
         getCommand("feed")?.setExecutor(FeedCommand())
         getCommand("heal")?.setExecutor(HealCommand())

@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class ClearChatCommand : CommandBase() {
 
@@ -21,6 +22,10 @@ class ClearChatCommand : CommandBase() {
     private fun getConfiguredRepeatCount() : Int =
         getConfiguration().getInt("Features.ClearChatRepeatBlankLine", 500)
 
+    private val permSelf = "essentials.clearchat"
+    private val permAll = "essentials.clearchat.all"
+    private val permOthers = "essentials.clearchat.others"
+
     private fun clearChat(t: Player, repeat: Int = 500) {
         repeat(repeat) {
             t.sendMessage("")
@@ -28,11 +33,10 @@ class ClearChatCommand : CommandBase() {
     }
 
     private fun handleEmptyArgs(context: CommandContext) {
-        val perm = "essentials.clearchat"
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console Usage: &c/cls <Target OR all>")
@@ -43,11 +47,10 @@ class ClearChatCommand : CommandBase() {
     }
 
     private fun handleSubcAll(context: CommandContext) {
-        val perm = "essentials.clearchat.all"
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permAll))
+            return context.sendNoPermission(sender, permAll)
 
         Bukkit.getOnlinePlayers()
             .filter { it.lacksPermission("essentials.clearchat.bypassall") }
@@ -56,21 +59,22 @@ class ClearChatCommand : CommandBase() {
     }
 
     private fun handleTargeted(context: CommandContext) {
-        val perm = "essentials.clearchat.others"
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permOthers))
+            return context.sendNoPermission(sender, permOthers)
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
 
         clearChat(t, getConfiguredRepeatCount())
-        sender.sendColored("&6You cleared &c${t.name}'s &6chat messages")
 
-        // TODO Targeted
+        if (t != sender)
+            sender.sendColored("&6You cleared &c${t.name}'s &6chat messages")
+
+        // TODO Accept multiple named targets with corresponding chat completion
     }
 
     override fun execute(context: CommandContext) {
@@ -88,7 +92,20 @@ class ClearChatCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /clearchat tab completion
-        return mutableListOf()
+        val suggestPlayers = if (sender.hasPermission(permAll)) mutableListOf("all") else mutableListOf()
+        val tab = mutableListOf<String>()
+
+        if (sender.hasPermission(permOthers))
+            suggestPlayers.addAll(getSortedOnlinePlayerNames())
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+            if (len == 1 && !suggestPlayers.contains(sub))
+                StringUtil.copyPartialMatches(sub, suggestPlayers, tab)
+        }
+
+        return tab.sorted().toMutableList()
     }
 }
