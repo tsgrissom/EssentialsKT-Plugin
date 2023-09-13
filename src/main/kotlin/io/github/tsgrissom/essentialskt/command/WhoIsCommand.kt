@@ -11,6 +11,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
 
@@ -18,12 +19,14 @@ class WhoIsCommand : CommandBase() {
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getAfkManager() = getPlugin().afkManager
 
+    private val permSelf = "essentials.whoami"
+    private val permOthers = "essentials.whois"
+
     private fun whoAmI(context: CommandContext) {
-        val perm = "essentials.whoami"
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console Usage: &c/whois <Target>")
@@ -37,15 +40,14 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun whoIs(context: CommandContext) {
-        val perm = "essentials.whois"
         val args = context.args
         val sender = context.sender
 
         if (args.isEmpty())
             return sender.sendColored("&4Usage: &c/whois <Target>")
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permOthers))
+            return context.sendNoPermission(sender, permOthers)
 
         val sub = args[0]
         val t = Bukkit.getPlayer(sub)
@@ -119,7 +121,15 @@ class WhoIsCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /whois tab completion
-        return mutableListOf()
+        val tab = mutableListOf<String>()
+
+        if (label.equalsIc("whoami"))
+            return tab
+        else {
+            if (args.size == 1 && sender.hasPermission(permOthers))
+                StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

@@ -9,8 +9,12 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class FeedCommand : CommandBase() {
+
+    private val permSelf = "essentials.feed"
+    private val permOthers = "essentials.feed.others"
 
     private fun handleEmptyArgs(context: CommandContext) {
         val label = context.label
@@ -21,9 +25,8 @@ class FeedCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val perm = "essentials.feed"
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
 
         feed(sender, sender)
     }
@@ -36,8 +39,6 @@ class FeedCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        val permSelf = "essentials.feed"
-        val permOthers = "essentials.feed.others"
         if (target == sender && sender.lacksPermission(permSelf))
             return context.sendNoPermission(sender, permSelf)
         if (target != sender && sender.lacksPermission(permOthers))
@@ -66,7 +67,14 @@ class FeedCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /feed tab completion
-        return mutableListOf()
+        val tab = mutableListOf<String>()
+        val len = args.size
+
+        if (len > 0) {
+            if (len == 1 && sender.hasPermission(permOthers))
+                StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

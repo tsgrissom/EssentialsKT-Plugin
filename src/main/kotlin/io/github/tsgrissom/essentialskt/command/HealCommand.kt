@@ -11,6 +11,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class HealCommand : CommandBase() {
 
@@ -35,9 +36,8 @@ class HealCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val perm = "essentials.heal"
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(permSelf))
+            return context.sendNoPermission(sender, permSelf)
 
         restoreHealth(sender, sender)
         // TODO Heal sender
@@ -83,7 +83,14 @@ class HealCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /heal tab completion
-        return mutableListOf()
+        val tab = mutableListOf<String>()
+        val len = args.size
+
+        if (len > 0) {
+            if (len == 1 && sender.hasPermission(permOthers))
+                StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

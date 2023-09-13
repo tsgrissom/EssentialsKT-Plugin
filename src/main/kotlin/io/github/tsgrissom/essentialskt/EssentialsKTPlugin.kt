@@ -39,8 +39,11 @@ class EssentialsKTPlugin : JavaPlugin() {
 
     private fun registerCommands() {
         registerCommand("clearchat", ClearChatCommand())
+        registerCommand("feed", FeedCommand())
         registerCommand("gamemode", GamemodeCommand())
+        registerCommand("heal", HealCommand())
         registerCommand("list", ListCommand())
+        registerCommand("whois", WhoIsCommand())
     }
 
     override fun onEnable() {
@@ -53,13 +56,12 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         registerCommands()
 
+        /* WIP Commands */
         getCommand("ntime")?.setExecutor(TimeCommand())
 
         /* Command Setup (General; A->Z) */
         getCommand("afk")?.setExecutor(AfkCommand())
         getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
-        getCommand("feed")?.setExecutor(FeedCommand())
-        getCommand("heal")?.setExecutor(HealCommand())
         getCommand("nickname")?.setExecutor(NicknameCommand())
         getCommand("ping")?.setExecutor(PingCommand())
         getCommand("rain")?.setExecutor(RainCommand())
@@ -67,7 +69,6 @@ class EssentialsKTPlugin : JavaPlugin() {
         getCommand("suicide")?.setExecutor(SuicideCommand())
         getCommand("toggledownfall")?.setExecutor(ToggleDownfallCommand())
         getCommand("weather")?.setExecutor(WeatherCommand())
-        getCommand("whois")?.setExecutor(WhoIsCommand())
 
         /* Time Setting (Early->Late) */
         getCommand("day")?.setExecutor(DayCommand())

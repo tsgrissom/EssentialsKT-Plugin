@@ -84,10 +84,10 @@ permissions:
       essentials.feed: true
       essentials.feed.others: true
       essentials.gamemode: true
-      essentials.gamemode.other: true
+      essentials.gamemode.others: true
       essentials.gamemode.all: true
       essentials.heal: true
-      essentials.heal.other: true
+      essentials.heal.others: true
       essentials.nick.*: true
       essentials.ping: true
       essentials.suicide: true
