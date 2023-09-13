@@ -8,6 +8,7 @@ import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.GameMode.*
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -166,6 +167,11 @@ class GamemodeCommand : CommandBase() {
             "gamemode", "gm", "egamemode", "egm" -> handleExtendedLabel(context)
             else -> sender.sendColored("&4Alternate gamemode command form detected")
         }
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /gamemode tab completion
+        return mutableListOf()
     }
 
     private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {

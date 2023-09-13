@@ -1,7 +1,9 @@
 package io.github.tsgrissom.pluginapi.extension
 
+import io.github.tsgrissom.pluginapi.command.CommandBase
 import org.bukkit.Bukkit
 import org.bukkit.World
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permission

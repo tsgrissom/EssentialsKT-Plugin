@@ -5,6 +5,8 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
 import org.bukkit.World
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
 class RainCommand
     : QuickWeatherCommand("Rain") {
@@ -43,5 +45,10 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
 
         setWeather(world)
         sender.sendColored(message)
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement quick weather tab completion
+        return mutableListOf()
     }
 }

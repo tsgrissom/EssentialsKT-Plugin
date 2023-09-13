@@ -5,6 +5,7 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -62,5 +63,10 @@ class FeedCommand : CommandBase() {
         if (sender != target)
             sender.sendColored("&6You fed &c$tn")
         target.sendColored("&6Your hunger was sated")
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /feed tab completion
+        return mutableListOf()
     }
 }

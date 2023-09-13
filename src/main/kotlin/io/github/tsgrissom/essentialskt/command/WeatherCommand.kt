@@ -5,6 +5,7 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
 import org.bukkit.World
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class WeatherCommand : CommandBase() {
@@ -42,6 +43,11 @@ class WeatherCommand : CommandBase() {
             "thunder" -> delegateSubcThunder(context)
             else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4. Do &c/wthr ? &4for help.")
         }
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /weather tab completion
+        return mutableListOf()
     }
 
     private fun delegateSubcClear(context: CommandContext) {

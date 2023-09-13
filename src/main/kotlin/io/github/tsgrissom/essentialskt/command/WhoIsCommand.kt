@@ -7,6 +7,7 @@ import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
 import org.bukkit.WorldType
 import org.bukkit.attribute.Attribute
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -115,5 +116,10 @@ class WhoIsCommand : CommandBase() {
             " &8- &7Is Sneaking: &e${target.isSneaking.palatable(withColor=true)} &8+ &7Is Sprinting: &e${target.isSprinting.palatable(withColor=true)}",
             " &8- &7Level: &e${target.level} &8+ &7Exp: &e${target.exp} &8+ &7Total Exp: &e${target.totalExperience}"
         )
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /whois tab completion
+        return mutableListOf()
     }
 }

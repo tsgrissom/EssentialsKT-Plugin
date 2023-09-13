@@ -4,6 +4,8 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
@@ -18,6 +20,8 @@ class NicknameCommand : CommandBase() {
      * - essentials.nick.changecolors.bypass
      * - essentials.nick.rgb
      * - essentials.nick.others
+     * - essentials.nick.magic
+     * - essentials.nick.format
      */
 
     private val permBase = "essentials.nick"
@@ -108,5 +112,10 @@ class NicknameCommand : CommandBase() {
         if (sender != t)
             sender.sendColored("&6You set &c${tn}'s &6nickname to &r${newNickname}")
         t.sendColored("&6Your new nickname is &r${newNickname}")
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /nick tab completion
+        return mutableListOf()
     }
 }

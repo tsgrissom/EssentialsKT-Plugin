@@ -21,7 +21,7 @@ commands:
     aliases: ["clearc", "cc", "cls"]
   clearweather:
     description: "Clear a world's weather"
-    aliases: ["clearw", "unrain", "norain"]
+    aliases: ["clearw", "unrain", "norain", "rainoff"]
   feed:
     description: "Restore a player's food level"
     aliases: ["efeed", "eat", "eeat", "sate"]
@@ -31,11 +31,17 @@ commands:
   heal:
     description: "Restores a player's health"
     aliases: ["eheal"]
+  list:
+    description: "Display various lists"
+    aliases: ["ls"]
   ping:
     description: "Check how long it takes to receive a response from the server"
     aliases: ["eping", "epong", "pong"]
   rain:
     description: "Set a world's weather to be raining"
+  remove:
+    description: "Remove entities from a world or within a range"
+    aliases: ["killall", "eremove"]
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]

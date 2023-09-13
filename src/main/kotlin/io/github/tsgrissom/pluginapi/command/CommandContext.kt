@@ -1,5 +1,6 @@
 package io.github.tsgrissom.pluginapi.command
 
+import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -18,5 +19,22 @@ class CommandContext(
             resp += " (&c$permission&4)"
         }
         sender.sendColored(resp)
+    }
+
+    fun hasFlag(pair: Pair<String, String>) : Boolean =
+        hasFlag(pair.first, pair.second)
+    fun hasFlag(long: String, short: String) : Boolean {
+        if (args.isEmpty())
+            return false
+
+        val longFlag = "--$long"
+        val shortFlag = "-$short"
+
+        for (a in args) {
+            if (a.equalsIc(longFlag, shortFlag))
+                return true
+        }
+
+        return false
     }
 }

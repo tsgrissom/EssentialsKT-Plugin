@@ -6,9 +6,17 @@ import io.github.tsgrissom.essentialskt.listener.JoinAndQuitListener
 import io.github.tsgrissom.essentialskt.listener.MovementListener
 import io.github.tsgrissom.essentialskt.manager.AfkManager
 import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
+import io.github.tsgrissom.pluginapi.command.CommandBase
 import org.bukkit.Bukkit
 import org.bukkit.Bukkit.*
+import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
+
+fun EssentialsKTPlugin.register(label: String, impl: CommandBase) {
+    val bukkitCommand = this.getCommand(label)!!
+    bukkitCommand.setExecutor(impl)
+    bukkitCommand.tabCompleter = impl
+}
 
 class EssentialsKTPlugin : JavaPlugin() {
 
@@ -28,6 +36,10 @@ class EssentialsKTPlugin : JavaPlugin() {
         checkAfkTaskId = checkAfkTask.taskId
     }
 
+    private fun registerCommands() {
+        register("list", ListCommand())
+    }
+
     override fun onEnable() {
         /* Bootstrapping */
         instance = this
@@ -35,6 +47,8 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         config.options().copyDefaults(true)
         saveDefaultConfig()
+
+        registerCommands()
 
         getCommand("ntime")?.setExecutor(TimeCommand())
 
@@ -48,6 +62,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         getCommand("nickname")?.setExecutor(NicknameCommand())
         getCommand("ping")?.setExecutor(PingCommand())
         getCommand("rain")?.setExecutor(RainCommand())
+        getCommand("remove")?.setExecutor(RemoveCommand())
         getCommand("suicide")?.setExecutor(SuicideCommand())
         getCommand("toggledownfall")?.setExecutor(ToggleDownfallCommand())
         getCommand("weather")?.setExecutor(WeatherCommand())

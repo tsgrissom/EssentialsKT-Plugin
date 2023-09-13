@@ -6,6 +6,8 @@ import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.World
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
 class DayCommand
     : QuickTimeCommand("essentials.time.quick.day", 1000, "Day")
@@ -48,5 +50,10 @@ open class QuickTimeCommand(
 
         world.time = time
         sender.sendColored(setMessage)
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Quick time tab completion
+        return mutableListOf()
     }
 }

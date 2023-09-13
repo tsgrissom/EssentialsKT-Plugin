@@ -7,6 +7,7 @@ import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
+import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
@@ -79,5 +80,10 @@ class HealCommand : CommandBase() {
             sender.sendColored("&6You restored your own $postfix")
         else
             sender.sendColored("&6You restored &c${target.name}'s &6$postfix")
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /heal tab completion
+        return mutableListOf()
     }
 }

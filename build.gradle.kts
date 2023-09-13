@@ -1,6 +1,6 @@
 plugins {
     id("idea")
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -16,10 +16,11 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.10.11")
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 val devServerPluginsDir = file("${System.getProperty("user.home")}/Servers/Development/plugins")

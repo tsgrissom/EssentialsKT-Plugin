@@ -7,6 +7,8 @@ import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import io.github.tsgrissom.pluginapi.extension.toggleRain
 import org.bukkit.World
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
 class ToggleDownfallCommand : CommandBase() {
 
@@ -25,4 +27,7 @@ class ToggleDownfallCommand : CommandBase() {
         w.toggleRain()
         sender.sendColored("&6Weather of world &c${wn} &6set to &c${targetCondition}")
     }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> =
+        emptyList<String>().toMutableList()
 }

@@ -7,6 +7,8 @@ import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
@@ -83,5 +85,10 @@ class ClearChatCommand : CommandBase() {
             return handleSubcAll(context)
 
         handleTargeted(context)
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        // TODO Implement /clearchat tab completion
+        return mutableListOf()
     }
 }
