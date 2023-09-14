@@ -50,37 +50,37 @@ class EntityUtility {
             EntityType.PAINTING,      EntityType.PLAYER,        EntityType.TEXT_DISPLAY,    EntityType.THROWN_EXP_BOTTLE
         )
 
-    fun getAll(from: Location, radius: Double) : List<Entity> =
+    fun getAllNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { !getProtectedEntityTypes().contains(it.type) }
-    fun getMonsters(from: Location, radius: Double) : List<Entity> =
+    fun getMonstersNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filterIsInstance<Monster>()
-    fun getAnimals(from: Location, radius: Double) : List<Entity> =
+    fun getAnimalsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filterIsInstance<Animals>()
-    fun getAmbient(from: Location, radius: Double) : List<Entity> =
+    fun getAmbientNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filterIsInstance<Ambient>()
-    fun getMobs(from: Location, radius: Double) : List<Entity> =
+    fun getMobsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filterIsInstance<Mob>()
-    fun getTamed(from: Location, radius: Double) : List<Entity> =
+    fun getTamedNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filterIsInstance<Tameable>()
-    fun getNamed(from: Location, radius: Double) : List<Entity> =
+    fun getNamedNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.customName != null }
-    fun getDroppedItems(from: Location, radius: Double) : List<Entity> =
+    fun getDroppedItemsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.type == EntityType.DROPPED_ITEM }
-    fun getBoats(from: Location, radius: Double) : List<Entity> {
+    fun getBoatsNearby(from: Location, radius: Double) : List<Entity> {
         return getLocationalNearbyEntities(from, radius).filter {
             it.type == EntityType.BOAT || it.type == EntityType.CHEST_BOAT
         }
     }
-    fun getMinecarts(from: Location, radius: Double) : List<Entity> =
+    fun getMinecartsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.type.name.contains("MINECART") }
-    fun getExperienceOrbs(from: Location, radius: Double) : List<Entity> =
+    fun getExperienceOrbsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.type==EntityType.EXPERIENCE_ORB }
-    fun getPaintings(from: Location, radius: Double) : List<Entity> =
+    fun getPaintingsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.type==EntityType.PAINTING }
-    fun getItemFrames(from: Location, radius: Double) : List<Entity> =
+    fun getItemFramesNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter {
             it.type==EntityType.ITEM_FRAME || it.type==EntityType.GLOW_ITEM_FRAME
         }
-    fun getEnderCrystals(from: Location, radius: Double) : List<Entity> =
+    fun getEnderCrystalsNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { it.type==EntityType.ENDER_CRYSTAL }
 }

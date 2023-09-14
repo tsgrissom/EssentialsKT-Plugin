@@ -8,10 +8,14 @@ import org.bukkit.command.TabCompleter
 
 abstract class CommandBase : CommandExecutor, TabCompleter {
 
-    fun getSortedOnlinePlayerNames() : MutableList<String> =
+    fun getOnlinePlayerNamesToMutableList() : MutableList<String> =
         Bukkit.getOnlinePlayers()
             .map { it.name }
-            .sorted()
+            .toMutableList()
+
+    fun getWorldNamesToMutableList() : MutableList<String> =
+        Bukkit.getWorlds()
+            .map { it.name }
             .toMutableList()
 
     abstract fun execute(context: CommandContext)

@@ -7,21 +7,30 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.util.StringUtil
 
 class WeatherCommand : CommandBase() {
 
-    val perm = "essentials.weather"
+    private val perm = "essentials.weather"
 
-    private fun getHelpText() : Array<String> =
-        arrayOf(
-            "   &6Command Help for &e/weather",
-            "&6&l> &7/wthr clear",
-            "&6&l> &7/wthr display",
-            "&6&l> &7/wthr rain",
-            "&6&l> &7/wthr thunder"
+    private fun getHelpText(context: CommandContext) : Array<String> {
+        val label = context.label
+        return arrayOf(
+            "  &6Command Help &8-> &e/${label}",
+            "&6> &7Aliases&8: &eweather&8, &ewthr",
+            "&6> &7Parameters&8: &c<Required> &7& &a[Optional]",
+            " &8/&e${label} clear &a[World]&8:",
+            "     &7Clear world weather conditions",
+            " &8/&e${label} display &a[World]&8:",
+            "     &7Display world weather statistics",
+            " &8/&e${label} rain &a[World]&8:",
+            "     &7Enable rain for a world",
+            " &8/&e${label} thunder &a[World]&8:",
+            "     &7Enable thunderstorms for a world"
         )
-    private fun sendHelp(sender: CommandSender) =
-        getHelpText().forEach { sender.sendColored(it) }
+    }
+    private fun sendHelp(context: CommandContext) =
+        getHelpText(context).forEach { context.sender.sendColored(it) }
 
     override fun execute(context: CommandContext) {
         val args = context.args
@@ -31,12 +40,12 @@ class WeatherCommand : CommandBase() {
             return context.sendNoPermission(sender, perm)
 
         if (args.isEmpty())
-            return sendHelp(sender)
+            return sendHelp(context)
 
         val sub = args[0]
 
         when (sub.lowercase()) {
-            "help", "h", "?" -> sendHelp(sender)
+            "help", "h", "?" -> sendHelp(context)
             "clear", "clr" -> delegateSubcClear(context)
             "display", "d", "info", "i" -> delegateSubcDisplay(context)
             "rain" -> delegateSubcRain(context)
@@ -46,8 +55,25 @@ class WeatherCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /weather tab completion
-        return mutableListOf()
+        val suggestSub = mutableListOf("help", "clear", "display", "rain", "thunder")
+        val tab = mutableListOf<String>()
+        val len = args.size
+
+        if (sender.lacksPermission(perm))
+            return tab
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                StringUtil.copyPartialMatches(sub, suggestSub, tab)
+            } else if (len == 2) {
+                if (sub.equalsIc("clear", "display", "rain", "thunder"))
+                    StringUtil.copyPartialMatches(args[1], getWorldNamesToMutableList(), tab)
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 
     private fun delegateSubcClear(context: CommandContext) {

@@ -44,6 +44,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("heal", HealCommand())
         registerCommand("list", ListCommand())
         registerCommand("nickname", NicknameCommand())
+        registerCommand("remove", RemoveCommand())
+        registerCommand("weather", WeatherCommand())
         registerCommand("whois", WhoIsCommand())
     }
 
@@ -65,10 +67,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
         getCommand("ping")?.setExecutor(PingCommand())
         getCommand("rain")?.setExecutor(RainCommand())
-        getCommand("remove")?.setExecutor(RemoveCommand())
         getCommand("suicide")?.setExecutor(SuicideCommand())
         getCommand("toggledownfall")?.setExecutor(ToggleDownfallCommand())
-        getCommand("weather")?.setExecutor(WeatherCommand())
 
         /* Time Setting (Early->Late) */
         getCommand("day")?.setExecutor(DayCommand())

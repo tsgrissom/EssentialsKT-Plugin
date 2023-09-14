@@ -127,7 +127,7 @@ class WhoIsCommand : CommandBase() {
             return tab
         else {
             if (args.size == 1 && sender.hasPermission(permOthers))
-                StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
         }
 
         return tab.sorted().toMutableList()

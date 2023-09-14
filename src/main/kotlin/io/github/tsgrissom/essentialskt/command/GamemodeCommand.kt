@@ -182,14 +182,14 @@ class GamemodeCommand : CommandBase() {
             if (len == 1) {
                 if (shortLabels.contains(label.lowercase())) {
                     if (sender.hasPermission(permOthers))
-                        StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+                        StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
                 } else {
                     StringUtil.copyPartialMatches(sub, suggestGamemodes, tab)
                 }
             } else if (len == 2) {
                 if (sub.equalsIc(suggestGamemodes)) {
                     if (sender.hasPermission(permOthers))
-                        StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
+                        StringUtil.copyPartialMatches(args[1], getOnlinePlayerNamesToMutableList(), tab)
                 }
             }
         }

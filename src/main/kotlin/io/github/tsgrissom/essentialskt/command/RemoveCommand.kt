@@ -10,6 +10,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class RemoveCommand : CommandBase() {
 
@@ -58,7 +59,7 @@ class RemoveCommand : CommandBase() {
             "&6Types: &eall&7,&etamed&7,&enamed&7,&edrops&7,&earrows&7,&eboats&7,&eminecarts&7,&exp&7,&epaintings&7,",
             "&eitemframes&7,&eendercrystals&7,&emonsters&7,&eanimals&7,",
             "&eambient&7,&emobs",
-            "&6Do &e/${label} ls mobs &6to display valid mob specifiers"
+            "&6Do &e/list mobs &6to display valid mob specifiers"
         )
     private fun sendTypes(context: CommandContext) =
         getTypesText(context.label).forEach { context.sender.sendColored(it) }
@@ -80,8 +81,31 @@ class RemoveCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /remove tab completion
-        return mutableListOf()
+        val tab = mutableListOf<String>()
+
+        if (sender.lacksPermission(perm))
+            return tab
+
+        val entityUtility = EntityUtility()
+        val suggestSub = mutableListOf<String>()
+        suggestSub.addAll(getValidGroupedTypes())
+        suggestSub.addAll(entityUtility.getMobTypes().map { it.name.lowercase() })
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                StringUtil.copyPartialMatches(sub, suggestSub, tab)
+            } else if (len == 2) {
+                if (suggestSub.contains(sub.lowercase())) {
+                    StringUtil.copyPartialMatches(args[1], getWorldNamesToMutableList(), tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 
     private fun handleOneArgument(context: CommandContext) {
@@ -146,7 +170,7 @@ class RemoveCommand : CommandBase() {
 
         if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
             sender.sendColored("&4Unknown entity type &c\"$targetedType\"")
-            sender.sendColored("&4Do &c/remove ls &4to view valid groups, or &c/remove ls mobs &4to view valid mobs.")
+            sender.sendColored("&4Do &c/remove types &4to view valid groups, or &c/list mobs &4to view valid mobs.")
             return
         }
 

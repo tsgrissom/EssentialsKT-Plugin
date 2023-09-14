@@ -97,7 +97,7 @@ class ClearChatCommand : CommandBase() {
         val tab = mutableListOf<String>()
 
         if (sender.hasPermission(permOthers))
-            suggestPlayers.addAll(getSortedOnlinePlayerNames())
+            suggestPlayers.addAll(getOnlinePlayerNamesToMutableList())
 
         val len = args.size
 

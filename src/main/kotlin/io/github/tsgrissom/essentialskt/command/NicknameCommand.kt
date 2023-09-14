@@ -134,7 +134,7 @@ class NicknameCommand : CommandBase() {
                 StringUtil.copyPartialMatches(sub, suggestSub, tab)
             } else if (len == 2) {
                 if (sender.hasPermission(permOthers))
-                    StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
+                    StringUtil.copyPartialMatches(args[1], getOnlinePlayerNamesToMutableList(), tab)
             }
         }
 

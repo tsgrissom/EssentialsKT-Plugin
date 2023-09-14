@@ -88,7 +88,7 @@ class HealCommand : CommandBase() {
 
         if (len > 0) {
             if (len == 1 && sender.hasPermission(permOthers))
-                StringUtil.copyPartialMatches(args[0], getSortedOnlinePlayerNames(), tab)
+                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
         }
 
         return tab.sorted().toMutableList()
