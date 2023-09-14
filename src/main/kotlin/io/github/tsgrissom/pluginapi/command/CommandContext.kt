@@ -37,4 +37,32 @@ class CommandContext(
 
         return false
     }
+
+    fun getExecutedString(withLabel: Boolean = true, startIndex: Int, endIndex: Int) : String {
+        var builder = String()
+
+        if (withLabel)
+            builder += label
+
+        if (args.isEmpty())
+            return builder
+
+        if (startIndex > args.size)
+            error("startIndex is out of bounds of arguments")
+        if (endIndex > args.size)
+            error("endIndex is out of bounds of arguments")
+
+        for (i in startIndex..endIndex) {
+            builder += " ${args[i]}"
+        }
+
+        return builder.trim()
+    }
+
+    fun getExecutedString(withLabel: Boolean = true) : String {
+        val len = args.size
+        val startIndex = 0
+        val endIndex = if (len > 0) args.size - 1 else 0
+        return getExecutedString(withLabel=withLabel, startIndex, endIndex)
+    }
 }

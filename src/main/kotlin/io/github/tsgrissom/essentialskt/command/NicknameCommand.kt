@@ -39,12 +39,12 @@ class NicknameCommand : CommandBase() {
             "&8&l> &e/nick of [Target] &8- &7View a player's nickname"
         )
 
-    private fun transformNickname(context: CommandContext, input: String, target: Player) : String {
+    private fun transformNickname(context: CommandContext, input: String, target: Player) : String? {
         val sender = context.sender
 
         if (sender.lacksPermission(permAllColors) && input.containsChatColor()) {
             context.sendNoPermission(sender, permAllColors)
-            return input.translateAndStripColorCodes()
+            return null
         }
 
         val new = if (input.isOnlyColorCodes())
@@ -110,7 +110,8 @@ class NicknameCommand : CommandBase() {
             return getHelpText().forEach { sender.sendColored(it) }
         }
 
-        val newNickname = transformNickname(context, sub, t)
+        val newNickname: String = transformNickname(context, sub, t)
+            ?: return
 
         t.setDisplayName(newNickname)
 

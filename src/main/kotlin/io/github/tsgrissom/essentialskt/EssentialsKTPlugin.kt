@@ -7,10 +7,8 @@ import io.github.tsgrissom.essentialskt.listener.MovementListener
 import io.github.tsgrissom.essentialskt.manager.AfkManager
 import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
-import org.bukkit.Bukkit
-import org.bukkit.Bukkit.*
-import org.bukkit.GameMode
-import org.bukkit.command.Command
+import org.bukkit.Bukkit.getPluginManager
+import org.bukkit.Bukkit.getScheduler
 import org.bukkit.plugin.java.JavaPlugin
 
 fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
@@ -45,6 +43,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("list", ListCommand())
         registerCommand("nickname", NicknameCommand())
         registerCommand("remove", RemoveCommand())
+        registerCommand("renameitem", RenameItemCommand())
         registerCommand("weather", WeatherCommand())
         registerCommand("whois", WhoIsCommand())
     }

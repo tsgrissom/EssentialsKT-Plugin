@@ -43,6 +43,8 @@ commands:
   remove:
     description: "Remove entities from a world or within a range"
     aliases: ["killall", "eremove"]
+  renameitem:
+    description: "Rename items without an anvil"
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
@@ -87,6 +89,7 @@ permissions:
       essentials.heal.*: true
       essentials.nick.*: true
       essentials.ping: true
+      essentials.renameitem.*: true
       essentials.suicide: true
       essentials.time.quick.*: true
       essentials.toggledownfall: true
@@ -131,6 +134,11 @@ permissions:
       essentials.nick.color: true
       essentials.nick.others: true
       essentials.nick.view: true
+  essentials.renameitem.*:
+    description: "Grants access to all /renameitem permissions"
+    children:
+      essentials.renameitem: true
+      essentials.renameitem.bypasslimit: true
   essentials.time.quick.*:
     description: "Grants all quick time setting permissions"
     children:
@@ -183,6 +191,10 @@ permissions:
     description: "Allows you to view the nickname of a player by their username"
   essentials.ping:
     description: "Allows you to view your ping to the server"
+  essentials.renameitem:
+    description: "Allows you to rename items without an anvil"
+  essentials.renameitem.bypasslimit:
+    description: "Allows you to exceed the character limit of renaming items"
   essentials.suicide:
     description: "Allows you to forcibly end your player's life"
   essentials.time.quick.day:
