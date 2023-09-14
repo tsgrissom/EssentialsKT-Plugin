@@ -8,6 +8,7 @@ description: "A lightweight Essentials replacer written in Kotlin"
 website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
+  # WIP Commands
   ntime:
   nickname:
     description: "Set your display name to a custom nickname"
@@ -71,7 +72,7 @@ commands:
     aliases: [ "dawn" ]
 
 permissions:
-  # Wildcard Permissions
+  # Grouped Permissions
   essentials.*:
     description: "Grants all permissions for the plugin"
     children:
@@ -81,13 +82,9 @@ permissions:
     children:
       essentials.afk: true
       essentials.clearchat.*: true
-      essentials.feed: true
-      essentials.feed.others: true
-      essentials.gamemode: true
-      essentials.gamemode.others: true
-      essentials.gamemode.all: true
-      essentials.heal: true
-      essentials.heal.others: true
+      essentials.feed.*: true
+      essentials.gamemode.*: true
+      essentials.heal.*: true
       essentials.nick.*: true
       essentials.ping: true
       essentials.suicide: true
@@ -102,7 +99,12 @@ permissions:
       essentials.clearchat: true
       essentials.clearchat.all: true
       essentials.clearchat.others: true
-      essentials.clearchat.bypassall: true
+      essentials.clearchat.exemptall: true
+  essentials.feed.*:
+    description: "Grants all feed-related permissions"
+    children:
+      essentials.feed: true
+      essentials.feed.others: true
   essentials.gamemode.*:
     description: "Grants all gamemode-related permissions for the plugin"
     children:
@@ -116,6 +118,11 @@ permissions:
       essentials.gamemode.creative: true
       essentials.gamemode.survival: true
       essentials.gamemode.spectator: true
+  essentials.heal.*:
+    description: "Grants all heal-related permissions"
+    children:
+      essentials.heal: true
+      essentials.heal.others: true
   essentials.nick.*:
     description: "Grants access to all /nickname subcommands"
     children:
@@ -123,6 +130,7 @@ permissions:
       essentials.nick.blacklist.bypass: true
       essentials.nick.color: true
       essentials.nick.others: true
+      essentials.nick.view: true
   essentials.time.quick.*:
     description: "Grants all quick time setting permissions"
     children:
@@ -141,7 +149,7 @@ permissions:
     description: "Allows you clear the chats of everyone on the server"
   essentials.clearchat.others:
     description: "Allows you clear the chat of another player"
-  essentials.clearchat.bypassall:
+  essentials.clearchat.exemptall:
     description: "Allows you to bypass having your chat cleared when someone executes /cls all"
   essentials.feed:
     description: "Allows you to restore your own hunger"
@@ -164,13 +172,15 @@ permissions:
   essentials.heal.others:
     description: "Allows you to restore another player's health"
   essentials.nick:
-    description: "Allows you to change your own nickname"
+    description: "Allows you to change and reset your own nickname"
   essentials.nick.blacklist.bypass:
     description: "Allows you to bypass being blacklisted from the nickname system"
   essentials.nick.color:
     description: "Allows you to add color codes to your nickname"
   essentials.nick.others:
-    description: "Allows you to change another player's nickname"
+    description: "Allows you to change and reset another player's nickname"
+  essentials.nick.view:
+    description: "Allows you to view the nickname of a player by their username"
   essentials.ping:
     description: "Allows you to view your ping to the server"
   essentials.suicide:
@@ -201,5 +211,5 @@ permissions:
     description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
     default: false
   essentials.disclosepermission:
-    description: "Displays missing permission "
+    description: "Displays missing permission when failing a permission check"
     default: op

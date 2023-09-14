@@ -25,6 +25,7 @@ class ClearChatCommand : CommandBase() {
     private val permSelf = "essentials.clearchat"
     private val permAll = "essentials.clearchat.all"
     private val permOthers = "essentials.clearchat.others"
+    private val permExemptFromAll = "essentials.clearchat.exemptall"
 
     private fun clearChat(t: Player, repeat: Int = 500) {
         repeat(repeat) {
@@ -53,7 +54,7 @@ class ClearChatCommand : CommandBase() {
             return context.sendNoPermission(sender, permAll)
 
         Bukkit.getOnlinePlayers()
-            .filter { it.lacksPermission("essentials.clearchat.bypassall") }
+            .filter { it.lacksPermission(permExemptFromAll) }
             .forEach { clearChat(it, getConfiguredRepeatCount()) }
         sender.sendColored("&6You cleared the chat messages of all players on the server")
     }

@@ -8,6 +8,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
 
 class NicknameCommand : CommandBase() {
 
@@ -28,6 +29,7 @@ class NicknameCommand : CommandBase() {
     private val permOthers = "essentials.nick.others"
     private val permBlacklistBypass = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
     private val permAllColors = "essentials.nick.color"
+    private val permView = "essentials.nick.view"
 
     private fun getHelpText() : Array<String> =
         arrayOf(
@@ -95,6 +97,9 @@ class NicknameCommand : CommandBase() {
                 sender.sendColored("&6You have reset &c${tn}'s &6nickname")
             return
         } else if (sub.equalsIc("view", "of")) {
+            if (sender.lacksPermission(permView))
+                return context.sendNoPermission(sender, permView)
+
             val dn = t.displayName
             if (dn == tn)
                 sender.sendColored("&c${tn} &6does not have a nickname")
@@ -115,7 +120,24 @@ class NicknameCommand : CommandBase() {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /nick tab completion
-        return mutableListOf()
+        val suggestSub = mutableListOf<String>()
+        val tab = mutableListOf<String>()
+        val len = args.size
+
+        if (sender.hasPermission(permBase))
+            suggestSub.addAll(arrayOf("reset", "view", "help"))
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                StringUtil.copyPartialMatches(sub, suggestSub, tab)
+            } else if (len == 2) {
+                if (sender.hasPermission(permOthers))
+                    StringUtil.copyPartialMatches(args[1], getSortedOnlinePlayerNames(), tab)
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

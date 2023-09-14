@@ -43,6 +43,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("gamemode", GamemodeCommand())
         registerCommand("heal", HealCommand())
         registerCommand("list", ListCommand())
+        registerCommand("nickname", NicknameCommand())
         registerCommand("whois", WhoIsCommand())
     }
 
@@ -62,7 +63,6 @@ class EssentialsKTPlugin : JavaPlugin() {
         /* Command Setup (General; A->Z) */
         getCommand("afk")?.setExecutor(AfkCommand())
         getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
-        getCommand("nickname")?.setExecutor(NicknameCommand())
         getCommand("ping")?.setExecutor(PingCommand())
         getCommand("rain")?.setExecutor(RainCommand())
         getCommand("remove")?.setExecutor(RemoveCommand())
