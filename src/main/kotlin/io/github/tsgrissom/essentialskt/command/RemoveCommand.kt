@@ -39,10 +39,15 @@ class RemoveCommand : CommandBase() {
 
     private fun getHelpText(label: String) : Array<String> =
         arrayOf(
-            "   &6Command Help for &e/${label}",
+            "   &6Command Help &8-> &e/${label}",
             "&8&l> &e/${label} <Type> [Radius OR World]",
-            "&8&l> &e/${label} all [Radius OR World]",
-            "&8&l> &e/ls mobs &8- &7To find mob types"
+            "    &7Kill entities of a specified type. By default all",
+            "     &7that match in the world, otherwise within a set",
+            "     &7radius or another world",
+            "&8&l> &e/${label} types",
+            "    &7List valid special grouped types",
+            "&8&l> &e/ls mobs",
+            "    &7List valid mob types"
         )
     private fun sendHelp(context: CommandContext) =
         getHelpText(context.label).forEach { context.sender.sendColored(it) }
@@ -54,15 +59,13 @@ class RemoveCommand : CommandBase() {
             "itemframes", "endercrystals", "monsters",
             "animals", "ambient", "mobs"
         )
-    private fun getTypesText(label: String) : Array<String> =
+    private fun getGroupedTypesText() : Array<String> =
         arrayOf(
             "&6Types: &eall&7,&etamed&7,&enamed&7,&edrops&7,&earrows&7,&eboats&7,&eminecarts&7,&exp&7,&epaintings&7,",
             "&eitemframes&7,&eendercrystals&7,&emonsters&7,&eanimals&7,",
             "&eambient&7,&emobs",
             "&6Do &e/list mobs &6to display valid mob specifiers"
         )
-    private fun sendTypes(context: CommandContext) =
-        getTypesText(context.label).forEach { context.sender.sendColored(it) }
 
     override fun execute(context: CommandContext) {
         val args = context.args
@@ -86,10 +89,9 @@ class RemoveCommand : CommandBase() {
         if (sender.lacksPermission(perm))
             return tab
 
-        val entityUtility = EntityUtility()
         val suggestSub = mutableListOf<String>()
         suggestSub.addAll(getValidGroupedTypes())
-        suggestSub.addAll(entityUtility.getMobTypes().map { it.name.lowercase() })
+        suggestSub.addAll(EntityUtility().getAllMobNames())
 
         val len = args.size
 
@@ -116,6 +118,8 @@ class RemoveCommand : CommandBase() {
 
         if (sub.equalsIc("help", "h", "?")) {
             return sendHelp(context)
+        } else if (sub.equalsIc("types", "groups")) {
+            return getGroupedTypesText().forEach { sender.sendColored(it) }
         }
 
         if (sender is ConsoleCommandSender)

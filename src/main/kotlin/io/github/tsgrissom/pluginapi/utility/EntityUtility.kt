@@ -14,20 +14,43 @@ class EntityUtility {
     fun getNonSpawnableTypes() = EntityType.entries.filter { !it.isSpawnable }.toSet()
     fun getNonMobTypes() = EntityType.entries.filter { !it.isAlive || !it.isSpawnable }.toSet()
 
-    fun getMobTypeNames(): Map<Set<String>, EntityType> {
+    fun getMobNames(type: EntityType) : Set<String> {
+        val set = mutableSetOf<String>()
+        val name = type.name.lowercase()
+
+        set.add(name)
+        if (name.contains("_"))
+            set.add(name.replace("_", ""))
+
+        return set
+    }
+
+    fun getMobNamesToType(): Map<Set<String>, EntityType> {
         val map = mutableMapOf<Set<String>, EntityType>()
-        for (et in getMobTypes()) {
-            val name = et.name.lowercase()
-            val keys = mutableSetOf(name)
-            val sansUnderscore = name.replace("_", "")
-
-            if (name.contains("_"))
-                keys.add(sansUnderscore)
-            keys.add("${sansUnderscore}s")
-
-            map[keys] = et
+        for (type in getMobTypes()) {
+            val names = getMobNames(type)
+            map[names] = type
         }
         return map
+    }
+
+    fun getAllMobNames() : Set<String> {
+        val set = mutableSetOf<String>()
+
+        for (type in getMobTypes()) {
+            set.addAll(getMobNames(type))
+        }
+
+        return set
+    }
+
+    fun getMobTypeFromName(name: String) : EntityType? {
+        for (entry in getMobNamesToType()) {
+            if (entry.key.contains(name.lowercase()))
+                return entry.value
+        }
+
+        return null
     }
 
     fun getLocationalNearbyEntities(from: Location, radius: Double) : List<Entity> {
