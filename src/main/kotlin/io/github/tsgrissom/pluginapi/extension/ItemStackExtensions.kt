@@ -1,6 +1,5 @@
 package io.github.tsgrissom.pluginapi.extension
 
-import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -18,7 +17,7 @@ fun ItemStack.amount(amount: Int): ItemStack {
 
 fun ItemStack.name(name: String): ItemStack {
     val meta = itemMeta
-    meta?.setDisplayName(name.c())
+    meta?.setDisplayName(name.translateColor())
     itemMeta = meta
     return this
 }
@@ -78,7 +77,7 @@ fun ItemStack.clearLore(): ItemStack {
 }
 
 fun ItemStack.clearEnchantments(): ItemStack {
-    enchantments.keys.forEach(Consumer<Enchantment> { this.removeEnchantment(it) })
+    enchantments.keys.forEach(Consumer { this.removeEnchantment(it) })
     return this
 }
 
@@ -104,14 +103,10 @@ fun ItemStack.flag(vararg flag: ItemFlag): ItemStack {
     return this
 }
 
-private fun String.c(): String {
-    return ChatColor.translateAlternateColorCodes('&', this)
-}
-
 private fun List<String>.c(): List<String> {
     val tempStringList = ArrayList<String>()
     for (text in this) {
-        tempStringList.add(text.c())
+        tempStringList.add(text.translateColor())
     }
     return tempStringList
 }

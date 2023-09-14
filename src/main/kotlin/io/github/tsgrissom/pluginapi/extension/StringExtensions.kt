@@ -2,8 +2,6 @@ package io.github.tsgrissom.pluginapi.extension
 
 import org.bukkit.ChatColor
 
-fun Double.roundToDigits(i: Int) : Double = String.format("%.${i}f", this).toDouble()
-
 /* Equality */
 
 /**
