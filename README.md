@@ -1,33 +1,45 @@
 # EssentialsKT
 
-A test plugin for CraftBukkit servers written in the Kotlin programming language
+An addon for EssentialsX written for modern CraftBukkit servers. Replaces and adds many Essentials-like commands.
 
-Tested on PaperMC with Minecraft version 1.20.1
+Developed with Kotlin version 1.9 and modern Java 17
+
+Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 
 ## Features
-* Lightweight Essentials replacer written in Kotlin
+* Modern, powerful EssentialsX addon written in Kotlin
+* Designed with EssentialsX permissions in mind for drop-in compatibility with minimal breakage
 * Supports any flavor of Bukkit server: Spigot, Paper, etc.
 * Commands with intelligent user feedback
-* Configurable messages for join, quit, and chat events
+* Configurable event messages
 * A [plugin API](https://github.com/tsgrissom/EssentialsKT/tree/main/src/main/kotlin/io/github/tsgrissom/pluginapi) powering the plugin features
 
 ## Commands
 * EssentialsKT imitates the command structure of EssentialsX, including supporting aliases prefixed with `e`
 * Permission structure mirrors that of EssentialsX, allowing it to serve as a drop-in replacement with minimal breakage of permission structure
 #### General-Purpose (A to Z)
+* `/afk`
+* `/clearchat`
 * `/feed`
 * `/gamemode`, `/gmc`, `/gms`, etc.
 * `/heal`
+* `/list`
+* `/nickname`
 * `/ping`
+* `/remove`
+* `/renameitem`
 * `/suicide`
+* `/toggledownfall`
 * `/whois` & `/whoami`
 #### Time Setting
 * Quick-time commands: `/day`, `/midnight`, `/night`, `/noon`, `/sunset`, & `/sunrise`
+* In development: `/ntime`
+#### Weather Setting
+* Quick-weather commands: `/rain`, `/clear`
+* In development: `/weather`
+
 
 ## Upcoming Commands
-* clearchat
-* weather
-* time
 * repair
 * kickall
 * tpall
@@ -38,20 +50,17 @@ Tested on PaperMC with Minecraft version 1.20.1
 * tprandom
 * tpauto
 * realname
-* nickname
 * compass
 * world
 * me
-* list
 * kill
 * invsee
 * god
 * broadcast
-* afk
 * burn
 * exp
 * 
 
 ## Permissions
-* Permissions are structured differently between EssentialsX and EssentialsKT
+* Permissions are structured identically between EssentialsX and EssentialsKT to ensure minimal breakage
 * See [`plugin.yml`](https://github.com/tsgrissom/EssentialsKT/blob/main/src/main/resources/plugin.yml) until Permissions page on the wiki is built-out
