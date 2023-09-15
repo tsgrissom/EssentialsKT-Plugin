@@ -72,10 +72,9 @@ class ListCommand : CommandBase() {
             val z = loc.z.roundToDigits(1)
             builder.append(
                 HoverableText
-                    .compose("&e${p.displayName}")
+                    .compose("&e${p.name}")
                     .hoverText(
-                        "&8&l> &7Username&8: &e${p.name}",
-                        "&8&l> &7Display Name&8: &r${p.displayName}\n",
+                        "&8&l> &7Nickname&8: &r${p.displayName}\n",
                         "&8&l> &7UUID&8: &e${p.getUniqueString()}\n",
                         "&8&l> &7Current World&8: &e${p.world.name}\n",
                         "&8&l> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
