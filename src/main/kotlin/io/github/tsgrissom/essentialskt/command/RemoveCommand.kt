@@ -1,9 +1,12 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.*
-import io.github.tsgrissom.pluginapi.utility.EntityUtility
+import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
+import io.github.tsgrissom.pluginapi.extension.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -34,6 +37,11 @@ class RemoveCommand : CommandBase() {
      * mobs
      * [mobType]
      */
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getEntityUtility() =
+        getPlugin().entityUtility
 
     private val perm = "essentials.remove"
 
@@ -91,7 +99,7 @@ class RemoveCommand : CommandBase() {
 
         val suggestSub = mutableListOf<String>()
         suggestSub.addAll(getValidGroupedTypes())
-        suggestSub.addAll(EntityUtility().getAllMobNames())
+        suggestSub.addAll(getEntityUtility().getAllMobKeys())
 
         val len = args.size
 
@@ -166,9 +174,8 @@ class RemoveCommand : CommandBase() {
         targetedType: String,
         radius: Double
     ) {
-        val entityUtility = EntityUtility()
         val validGroups = getValidGroupedTypes()
-        val validMobs = entityUtility.getMobTypes()
+        val validMobs = getEntityUtility().getMobTypes()
             .map { it.name.lowercase() }
             .toSet()
 

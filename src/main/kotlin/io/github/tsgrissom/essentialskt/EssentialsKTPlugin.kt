@@ -7,6 +7,7 @@ import io.github.tsgrissom.essentialskt.listener.MovementListener
 import io.github.tsgrissom.essentialskt.manager.AfkManager
 import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
+import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import org.bukkit.Bukkit.getPluginManager
 import org.bukkit.Bukkit.getScheduler
 import org.bukkit.plugin.java.JavaPlugin
@@ -20,6 +21,7 @@ fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
 class EssentialsKTPlugin : JavaPlugin() {
 
     lateinit var afkManager: AfkManager
+    lateinit var entityUtility: EntityUtility
     private var checkAfkTaskId: Int = -1
 
     /* Static Instance */
@@ -52,6 +54,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         /* Bootstrapping */
         instance = this
         afkManager = AfkManager()
+        entityUtility = EntityUtility()
 
         config.options().copyDefaults(true)
         saveDefaultConfig()

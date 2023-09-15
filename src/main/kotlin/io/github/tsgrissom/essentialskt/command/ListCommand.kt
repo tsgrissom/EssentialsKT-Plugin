@@ -28,6 +28,46 @@ class ListCommand : CommandBase() {
             "&8&l> &eplayers &b--gui"
         )
 
+    override fun execute(context: CommandContext) {
+        val args = context.args
+        val sender = context.sender
+
+        if (args.isEmpty())
+            return getAvailableLists().forEach { sender.sendColored(it) }
+
+        val sub = args[0]
+
+        when (sub.lowercase()) {
+            "players", "pl", "online" -> handleSubcPlayers(context)
+            "mobs", "mob" -> handleSubcMobs(context)
+            else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        val suggestSub = mutableListOf("players", "online", "mobs")
+        val suggestPlayersArg1 = mutableListOf("--gui", "-g")
+        val tab = mutableListOf<String>()
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                if (!suggestSub.contains(sub)) {
+                    StringUtil.copyPartialMatches(sub, suggestSub, tab)
+                }
+            } else if (len == 2) {
+                if (sub.equalsIc("players", "online")) {
+                    StringUtil.copyPartialMatches(args[1], suggestPlayersArg1, tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
+    }
+
     private fun handleSubcPlayers(context: CommandContext) {
         val sender = context.sender
         val guiFlag = Pair("gui", "g")
@@ -53,17 +93,28 @@ class ListCommand : CommandBase() {
 
     private fun createPlayerListAsTextComponents() : Array<BaseComponent> {
         val onlinePlayers = Bukkit.getOnlinePlayers()
+        val count = onlinePlayers.size
+        val max = Bukkit.getMaxPlayers()
         val builder = ComponentBuilder()
-            .append("Players").color(ChatColor.GRAY)
+            .append("Player List").color(ChatColor.GRAY)
+            .append(" ")
 
-        if (onlinePlayers.isNotEmpty()) {
+        if (onlinePlayers.isEmpty()) {
             builder
-                .append(" (").color(ChatColor.DARK_GRAY)
-                .append("${onlinePlayers.size} online").color(ChatColor.GOLD)
+                .append("(").color(ChatColor.DARK_GRAY)
+                .append("None").color(ChatColor.RED)
                 .append(")").color(ChatColor.DARK_GRAY)
+
+            return builder.create()
         }
 
-        builder.append(" ")
+        builder
+            .append("(").color(ChatColor.DARK_GRAY)
+            .append("$count").color(ChatColor.GOLD)
+            .append("/").color(ChatColor.DARK_GRAY)
+            .append("$max").color(ChatColor.GOLD)
+            .append(")").color(ChatColor.DARK_GRAY)
+            .append(" ")
 
         for ((index, p) in onlinePlayers.withIndex()) {
             val loc = p.location
@@ -94,47 +145,11 @@ class ListCommand : CommandBase() {
         sender.spigot().sendMessage(*createPlayerListAsTextComponents())
     }
 
+    private fun createMobListAsTextComponents() : Array<BaseComponent> {
+        TODO("WIP")
+    }
+
     private fun handleSubcMobs(context: CommandContext) {
         context.sender.sendMessage("TODO Display mods as text")
-    }
-
-    override fun execute(context: CommandContext) {
-        val args = context.args
-        val sender = context.sender
-
-        if (args.isEmpty())
-            return getAvailableLists().forEach { sender.sendColored(it) }
-
-        val sub = args[0]
-
-        when (sub.lowercase()) {
-            "players", "online" -> handleSubcPlayers(context)
-            "mobs", "mob" -> handleSubcMobs(context)
-            else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
-        }
-    }
-
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val suggestSub = mutableListOf("players", "online", "mobs")
-        val suggestPlayersArg1 = mutableListOf("--gui", "-g")
-        val tab = mutableListOf<String>()
-
-        val len = args.size
-
-        if (len > 0) {
-            val sub = args[0]
-
-            if (len == 1) {
-                if (!suggestSub.contains(sub)) {
-                    StringUtil.copyPartialMatches(sub, suggestSub, tab)
-                }
-            } else if (len == 2) {
-                if (sub.equalsIc("players", "online")) {
-                    StringUtil.copyPartialMatches(args[1], suggestPlayersArg1, tab)
-                }
-            }
-        }
-
-        return tab.sorted().toMutableList()
     }
 }

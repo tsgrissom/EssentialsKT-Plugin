@@ -1,20 +1,22 @@
 package io.github.tsgrissom.pluginapi.utility
 
+import com.uchuhimo.collections.mutableBiMapOf
 import org.bukkit.Location
 import org.bukkit.entity.*
 
 class EntityUtility {
 
-    fun getMobTypes() =
-        EntityType.entries
-            .filter { it.isAlive && it.isSpawnable }
-            .filter { it != EntityType.ARMOR_STAND }
-            .toSet()
-    fun getNonAliveTypes() = EntityType.entries.filter { !it.isAlive }.toSet()
-    fun getNonSpawnableTypes() = EntityType.entries.filter { !it.isSpawnable }.toSet()
-    fun getNonMobTypes() = EntityType.entries.filter { !it.isAlive || !it.isSpawnable }.toSet()
+    private val mobTypeToNames = mutableBiMapOf<EntityType, Set<String>>()
 
-    fun getMobNames(type: EntityType) : Set<String> {
+    private fun getProtectedEntityTypes() : Set<EntityType> =
+        setOf(
+            EntityType.ARMOR_STAND,   EntityType.BLOCK_DISPLAY, EntityType.CHEST_BOAT,      EntityType.ENDER_CRYSTAL,
+            EntityType.ENDER_SIGNAL,  EntityType.ENDER_DRAGON,  EntityType.GLOW_ITEM_FRAME, EntityType.INTERACTION,
+            EntityType.ITEM_DISPLAY,  EntityType.ITEM_FRAME,    EntityType.LEASH_HITCH,     EntityType.MARKER,
+            EntityType.PAINTING,      EntityType.PLAYER,        EntityType.TEXT_DISPLAY,    EntityType.THROWN_EXP_BOTTLE
+        )
+
+    private fun generateMobKeys(type: EntityType) : Set<String> {
         val set = mutableSetOf<String>()
         val name = type.name.lowercase()
 
@@ -25,33 +27,42 @@ class EntityUtility {
         return set
     }
 
-    fun getMobNamesToType(): Map<Set<String>, EntityType> {
-        val map = mutableMapOf<Set<String>, EntityType>()
-        for (type in getMobTypes()) {
-            val names = getMobNames(type)
-            map[names] = type
+    init {
+        getMobTypes().forEach {
+            mobTypeToNames[it] = generateMobKeys(it)
         }
-        return map
     }
 
-    fun getAllMobNames() : Set<String> {
+    fun getMobKeys(type: EntityType) : Set<String> =
+        mobTypeToNames[type] ?: error("The given type is not a mob")
+
+    fun getAllMobKeys() : Set<String> {
         val set = mutableSetOf<String>()
 
-        for (type in getMobTypes()) {
-            set.addAll(getMobNames(type))
+        mobTypeToNames.values.forEach {
+            set.addAll(it)
         }
 
         return set
     }
 
-    fun getMobTypeFromName(name: String) : EntityType? {
-        for (entry in getMobNamesToType()) {
-            if (entry.key.contains(name.lowercase()))
-                return entry.value
+    fun getMobTypeFromKey(key: String) : EntityType? {
+        for (entry in mobTypeToNames) {
+            val keys: Set<String> = entry.value
+            if (keys.contains(key.lowercase()))
+                return entry.key
         }
-
         return null
     }
+
+    fun getMobTypes() =
+        EntityType.entries
+            .filter { it.isAlive && it.isSpawnable }
+            .filter { it != EntityType.ARMOR_STAND }
+            .toSet()
+    fun getNonAliveTypes() = EntityType.entries.filter { !it.isAlive }.toSet()
+    fun getNonSpawnableTypes() = EntityType.entries.filter { !it.isSpawnable }.toSet()
+    fun getNonMobTypes() = EntityType.entries.filter { !it.isAlive || !it.isSpawnable }.toSet()
 
     fun getLocationalNearbyEntities(from: Location, radius: Double) : List<Entity> {
         val w = from.world ?: error("World was null from Location")
@@ -64,14 +75,6 @@ class EntityUtility {
 
         return allEntities
     }
-
-    private fun getProtectedEntityTypes() : Set<EntityType> =
-        setOf(
-            EntityType.ARMOR_STAND,   EntityType.BLOCK_DISPLAY, EntityType.CHEST_BOAT,      EntityType.ENDER_CRYSTAL,
-            EntityType.ENDER_SIGNAL,  EntityType.ENDER_DRAGON,  EntityType.GLOW_ITEM_FRAME, EntityType.INTERACTION,
-            EntityType.ITEM_DISPLAY,  EntityType.ITEM_FRAME,    EntityType.LEASH_HITCH,     EntityType.MARKER,
-            EntityType.PAINTING,      EntityType.PLAYER,        EntityType.TEXT_DISPLAY,    EntityType.THROWN_EXP_BOTTLE
-        )
 
     fun getAllNearby(from: Location, radius: Double) : List<Entity> =
         getLocationalNearbyEntities(from, radius).filter { !getProtectedEntityTypes().contains(it.type) }
