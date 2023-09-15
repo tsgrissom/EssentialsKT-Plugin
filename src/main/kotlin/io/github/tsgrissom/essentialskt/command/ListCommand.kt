@@ -1,62 +1,22 @@
 package io.github.tsgrissom.essentialskt.command
 
-import com.github.stefvanschie.inventoryframework.gui.GuiItem
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
-import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import io.github.tsgrissom.essentialskt.gui.PlayerListGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.getUniqueString
+import io.github.tsgrissom.pluginapi.extension.roundToDigits
+import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.misc.HoverableText
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.util.StringUtil
-
-class PlayerListGui : ChestGui(5, "Online Players") {
-
-    init {
-        val op = Bukkit.getOnlinePlayers()
-        val pane = OutlinePane(0, 0, 9, 5)
-
-        for (p in op) {
-            val head = createPlayerHead(p)
-            val btn = GuiItem(head) { e ->
-                e.isCancelled = true
-                e.whoClicked.closeInventory()
-                Bukkit.dispatchCommand(e.whoClicked, "whois ${p.name}")
-            }
-            pane.addItem(btn)
-        }
-
-        this.addPane(pane)
-    }
-
-    private fun createPlayerHead(p: Player) : ItemStack {
-        val x = p.location.x.roundToDigits(1)
-        val y = p.location.y.roundToDigits(1)
-        val z = p.location.z.roundToDigits(1)
-        val item = ItemStack(Material.PLAYER_HEAD)
-            .name("&6${p.name}")
-            .lore(
-                "&7Click to view their &e/whois &7profile",
-                "&8> &7Nickname: &e${p.displayName}",
-                "&8> &7UUID: &e${p.getUniqueString()}",
-                "&8> &7World&8: &e${p.world.name}",
-                "&8> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
-            )
-            .flag(ItemFlag.HIDE_ATTRIBUTES)
-
-        val sm = item.itemMeta as SkullMeta
-        sm.ownerProfile = p.playerProfile
-        item.itemMeta = sm
-        return item
-    }
-}
 
 class ListCommand : CommandBase() {
 
@@ -91,8 +51,48 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
     }
 
+    private fun createPlayerListAsTextComponents() : Array<BaseComponent> {
+        val onlinePlayers = Bukkit.getOnlinePlayers()
+        val builder = ComponentBuilder()
+            .append("Players").color(ChatColor.GRAY)
+
+        if (onlinePlayers.isNotEmpty()) {
+            builder
+                .append(" (").color(ChatColor.DARK_GRAY)
+                .append("${onlinePlayers.size} online").color(ChatColor.GOLD)
+                .append(")").color(ChatColor.DARK_GRAY)
+        }
+
+        builder.append(" ")
+
+        for ((index, p) in onlinePlayers.withIndex()) {
+            val loc = p.location
+            val x = loc.x.roundToDigits(1)
+            val y = loc.y.roundToDigits(1)
+            val z = loc.z.roundToDigits(1)
+            builder.append(
+                HoverableText
+                    .compose("&e${p.displayName}")
+                    .hoverText(
+                        "&8&l> &7Username&8: &e${p.name}",
+                        "&8&l> &7Display Name&8: &r${p.displayName}\n",
+                        "&8&l> &7UUID&8: &e${p.getUniqueString()}\n",
+                        "&8&l> &7Current World&8: &e${p.world.name}\n",
+                        "&8&l> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
+                    )
+                    .toTextComponent()
+            )
+            if (index != (onlinePlayers.size - 1))
+                builder.append(" ")
+        }
+
+        return builder.create()
+    }
+
     private fun handleSubcPlayersText(context: CommandContext) {
-        context.sender.sendMessage("TODO Display players as text")
+        val sender = context.sender
+
+        sender.spigot().sendMessage(*createPlayerListAsTextComponents())
     }
 
     private fun handleSubcMobs(context: CommandContext) {

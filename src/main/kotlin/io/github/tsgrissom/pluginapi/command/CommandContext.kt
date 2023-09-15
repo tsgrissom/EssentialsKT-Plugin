@@ -2,8 +2,11 @@ package io.github.tsgrissom.pluginapi.command
 
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
 
 class CommandContext(
     val sender: CommandSender,
@@ -65,4 +68,13 @@ class CommandContext(
         val endIndex = if (len > 0) args.size - 1 else 0
         return getExecutedString(withLabel=withLabel, startIndex, endIndex)
     }
+
+    fun performCommand(command: String) {
+        if (sender is ConsoleCommandSender)
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)
+        else if (sender is Player)
+            sender.performCommand(command)
+    }
+
+
 }
