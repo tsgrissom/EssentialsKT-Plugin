@@ -13,6 +13,9 @@ commands:
   nickname:
     description: "Set your display name to a custom nickname"
     aliases: ["nick", "enickname", "enick"]
+  uniqueid:
+    description: "View a player's UUID"
+    aliases: ["uuid", "uid"]
   # General (A-Z)
   afk:
     description: "Toggle your AFK status"

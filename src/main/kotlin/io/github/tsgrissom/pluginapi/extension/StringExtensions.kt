@@ -63,7 +63,7 @@ fun String.isDoubleQuoted() : Boolean =
 fun String.isQuoted() : Boolean =
     (this.isSingleQuoted() || this.isDoubleQuoted())
 
-/* String Transformations */
+/* String Mutations */
 
 /**
  * Capitalizes a String by only altering the first letter. Alternate method offered
@@ -89,6 +89,35 @@ fun String.capitalize() : String {
  * @return The all caps String lowercased with only the first letter capitalized
  */
 fun String.capitalizeAllCaps() : String = this.lowercase().capitalize()
+
+/**
+ * Replaces placeholders (map keys surrounded by percent signs) with their corresponding
+ * map value to allow the user to access a variety of info at configuration time.
+ * @param replacements The Map of replacements to substitute into the String
+ * @return The String with substitutions made
+ */
+fun String.replaceMap(replacements: Map<String, String>) : String {
+    var str = this
+    for (en in replacements) {
+        val formattedKey = "%${en.key}%"
+        str = str.replace(formattedKey, en.value)
+    }
+    return str
+}
+
+/**
+ * Replaces placeholders (map keys surrounded by percent signs) with their corresponding
+ * map value to allow the user to access a variety of info at configuration time.
+ * @param replacements The Map of replacements to substitute into the String
+ * @return The List of Strings with substitutions made
+ */
+fun MutableList<String>.replaceMap(replacements: Map<String, String>) : MutableList<String> {
+    for ((i, line) in this.withIndex()) {
+        val replaced = line.replaceMap(replacements)
+        this[i] = replaced
+    }
+    return this
+}
 
 /* ChatColor Related */
 

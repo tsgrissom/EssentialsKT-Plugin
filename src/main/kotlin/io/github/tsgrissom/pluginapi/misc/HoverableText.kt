@@ -47,15 +47,6 @@ class HoverableText(
         return this
     }
 
-    fun send(to: CommandSender) {
-        if (to is ConsoleCommandSender)
-            return sendUnfolded(to)
-        if (to !is Player)
-            return
-
-        sendHoverText(to)
-    }
-
     fun toTextComponent() : TextComponent {
         val component = TextComponent(text.translateColor())
         val e = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${hoverText[0].translateColor()}\n"))
@@ -72,6 +63,15 @@ class HoverableText(
 
         component.hoverEvent = e
         return component
+    }
+
+    fun send(to: CommandSender) {
+        if (to is ConsoleCommandSender)
+            return sendUnfolded(to)
+        if (to !is Player)
+            return
+
+        sendHoverText(to)
     }
 
     private fun sendHoverText(to: Player) {
