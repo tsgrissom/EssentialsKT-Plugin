@@ -3,10 +3,7 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.essentialskt.gui.PlayerListGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.getUniqueString
-import io.github.tsgrissom.pluginapi.extension.roundToDigits
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.misc.HoverableText
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
@@ -20,6 +17,10 @@ import org.bukkit.util.StringUtil
 
 class ListCommand : CommandBase() {
 
+    private var permBase = "essentials.list"
+    private var permPlayers = "essentials.list.players"
+    private var permMobs = "essentials.list.mobs"
+
     private fun getAvailableLists() : Array<String> =
         arrayOf(
             "&6Available Lists",
@@ -31,6 +32,9 @@ class ListCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val args = context.args
         val sender = context.sender
+
+        if (sender.lacksPermission(permBase))
+            return context.sendNoPermission(sender, permBase)
 
         if (args.isEmpty())
             return getAvailableLists().forEach { sender.sendColored(it) }
@@ -70,6 +74,10 @@ class ListCommand : CommandBase() {
 
     private fun handleSubcPlayers(context: CommandContext) {
         val sender = context.sender
+
+        if (sender.lacksPermission(permPlayers))
+            return context.sendNoPermission(sender, permPlayers)
+
         val guiFlag = Pair("gui", "g")
         val hasGuiFlag = context.hasFlag(guiFlag)
 
@@ -150,6 +158,11 @@ class ListCommand : CommandBase() {
     }
 
     private fun handleSubcMobs(context: CommandContext) {
-        context.sender.sendMessage("TODO Display mods as text")
+        val sender = context.sender
+
+        if (sender.lacksPermission(permMobs))
+            return context.sendNoPermission(sender, permMobs)
+
+        sender.sendMessage("TODO Display mods as text")
     }
 }

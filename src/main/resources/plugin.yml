@@ -13,9 +13,7 @@ commands:
   nickname:
     description: "Set your display name to a custom nickname"
     aliases: ["nick", "enickname", "enick"]
-  uniqueid:
-    description: "View a player's UUID"
-    aliases: ["uuid", "uid"]
+
   # General (A-Z)
   afk:
     description: "Toggle your AFK status"
@@ -26,6 +24,9 @@ commands:
   clearweather:
     description: "Clear a world's weather"
     aliases: ["clearw", "unrain", "norain", "rainoff"]
+  damage:
+    description: "Damage a player for an amount of HP"
+    aliases: [ "dmg", "hurt", "wound", "injure" ]
   feed:
     description: "Restore a player's food level"
     aliases: ["efeed", "eat", "eeat", "sate"]
@@ -54,6 +55,9 @@ commands:
   toggledownfall:
     description: "Toggles weather in the current world"
     aliases: ["tdf"]
+  uniqueid:
+    description: "View a player's UUID"
+    aliases: [ "uuid", "uid" ]
   weather:
     description: "Set various weather options for each world"
     aliases: ["wthr"]
@@ -82,20 +86,26 @@ permissions:
     description: "Grants all permissions for the plugin"
     children:
       essentials.command.*: true
+      essentials.disclosepermission: true
   essentials.command.*:
     description: "Grants all command-related permissions for the plugin"
     children:
       essentials.afk: true
       essentials.clearchat.*: true
+      essentials.damage: true
+      essentials.damage.percent: true
       essentials.feed.*: true
       essentials.gamemode.*: true
       essentials.heal.*: true
+      essentials.list.*: true
       essentials.nick.*: true
       essentials.ping: true
+      essentials.remove: true
       essentials.renameitem.*: true
       essentials.suicide: true
       essentials.time.quick.*: true
       essentials.toggledownfall: true
+      essentials.uniqueid: true
       essentials.weather: true
       essentials.whois: true
       essentials.whoami: true
@@ -106,6 +116,11 @@ permissions:
       essentials.clearchat.all: true
       essentials.clearchat.others: true
       essentials.clearchat.exemptall: true
+  essentials.damage.*:
+    description: "Grants all permissions related to /damage"
+    children:
+      essentials.damage: true
+      essentials.damage.percent: true
   essentials.feed.*:
     description: "Grants all feed-related permissions"
     children:
@@ -129,6 +144,12 @@ permissions:
     children:
       essentials.heal: true
       essentials.heal.others: true
+  essentials.list.*:
+    description: "Grants all /list related permissions"
+    children:
+      essentials.list: true
+      essentials.list.players: true
+      essentials.list.mobs: true
   essentials.nick.*:
     description: "Grants access to all /nickname subcommands"
     children:
@@ -162,6 +183,10 @@ permissions:
     description: "Allows you clear the chat of another player"
   essentials.clearchat.exemptall:
     description: "Allows you to bypass having your chat cleared when someone executes /cls all"
+  essentials.damage:
+    description: "Allows you to damage a player by force, either with direct damage or a percent of their max health"
+  essentials.damage.percent:
+    description: "Allows you to damage a percentage of a player's max health"
   essentials.feed:
     description: "Allows you to restore your own hunger"
   essentials.feed.others:
@@ -182,6 +207,12 @@ permissions:
     description: "Allows you to restore your own health"
   essentials.heal.others:
     description: "Allows you to restore another player's health"
+  essentials.list:
+    description: "Allows you to access /ls"
+  essentials.list.mobs:
+    description: "Allows you to access /ls mobs"
+  essentials.list.players:
+    description: "Allows you to access /ls players"
   essentials.nick:
     description: "Allows you to change and reset your own nickname"
   essentials.nick.blacklist.bypass:
@@ -194,6 +225,8 @@ permissions:
     description: "Allows you to view the nickname of a player by their username"
   essentials.ping:
     description: "Allows you to view your ping to the server"
+  essentials.remove:
+    description: "Allows you to use /remove"
   essentials.renameitem:
     description: "Allows you to rename items without an anvil"
   essentials.renameitem.bypasslimit:
@@ -214,6 +247,8 @@ permissions:
     description: "Allows you to set the time to sunrise"
   essentials.toggledownfall:
     description: "Allows you to toggle the weather"
+  essentials.uniqueid:
+    description: "Allows you to view and copy the UUIDs of players"
   essentials.weather:
     description: "Allows you to set the weather"
   essentials.whois:

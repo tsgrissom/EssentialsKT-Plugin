@@ -38,6 +38,7 @@ class EssentialsKTPlugin : JavaPlugin() {
     }
 
     private fun registerCommands() {
+        registerCommand("damage", DamageCommand())
         registerCommand("clearchat", ClearChatCommand())
         registerCommand("feed", FeedCommand())
         registerCommand("gamemode", GamemodeCommand())
