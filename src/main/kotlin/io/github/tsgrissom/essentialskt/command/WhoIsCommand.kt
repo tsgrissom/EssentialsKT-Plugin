@@ -5,8 +5,6 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
-import org.bukkit.WorldType
-import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -21,8 +19,42 @@ class WhoIsCommand : CommandBase() {
 
     private val permSelf = "essentials.whoami"
     private val permOthers = "essentials.whois"
+    private val permIp = "essentials.whois.ip"
 
-    private fun whoAmI(context: CommandContext) {
+    override fun execute(context: CommandContext) {
+        val label = context.label
+        val sender = context.sender
+
+        when (label) {
+            "whoami", "ewhoami" -> handleWhoAmI(context)
+            "whois", "ewhois" -> handleWhoIs(context)
+            else -> sender.sendColored("&4Unknown /whois subcommand (error)")
+        }
+    }
+
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        val len = args.size
+        val tab = mutableListOf<String>()
+        val options = listOf("temporary", "permanent", "help")
+
+        if (label.equalsIc("whoami")) {
+            if (len == 1)
+                StringUtil.copyPartialMatches(args[0], options, tab)
+
+            return tab
+        } else {
+            if (len == 1 && sender.hasPermission(permOthers))
+                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
+            if (len == 2)
+                StringUtil.copyPartialMatches(args[1], options, tab)
+        }
+
+        return tab.sorted().toMutableList()
+    }
+
+    private fun handleWhoAmI(context: CommandContext) {
+        val args = context.args
+        val label = args.size
         val sender = context.sender
 
         if (sender.lacksPermission(permSelf))
@@ -34,13 +66,24 @@ class WhoIsCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val p: Player = sender
+        if (args.isEmpty()) {
+            displayWhoIs(sender, sender)
+        } else {
+            val sub = args[0]
 
-        displayWhoIs(p, p)
+            when (sub.lowercase()) {
+                "temporary", "temp" -> displayTemporaryWhoIs(sender, sender)
+                "permanent", "perm" -> displayPermanentWhoIs(sender, sender)
+                "help", "h", "?", "usage" -> sender.sendColored("&4Usage: &c/$label [temporary,permanent]")
+                else -> displayWhoIs(sender, sender)
+            }
+        }
     }
 
-    private fun whoIs(context: CommandContext) {
+    private fun handleWhoIs(context: CommandContext) {
         val args = context.args
+        val label = context.label
+        val len = args.size
         val sender = context.sender
 
         if (args.isEmpty())
@@ -53,83 +96,50 @@ class WhoIsCommand : CommandBase() {
         val t = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
 
-        displayWhoIs(sender, t)
-    }
+        if (len == 1) {
+            displayWhoIs(sender, t)
+        } else {
+            val arg1 = args[1]
 
-    override fun execute(context: CommandContext) {
-        val label = context.label
-        val sender = context.sender
-
-        when (label) {
-            "whoami", "ewhoami" -> whoAmI(context)
-            "whois", "ewhois" -> whoIs(context)
-            else -> sender.sendColored("&4Unknown /whois subcommand (when hit else)")
+            when (arg1.lowercase()) {
+                "temporary", "temp" -> displayTemporaryWhoIs(sender, t)
+                "permanent", "perm" -> displayPermanentWhoIs(sender, t)
+                "help", "h", "?", "usage" -> sender.sendColored("&4Usage: &c/$label <Target> [temporary,permanent]")
+                else -> displayWhoIs(sender, t)
+            }
         }
     }
 
-    private fun displayWhoIsTemporary(sender: CommandSender, target: Player) {
-        // TODO Display temporary attributes
-    }
-
-    private fun displayWhoIsPermanent(sender: CommandSender, target: Player) {
-        // TODO Display permanent attributes
-    }
-
-    private fun displayWhoIs(sender: CommandSender, target: Player) {
-        val x = target.location.x.roundToDigits(2)
-        val y = target.location.y.roundToDigits(2)
-        val z = target.location.z.roundToDigits(2)
-
-        val worldType: WorldType? = target.world.worldType
-        var worldLine = " &8- &7World: &e${target.world.name}"
-
-        if (worldType != null)
-            worldLine += " &8+ &7World Type: &b${worldType.name.capitalizeAllCaps()}"
-
-        val isAfk = getAfkManager().isAfk(target)
-
-        var fireLine = " &8- &7On Fire: "
-
-        fireLine += if (target.fireTicks > 0)
-            "${true.palatable(withColor=true)} &8+ &7Ticks Left: &e${target.fireTicks}"
-        else
-            false.palatable(withColor=true)
-
-        val hunger = 20 - target.foodLevel
-
-        // TODO essentials.whois.ip
-
-        sender.sendColored(
-            "&6/whois for &e${target.name}",
-            " &8- &7Username: &e${target.name} &8+ &7Display Name: &r${target.displayName}",
-            " &8- &7Unique ID: &e${target.getUniqueString()}",
-            " &8- &7IP Address: &e${target.getIPString()}",
-            " &8- &7Gamemode: &b${target.gameMode.name.capitalizeAllCaps()}",
-            worldLine,
-            " &8- &7Location &cX&aY&bZ&7: &c${x} &a${y} &b${z}",
-            " &8- &7Is AFK: &e${isAfk.palatable(withColor=true)}",
-            " &8- &7Is OP: &e${target.isOp.palatable(withColor=true)}",
-            " &8- &7Health: &e${target.health} &8/ &7Max: &e${target.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value}",
-            " &8- &7Food Level: &e${target.foodLevel}&8/&e20 &8+ &7Hunger: &e$hunger",
-            " &8- &7Oxygen: &e${target.remainingAir}&8/&e300",
-            fireLine,
-            " &8- &7Flying Speed: &e${target.flySpeed} &8+ &7Walking Speed: &e${target.walkSpeed}",
-            " &8- &7Can Fly: &e${target.allowFlight.palatable(withColor=true)} &8+ &7Is Flying: &e${target.isFlying.palatable(withColor=true)}",
-            " &8- &7Is Sneaking: &e${target.isSneaking.palatable(withColor=true)} &8+ &7Is Sprinting: &e${target.isSprinting.palatable(withColor=true)}",
-            " &8- &7Level: &e${target.level} &8+ &7Exp: &e${target.exp} &8+ &7Total Exp: &e${target.totalExperience}"
+    private fun displayTemporaryWhoIs(sender: CommandSender, target: Player) {
+        sender.spigot().sendMessage(
+            *target.generateTemporaryAttributesList(
+                withHeader=true,
+                isAfk=getAfkManager().isAfk(target)
+            )
         )
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val tab = mutableListOf<String>()
+    private fun displayPermanentWhoIs(sender: CommandSender, target: Player) {
+        sender.spigot().sendMessage(
+            *target.generatePermanentAttributesList(
+                withHeader=true,
+                excludeIp=sender.lacksPermission(permIp)
+            )
+        )
+    }
 
-        if (label.equalsIc("whoami"))
-            return tab
-        else {
-            if (args.size == 1 && sender.hasPermission(permOthers))
-                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
-        }
-
-        return tab.sorted().toMutableList()
+    private fun displayWhoIs(sender: CommandSender, target: Player) {
+        sender.spigot().sendMessage(
+            *target.generatePermanentAttributesList(
+                withHeader=true,
+                excludeIp=sender.lacksPermission(permIp)
+            )
+        )
+        sender.spigot().sendMessage(
+            *target.generateTemporaryAttributesList(
+                withHeader=false,
+                isAfk=getAfkManager().isAfk(target)
+            )
+        )
     }
 }

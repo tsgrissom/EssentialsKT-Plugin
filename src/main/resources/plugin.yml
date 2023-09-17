@@ -253,6 +253,8 @@ permissions:
     description: "Allows you to set the weather"
   essentials.whois:
     description: "Allows you view a player's /whois profile"
+  essentials.whois.ip:
+    description: "Allows you to view a player's IP address in /whois"
   essentials.whoami:
     description: "Allows you to view your own /whois profile"
 
