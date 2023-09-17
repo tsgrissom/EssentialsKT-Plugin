@@ -6,7 +6,6 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import org.bukkit.event.player.PlayerChatEvent
 
 class ChatListener : Listener {
 
@@ -27,12 +26,11 @@ class ChatListener : Listener {
     }
 
     @EventHandler
-    fun onSyncChat(e: PlayerChatEvent) {
+    fun onSyncChat(e: AsyncPlayerChatEvent) {
         val p = e.player
+        val run = Runnable() { getAfkManager().removeAfk(p) }
         getAfkManager().storeMovement(p)
 
-        Bukkit.getScheduler().runTaskLater(getPlugin(), Runnable {
-            getAfkManager().removeAfk(p)
-        }, 10)
+        Bukkit.getScheduler().runTaskLater(getPlugin(), run, 10)
     }
 }

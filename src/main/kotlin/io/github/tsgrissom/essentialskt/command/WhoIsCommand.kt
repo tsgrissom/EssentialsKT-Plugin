@@ -16,13 +16,15 @@ import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
 
+    companion object {
+        const val PERM_SELF = "essentials.whoami"
+        const val PERM_OTHERS = "essentials.whois"
+        const val PERM_IP = "essentials.whois.ip"
+    }
+
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getAfkManager() = getPlugin().afkManager
-
-    private val permSelf = "essentials.whoami"
-    private val permOthers = "essentials.whois"
-    private val permIp = "essentials.whois.ip"
 
     override fun execute(context: CommandContext) {
         val label = context.label
@@ -46,7 +48,7 @@ class WhoIsCommand : CommandBase() {
 
             return tab
         } else {
-            if (len == 1 && sender.hasPermission(permOthers))
+            if (len == 1 && sender.hasPermission(PERM_OTHERS))
                 StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
             if (len == 2)
                 StringUtil.copyPartialMatches(args[1], options, tab)
@@ -60,8 +62,8 @@ class WhoIsCommand : CommandBase() {
         val label = args.size
         val sender = context.sender
 
-        if (sender.lacksPermission(permSelf))
-            return context.sendNoPermission(sender, permSelf)
+        if (sender.lacksPermission(PERM_SELF))
+            return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console Usage: &c/whois <Target>")
@@ -92,8 +94,8 @@ class WhoIsCommand : CommandBase() {
         if (args.isEmpty())
             return sender.sendColored("&4Usage: &c/whois <Target>")
 
-        if (sender.lacksPermission(permOthers))
-            return context.sendNoPermission(sender, permOthers)
+        if (sender.lacksPermission(PERM_OTHERS))
+            return context.sendNoPermission(sender, PERM_OTHERS)
 
         val sub = args[0]
         val t = Bukkit.getPlayer(sub)
@@ -128,7 +130,7 @@ class WhoIsCommand : CommandBase() {
         sender.spigot().sendMessage(
             *essP.generatePermanentAttributesList(
                 withHeader=true,
-                excludeIp=sender.lacksPermission(permIp)
+                excludeIp=sender.lacksPermission(PERM_IP)
             )
         )
     }
@@ -138,7 +140,7 @@ class WhoIsCommand : CommandBase() {
         sender.spigot().sendMessage(
             *essP.generatePermanentAttributesList(
                 withHeader=true,
-                excludeIp=sender.lacksPermission(permIp)
+                excludeIp=sender.lacksPermission(PERM_IP)
             )
         )
         sender.spigot().sendMessage(

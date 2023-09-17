@@ -14,20 +14,8 @@ import org.bukkit.util.StringUtil
 
 class RealNameCommand : CommandBase() {
 
-    private val perm = "essentials.realname"
-
-    private fun getOnlineDisplayNames() : MutableList<String> =
-        Bukkit.getOnlinePlayers().map { it.displayName }.toMutableList()
-
-    private fun getPlayerByDisplayName(s: String) : Player? {
-        val players = Bukkit.getOnlinePlayers()
-
-        for (p in players) {
-            if (p.displayName.stripColor() == s.translateAndStripColorCodes())
-                return p
-        }
-
-        return null
+    companion object {
+        const val PERM = "essentials.realname"
     }
 
     override fun execute(context: CommandContext) {
@@ -35,8 +23,8 @@ class RealNameCommand : CommandBase() {
         val label = context.label
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
             return sender.sendColored("&4Usage: &c/$label <Target>")
@@ -53,10 +41,10 @@ class RealNameCommand : CommandBase() {
         command: Command,
         label: String,
         args: Array<out String>
-    ): MutableList<String> {
+    ) : MutableList<String> {
         val tab = mutableListOf<String>()
 
-        if (sender.hasPermission(perm)) {
+        if (sender.hasPermission(PERM)) {
             val nicknames = getOnlineDisplayNames()
             val len = args.size
 
@@ -66,5 +54,19 @@ class RealNameCommand : CommandBase() {
         }
 
         return tab.sorted().toMutableList()
+    }
+
+    private fun getOnlineDisplayNames() : MutableList<String> =
+        Bukkit.getOnlinePlayers().map { it.displayName }.toMutableList()
+
+    private fun getPlayerByDisplayName(s: String) : Player? {
+        val players = Bukkit.getOnlinePlayers()
+
+        for (p in players) {
+            if (p.displayName.stripColor() == s.translateAndStripColorCodes())
+                return p
+        }
+
+        return null
     }
 }

@@ -15,8 +15,10 @@ import org.bukkit.inventory.ItemStack
 
 class RenameItemCommand : CommandBase() {
 
-    private val perm = "essentials.renameitem"
-    private val permBypassLengthLimit = "essentials.renameitem.bypasslimit"
+    companion object {
+        const val PERM = "essentials.renameitem"
+        const val PERM_BYPASS_LENGTH_LIMIT = "essentials.renameitem.bypasslimit"
+    }
 
     override fun execute(context: CommandContext) {
         val label = context.label
@@ -27,8 +29,8 @@ class RenameItemCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         val arguments = context.getExecutedString(withLabel=false).trim()
 
@@ -37,7 +39,7 @@ class RenameItemCommand : CommandBase() {
 
         val stripped = arguments.translateAndStripColorCodes()
 
-        if (stripped.length > 32 && sender.lacksPermission(permBypassLengthLimit))
+        if (stripped.length > 32 && sender.lacksPermission(PERM_BYPASS_LENGTH_LIMIT))
             return sender.sendColored("&4Item display names must be less than or equal to &c32 characters&4, excluding color codes")
 
         val p: Player = sender

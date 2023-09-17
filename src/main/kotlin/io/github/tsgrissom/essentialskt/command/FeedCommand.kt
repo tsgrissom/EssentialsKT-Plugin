@@ -13,8 +13,10 @@ import org.bukkit.util.StringUtil
 
 class FeedCommand : CommandBase() {
 
-    private val permSelf = "essentials.feed"
-    private val permOthers = "essentials.feed.others"
+    companion object {
+        const val PERM_SELF = "essentials.feed"
+        const val PERM_OTHERS = "essentials.feed.others"
+    }
 
     private fun handleEmptyArgs(context: CommandContext) {
         val label = context.label
@@ -25,8 +27,8 @@ class FeedCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        if (sender.lacksPermission(permSelf))
-            return context.sendNoPermission(sender, permSelf)
+        if (sender.lacksPermission(PERM_SELF))
+            return context.sendNoPermission(sender, PERM_SELF)
 
         feed(sender, sender)
     }
@@ -39,10 +41,10 @@ class FeedCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        if (target == sender && sender.lacksPermission(permSelf))
-            return context.sendNoPermission(sender, permSelf)
-        if (target != sender && sender.lacksPermission(permOthers))
-            return context.sendNoPermission(sender, permOthers)
+        if (target == sender && sender.lacksPermission(PERM_SELF))
+            return context.sendNoPermission(sender, PERM_SELF)
+        if (target != sender && sender.lacksPermission(PERM_OTHERS))
+            return context.sendNoPermission(sender, PERM_OTHERS)
 
         feed(sender, target)
     }
@@ -66,12 +68,18 @@ class FeedCommand : CommandBase() {
         target.sendColored("&6Your hunger was sated")
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> {
+
         val tab = mutableListOf<String>()
         val len = args.size
 
         if (len > 0) {
-            if (len == 1 && sender.hasPermission(permOthers))
+            if (len == 1 && sender.hasPermission(PERM_OTHERS))
                 StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
         }
 

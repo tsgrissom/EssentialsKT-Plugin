@@ -15,8 +15,10 @@ import org.bukkit.util.StringUtil
 
 class HealCommand : CommandBase() {
 
-    private val permSelf = "essentials.heal"
-    private val permOthers = "essentials.heal.others"
+    companion object {
+        const val PERM_SELF = "essentials.heal"
+        const val PERM_OTHERS = "essentials.heal.others"
+    }
 
     private fun shouldRestoreFoodLevel() : Boolean {
         val plugin = EssentialsKTPlugin.instance ?: return true
@@ -36,8 +38,8 @@ class HealCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        if (sender.lacksPermission(permSelf))
-            return context.sendNoPermission(sender, permSelf)
+        if (sender.lacksPermission(PERM_SELF))
+            return context.sendNoPermission(sender, PERM_SELF)
 
         restoreHealth(sender, sender)
         // TODO Heal sender
@@ -51,10 +53,10 @@ class HealCommand : CommandBase() {
         val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendColored("&4Could not find player &c$sub")
 
-        if (target == sender && sender.lacksPermission(permSelf))
-            return context.sendNoPermission(sender, permSelf)
-        if (target != sender && sender.lacksPermission(permOthers))
-            return context.sendNoPermission(sender, permOthers)
+        if (target == sender && sender.lacksPermission(PERM_SELF))
+            return context.sendNoPermission(sender, PERM_SELF)
+        if (target != sender && sender.lacksPermission(PERM_OTHERS))
+            return context.sendNoPermission(sender, PERM_OTHERS)
 
         restoreHealth(sender, target)
     }
@@ -87,7 +89,7 @@ class HealCommand : CommandBase() {
         val len = args.size
 
         if (len > 0) {
-            if (len == 1 && sender.hasPermission(permOthers))
+            if (len == 1 && sender.hasPermission(PERM_OTHERS))
                 StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
         }
 

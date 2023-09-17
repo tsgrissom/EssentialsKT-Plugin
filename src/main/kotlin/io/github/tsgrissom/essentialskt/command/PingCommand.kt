@@ -8,13 +8,16 @@ import org.bukkit.command.CommandSender
 
 class PingCommand : CommandBase() {
 
+    companion object {
+        const val PERM = "essentials.ping"
+    }
+
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val label = context.label
-        val perm = "essentials.ping"
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         val resp = when (label) {
             "pong", "epong" -> "Ping!"

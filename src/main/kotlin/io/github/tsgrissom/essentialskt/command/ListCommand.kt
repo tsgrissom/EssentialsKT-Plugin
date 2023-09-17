@@ -17,9 +17,11 @@ import org.bukkit.util.StringUtil
 
 class ListCommand : CommandBase() {
 
-    private var permBase = "essentials.list"
-    private var permPlayers = "essentials.list.players"
-    private var permMobs = "essentials.list.mobs"
+    companion object {
+        const val PERM = "essentials.list"
+        const val PERM_PLAYERS = "essentials.list.players"
+        const val PERM_MOBS = "essentials.list.mobs"
+    }
 
     private fun getAvailableLists() : Array<String> =
         arrayOf(
@@ -33,8 +35,8 @@ class ListCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(permBase))
-            return context.sendNoPermission(sender, permBase)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
             return getAvailableLists().forEach { sender.sendColored(it) }
@@ -75,8 +77,8 @@ class ListCommand : CommandBase() {
     private fun handleSubcPlayers(context: CommandContext) {
         val sender = context.sender
 
-        if (sender.lacksPermission(permPlayers))
-            return context.sendNoPermission(sender, permPlayers)
+        if (sender.lacksPermission(PERM_PLAYERS))
+            return context.sendNoPermission(sender, PERM_PLAYERS)
 
         val guiFlag = Pair("gui", "g")
         val hasGuiFlag = context.hasFlag(guiFlag)
@@ -160,8 +162,8 @@ class ListCommand : CommandBase() {
     private fun handleSubcMobs(context: CommandContext) {
         val sender = context.sender
 
-        if (sender.lacksPermission(permMobs))
-            return context.sendNoPermission(sender, permMobs)
+        if (sender.lacksPermission(PERM_MOBS))
+            return context.sendNoPermission(sender, PERM_MOBS)
 
         sender.sendMessage("TODO Display mods as text")
     }

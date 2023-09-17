@@ -15,15 +15,17 @@ import org.bukkit.util.StringUtil
 
 class DamageCommand : CommandBase() {
 
-    private val perm = "essentials.damage"
-    private val permPercentage = "essentials.damage.percent"
+    companion object {
+        const val PERM = "essentials.damage"
+        const val PERM_PERCENT = "essentials.damage.percent"
+    }
 
     private fun sendUsage(context: CommandContext) {
         val label = context.label
         val sender = context.sender
         var usage = "&4Usage: &c/$label <Target> <AmountAsDecimal"
 
-        usage += if (sender.hasPermission(permPercentage)) {
+        usage += if (sender.hasPermission(PERM_PERCENT)) {
             "OrPercentage>"
         } else {
             ">"
@@ -36,8 +38,8 @@ class DamageCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
             return sendUsage(context)
@@ -77,8 +79,8 @@ class DamageCommand : CommandBase() {
     private fun handlePercentage(context: CommandContext, target: Player, input: String) {
         val sender = context.sender
 
-        if (sender.lacksPermission(permPercentage))
-            return context.sendNoPermission(sender, permPercentage)
+        if (sender.lacksPermission(PERM_PERCENT))
+            return context.sendNoPermission(sender, PERM_PERCENT)
 
         val sansPercent = input.removeSuffix("%")
         val percent: Double
@@ -107,7 +109,8 @@ class DamageCommand : CommandBase() {
         command: Command,
         label: String,
         args: Array<out String>
-    ): MutableList<String> {
+    ) : MutableList<String> {
+
         val tab =  mutableListOf<String>()
         val len = args.size
 

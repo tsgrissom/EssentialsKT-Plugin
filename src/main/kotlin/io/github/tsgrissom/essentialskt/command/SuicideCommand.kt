@@ -11,12 +11,15 @@ import org.bukkit.entity.Player
 
 class SuicideCommand : CommandBase() {
 
+    companion object {
+        const val PERM = "essentials.suicide"
+    }
+
     override fun execute(context: CommandContext) {
         val sender = context.sender
-        val perm = "essentials.suicide"
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console cannot kill itself")

@@ -12,13 +12,15 @@ import org.bukkit.command.CommandSender
 
 class ToggleDownfallCommand : CommandBase() {
 
-    private val perm = "essentials.toggledownfall"
+    companion object {
+        const val PERM = "essentials.toggledownfall"
+    }
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         val w: World = sender.getCurrentWorldOrDefault()
         val wn = w.name

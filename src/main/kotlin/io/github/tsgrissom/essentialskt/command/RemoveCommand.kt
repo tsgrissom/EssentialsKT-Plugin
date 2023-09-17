@@ -48,7 +48,9 @@ class RemoveCommand : CommandBase() {
     private fun getEntityUtility() =
         getPlugin().entityUtility
 
-    private val perm = "essentials.remove"
+    companion object {
+        const val PERM = "essentials.remove"
+    }
 
     private fun getHelpText(label: String) : Array<String> =
         arrayOf(
@@ -108,8 +110,8 @@ class RemoveCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
             return sendHelp(context)
@@ -123,7 +125,7 @@ class RemoveCommand : CommandBase() {
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val tab = mutableListOf<String>()
 
-        if (sender.lacksPermission(perm))
+        if (sender.lacksPermission(PERM))
             return tab
 
         val suggestSub = mutableListOf<String>()

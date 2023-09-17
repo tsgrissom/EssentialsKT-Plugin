@@ -25,11 +25,13 @@ class NicknameCommand : CommandBase() {
      * - essentials.nick.format
      */
 
-    private val permBase = "essentials.nick"
-    private val permOthers = "essentials.nick.others"
-    private val permBlacklistBypass = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
-    private val permAllColors = "essentials.nick.color"
-    private val permView = "essentials.nick.view"
+    companion object {
+        const val PERM_BASE = "essentials.nick"
+        const val PERM_OTHERS = "essentials.nick.others"
+        const val PERM_BYPASS_BLACKLIST = "essentials.nick.blacklist.bypass" // TODO Implement blacklist
+        const val PERM_ALL_COLORS = "essentials.nick.color"
+        const val PERM_VIEW = "essentials.nick.view"
+    }
 
     private fun getHelpText() : Array<String> =
         arrayOf(
@@ -39,30 +41,14 @@ class NicknameCommand : CommandBase() {
             "&8&l> &e/nick of [Target] &8- &7View a player's nickname"
         )
 
-    private fun transformNickname(context: CommandContext, input: String, target: Player) : String? {
-        val sender = context.sender
-
-        if (sender.lacksPermission(permAllColors) && input.containsChatColor()) {
-            context.sendNoPermission(sender, permAllColors)
-            return null
-        }
-
-        val new = if (input.isOnlyColorCodes())
-            input + target.name
-        else
-            input
-
-        return new.translateColor()
-    }
-
     override fun execute(context: CommandContext) {
         val usage = "&4Usage: &c/nick <NewDisplayName> [Target]"
 
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(permBase))
-            return context.sendNoPermission(sender, permBase)
+        if (sender.lacksPermission(PERM_BASE))
+            return context.sendNoPermission(sender, PERM_BASE)
 
         if (args.isEmpty())
             return sender.sendColored(usage)
@@ -84,10 +70,10 @@ class NicknameCommand : CommandBase() {
 
         val tn = t.name
 
-        if (t == sender && sender.lacksPermission(permBase))
-            return context.sendNoPermission(sender, permBase)
-        if (t != sender && sender.lacksPermission(permOthers))
-            return context.sendNoPermission(sender, permOthers)
+        if (t == sender && sender.lacksPermission(PERM_BASE))
+            return context.sendNoPermission(sender, PERM_BASE)
+        if (t != sender && sender.lacksPermission(PERM_OTHERS))
+            return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (sub.equalsIc("reset", "remove")) {
             t.setDisplayName(t.name)
@@ -97,8 +83,8 @@ class NicknameCommand : CommandBase() {
                 sender.sendColored("&6You have reset &c${tn}'s &6nickname")
             return
         } else if (sub.equalsIc("view", "of")) {
-            if (sender.lacksPermission(permView))
-                return context.sendNoPermission(sender, permView)
+            if (sender.lacksPermission(PERM_VIEW))
+                return context.sendNoPermission(sender, PERM_VIEW)
 
             val dn = t.displayName
             if (dn == tn)
@@ -125,7 +111,7 @@ class NicknameCommand : CommandBase() {
         val tab = mutableListOf<String>()
         val len = args.size
 
-        if (sender.hasPermission(permBase))
+        if (sender.hasPermission(PERM_BASE))
             suggestSub.addAll(arrayOf("reset", "view", "help"))
 
         if (len > 0) {
@@ -134,11 +120,27 @@ class NicknameCommand : CommandBase() {
             if (len == 1) {
                 StringUtil.copyPartialMatches(sub, suggestSub, tab)
             } else if (len == 2) {
-                if (sender.hasPermission(permOthers))
+                if (sender.hasPermission(PERM_OTHERS))
                     StringUtil.copyPartialMatches(args[1], getOnlinePlayerNamesToMutableList(), tab)
             }
         }
 
         return tab.sorted().toMutableList()
+    }
+
+    private fun transformNickname(context: CommandContext, input: String, target: Player) : String? {
+        val sender = context.sender
+
+        if (sender.lacksPermission(PERM_ALL_COLORS) && input.containsChatColor()) {
+            context.sendNoPermission(sender, PERM_ALL_COLORS)
+            return null
+        }
+
+        val new = if (input.isOnlyColorCodes())
+            input + target.name
+        else
+            input
+
+        return new.translateColor()
     }
 }

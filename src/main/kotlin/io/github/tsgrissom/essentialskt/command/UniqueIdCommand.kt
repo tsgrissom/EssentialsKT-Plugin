@@ -19,7 +19,9 @@ import org.bukkit.util.StringUtil
 
 class UniqueIdCommand : CommandBase() {
 
-    private val perm = "essentials.uniqueid"
+    companion object {
+        const val PERM = "essentials.uniqueid"
+    }
 
     private fun createDisplayUniqueIdAsTextComponents(sender: CommandSender, t: Player) : Array<BaseComponent> {
         val name = t.name
@@ -39,10 +41,12 @@ class UniqueIdCommand : CommandBase() {
             builder
                 .append("        ")
                 .append(clickText.toTextComponent())
+                .append("\n").reset()
+        } else {
+            builder.append("\n")
         }
 
         builder
-            .append("\n")
             .append(" |---------------------------------------\n").color(ChatColor.DARK_GRAY)
             .append(" | ").color(ChatColor.DARK_GRAY)
             .append(uuid).color(ChatColor.YELLOW)
@@ -56,8 +60,8 @@ class UniqueIdCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         val t: Player = if (args.size == 1) {
             val sub = args[0]
@@ -84,7 +88,7 @@ class UniqueIdCommand : CommandBase() {
     ): MutableList<String> {
         val tab = mutableListOf<String>()
 
-        if (sender.lacksPermission(perm))
+        if (sender.lacksPermission(PERM))
             return tab
 
         val len = args.size

@@ -11,7 +11,9 @@ import org.bukkit.util.StringUtil
 
 class WeatherCommand : CommandBase() {
 
-    private val perm = "essentials.weather"
+    companion object {
+        const val PERM = "essentials.weather"
+    }
 
     private fun getHelpText(context: CommandContext) : Array<String> {
         val label = context.label
@@ -36,8 +38,8 @@ class WeatherCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
             return sendHelp(context)
@@ -59,7 +61,7 @@ class WeatherCommand : CommandBase() {
         val tab = mutableListOf<String>()
         val len = args.size
 
-        if (sender.lacksPermission(perm))
+        if (sender.lacksPermission(PERM))
             return tab
 
         if (len > 0) {

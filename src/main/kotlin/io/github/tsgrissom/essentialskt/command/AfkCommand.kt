@@ -12,16 +12,19 @@ import org.bukkit.entity.Player
 
 class AfkCommand : CommandBase() {
 
+    companion object {
+        const val PERM = "essentials.afk"
+    }
+
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getAfkManager() = getPlugin().afkManager
 
     override fun execute(context: CommandContext) {
-        val perm = "essentials.afk"
         val sender = context.sender
 
-        if (sender.lacksPermission(perm))
-            return context.sendNoPermission(sender, perm)
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
 
         if (sender is ConsoleCommandSender)
             return sender.sendColored("&4Console cannot be AFK")
