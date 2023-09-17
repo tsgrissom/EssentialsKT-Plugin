@@ -7,6 +7,11 @@ import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.misc.ClickableText
+import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -67,13 +72,37 @@ class RemoveCommand : CommandBase() {
             "itemframes", "endercrystals", "monsters",
             "animals", "ambient", "mobs"
         )
-    private fun getGroupedTypesText() : Array<String> =
-        arrayOf(
-            "&6Types: &eall&7,&etamed&7,&enamed&7,&edrops&7,&earrows&7,&eboats&7,&eminecarts&7,&exp&7,&epaintings&7,",
-            "&eitemframes&7,&eendercrystals&7,&emonsters&7,&eanimals&7,",
-            "&eambient&7,&emobs",
-            "&6Do &e/list mobs &6to display valid mob specifiers"
-        )
+    private fun getGroupedTypesAsComponents(context: CommandContext) : Array<BaseComponent> {
+        val label = context.label
+        val builder = ComponentBuilder()
+            .append("Types").color(ChatColor.GOLD)
+            .append(": ").color(ChatColor.DARK_GRAY)
+
+        for ((i, type) in getValidGroupedTypes().withIndex()) {
+            val clickText = ClickableText
+                .compose("&e$type")
+                .action(ClickEvent.Action.SUGGEST_COMMAND)
+                .value("/$label $type ")
+            builder.append(clickText.toTextComponent())
+
+            if (i != (getValidGroupedTypes().size - 1))
+                builder.append(",").color(ChatColor.GRAY)
+        }
+
+        val clickText = ClickableText
+            .compose("&e/list mobs")
+            .action(ClickEvent.Action.RUN_COMMAND)
+            .value("/list mobs")
+
+        builder
+            .append("\n")
+            .append("Do ").color(ChatColor.GOLD)
+            .append(clickText.toTextComponent())
+            .append(" to display valid mob specifiers").color(ChatColor.GOLD)
+
+
+        return builder.create()
+    }
 
     override fun execute(context: CommandContext) {
         val args = context.args
@@ -126,8 +155,9 @@ class RemoveCommand : CommandBase() {
 
         if (sub.equalsIc("help", "h", "?")) {
             return sendHelp(context)
-        } else if (sub.equalsIc("types", "groups")) {
-            return getGroupedTypesText().forEach { sender.sendColored(it) }
+        } else if (sub.equalsIc("types", "groups", "list", "ls")) {
+            val types = getGroupedTypesAsComponents(context)
+            return sender.spigot().sendMessage(*types)
         }
 
         if (sender is ConsoleCommandSender)
@@ -187,6 +217,6 @@ class RemoveCommand : CommandBase() {
 
         val radiusStr: String = if (radius < 0) "infinite" else radius.toString()
 
-        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within ${radiusStr} radius")
+        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius")
     }
 }

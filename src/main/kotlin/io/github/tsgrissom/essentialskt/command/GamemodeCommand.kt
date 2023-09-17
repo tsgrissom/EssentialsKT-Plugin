@@ -8,6 +8,7 @@ import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import io.github.tsgrissom.pluginapi.misc.ClickableText
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
@@ -84,7 +85,10 @@ class GamemodeCommand : CommandBase() {
         return available
     }
 
-    private fun getAvailableGameModesAsComponentBuilder(sender: CommandSender, negative: Boolean = true) : ComponentBuilder {
+    private fun getAvailableGameModesAsComponent(
+        sender: CommandSender,
+        negative: Boolean = true
+    ) : Array<BaseComponent> {
         val available = getAvailableGameModes(sender)
             .map { it.name.lowercase() }
             .toSet()
@@ -99,7 +103,7 @@ class GamemodeCommand : CommandBase() {
             builder
                 .append(" ")
                 .append("None").color(ChatColor.RED)
-            return builder
+            return builder.create()
         }
 
         for ((i, mode) in available.withIndex()) {
@@ -116,10 +120,10 @@ class GamemodeCommand : CommandBase() {
                 builder.append(",").color(ChatColor.DARK_GRAY)
         }
 
-        return builder
+        return builder.create()
     }
 
-    private fun getCommandUsageAsComponentBuilder(sender: CommandSender) : ComponentBuilder {
+    private fun getCommandUsageAsComponent(sender: CommandSender) : Array<BaseComponent> {
         val isConsole = sender is ConsoleCommandSender
         val available = getAvailableGameModes(sender).map { it.name.lowercase() }.toSet()
         val builder = ComponentBuilder()
@@ -147,7 +151,7 @@ class GamemodeCommand : CommandBase() {
             .append("> ").color(ChatColor.RED)
             .append(if (isConsole) "<Target>" else "[Target]")
 
-        return builder
+        return builder.create()
     }
 
     override fun execute(context: CommandContext) {
@@ -155,9 +159,15 @@ class GamemodeCommand : CommandBase() {
         val label = context.label
 
         when (label.lowercase()) {
-            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2" -> handleShorthandLabel(context)
-            "gamemode", "gm", "egamemode", "egm" -> handleExtendedLabel(context)
-            else -> sender.sendColored("&4Alternate gamemode command form detected")
+            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2" -> {
+                handleShorthandLabel(context)
+            }
+            "gamemode", "gm", "egamemode", "egm" -> {
+                handleExtendedLabel(context)
+            }
+            else -> {
+                sender.sendColored("&4Alternate gamemode command form detected")
+            }
         }
     }
 
@@ -228,10 +238,8 @@ class GamemodeCommand : CommandBase() {
         val sender = context.sender
         val args = context.args
 
-        if (args.isEmpty()) {
-            val usage = getCommandUsageAsComponentBuilder(sender)
-            return sender.spigot().sendMessage(*usage.create())
-        }
+        if (args.isEmpty())
+            return sender.spigot().sendMessage(*getCommandUsageAsComponent(sender))
 
         val sub = args[0]
 
@@ -258,15 +266,12 @@ class GamemodeCommand : CommandBase() {
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
-        if (sub.equalsIc("toggle", "t", "cycle" )) {
+        if (sub.equalsIc("toggle", "t", "cycle" ))
             return cycleGameMode(sender, target)
-        } else if (sub.equalsIc("available", "list", "ls")) {
-            val ls = getAvailableGameModesAsComponentBuilder(sender, false)
-            return sender.spigot().sendMessage(*ls.create())
-        } else if (sub.equalsIc("usage")) {
-            val usage = getCommandUsageAsComponentBuilder(sender)
-            return sender.spigot().sendMessage(*usage.create())
-        }
+        else if (sub.equalsIc("available", "list", "ls"))
+            return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, false))
+        else if (sub.equalsIc("usage"))
+            return sender.spigot().sendMessage(*getCommandUsageAsComponent(sender))
 
         val mode = when (sub.lowercase()) {
             "0", "survival", "surv", "sur", "s" -> {
@@ -290,9 +295,8 @@ class GamemodeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                val component = getAvailableGameModesAsComponentBuilder(sender, true)
                 sender.sendColored("&4Unknown gamemode &c\"$sub\"")
-                return sender.spigot().sendMessage(*component.create())
+                return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }
 

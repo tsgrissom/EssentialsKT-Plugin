@@ -25,10 +25,10 @@ class UniqueIdCommand : CommandBase() {
         val name = t.name
         val uuid = t.getUniqueString()
         val builder = ComponentBuilder()
+            .append(" ---------------------------------------\n").color(ChatColor.DARK_GRAY)
+            .append(" | ").color(ChatColor.DARK_GRAY)
             .append("UUID of ").color(ChatColor.GRAY)
             .append(name).color(ChatColor.YELLOW)
-            .append(" is ").color(ChatColor.GRAY)
-            .append(uuid).color(ChatColor.YELLOW)
 
         if (sender is Player) {
             val clickText = ClickableText
@@ -37,9 +37,17 @@ class UniqueIdCommand : CommandBase() {
                 .value(uuid)
 
             builder
-                .append("\n")
+                .append("        ")
                 .append(clickText.toTextComponent())
         }
+
+        builder
+            .append("\n")
+            .append(" |---------------------------------------\n").color(ChatColor.DARK_GRAY)
+            .append(" | ").color(ChatColor.DARK_GRAY)
+            .append(uuid).color(ChatColor.YELLOW)
+            .append("\n")
+            .append(" ---------------------------------------").color(ChatColor.DARK_GRAY)
 
         return builder.create()
     }

@@ -14,6 +14,8 @@ class ClickableText(
     private var value: String?
 ) {
 
+    private var hoverText: List<String>? = null
+
     companion object {
         fun compose(text: String) : ClickableText = ClickableText(text,"https://google.com")
     }
@@ -36,6 +38,11 @@ class ClickableText(
         return this
     }
 
+    fun hoverText(vararg text: String) : ClickableText {
+        this.hoverText = text.asList().translateColor()
+        return this
+    }
+
     fun toTextComponent() : TextComponent {
         fun getShowTextOnHoverEvent(text: String) : HoverEvent =
             HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(text.translateColor()))
@@ -43,11 +50,16 @@ class ClickableText(
         val component = TextComponent(text.translateColor())
 
         component.clickEvent = ClickEvent(action, value)
-        val hoverEvent: HoverEvent? = when (action) {
-            COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("&7Click to copy to clipboard")
-            SUGGEST_COMMAND -> getShowTextOnHoverEvent("&7Click to suggest command")
-            RUN_COMMAND -> getShowTextOnHoverEvent("&7Click to run command: &e$value")
-            else -> null
+        val hoverEvent: HoverEvent? = if (hoverText != null) {
+            HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText?.map { Text(it) })
+        } else {
+            when (action) {
+                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("&7Click to copy to clipboard")
+                SUGGEST_COMMAND -> getShowTextOnHoverEvent("&7Click to suggest command")
+                RUN_COMMAND -> getShowTextOnHoverEvent("&7Click to run command: &e$value")
+
+                else -> null
+            }
         }
 
         if (hoverEvent != null)
