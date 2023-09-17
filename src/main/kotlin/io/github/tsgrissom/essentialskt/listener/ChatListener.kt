@@ -3,7 +3,6 @@ package io.github.tsgrissom.essentialskt.listener
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import org.bukkit.Bukkit
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -32,7 +31,7 @@ class ChatListener : Listener {
         val p = e.player
         getAfkManager().storeMovement(p)
 
-        Bukkit.getScheduler().runTaskLater(getPlugin(), Runnable() {
+        Bukkit.getScheduler().runTaskLater(getPlugin(), Runnable {
             getAfkManager().removeAfk(p)
         }, 10)
     }

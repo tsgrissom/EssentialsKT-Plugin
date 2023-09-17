@@ -45,6 +45,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("heal", HealCommand())
         registerCommand("list", ListCommand())
         registerCommand("nickname", NicknameCommand())
+        registerCommand("realname", RealNameCommand())
         registerCommand("remove", RemoveCommand())
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("whois", WhoIsCommand())

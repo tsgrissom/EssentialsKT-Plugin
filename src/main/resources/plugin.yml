@@ -10,6 +10,7 @@ website: "https://github.com/tsgrissom/EssentialsKT"
 commands:
   # WIP Commands
   ntime:
+    description: "View and set world time"
   nickname:
     description: "Set your display name to a custom nickname"
     aliases: ["nick", "enickname", "enick"]
@@ -44,6 +45,9 @@ commands:
     aliases: ["eping", "epong", "pong"]
   rain:
     description: "Set a world's weather to be raining"
+  realname:
+    description: "Find a player's real username by their nickname"
+    aliases: ["erealname"]
   remove:
     description: "Remove entities from a world or within a range"
     aliases: ["killall", "eremove"]
@@ -100,6 +104,7 @@ permissions:
       essentials.list.*: true
       essentials.nick.*: true
       essentials.ping: true
+      essentials.realname: true
       essentials.remove: true
       essentials.renameitem.*: true
       essentials.suicide: true
@@ -225,6 +230,8 @@ permissions:
     description: "Allows you to view the nickname of a player by their username"
   essentials.ping:
     description: "Allows you to view your ping to the server"
+  essentials.realname:
+    description: "Allows you to view a player's username based on their display name"
   essentials.remove:
     description: "Allows you to use /remove"
   essentials.renameitem:

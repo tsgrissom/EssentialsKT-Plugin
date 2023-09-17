@@ -20,9 +20,9 @@ class AfkManager {
         getConfiguration().getLong("Features.NotifyAfkAfter", 600)
     fun shouldCameraMovementCountForAfkTracking() : Boolean =
         getConfiguration().getBoolean("Features.CameraMovementCountsForAfk", false)
-    fun getAfkMessage() : String =
+    private fun getAfkMessage() : String =
         getConfiguration().getString("Messages.Afk", "&c%pd% &6is AFK...")!!
-    fun getNotAfkMessage() : String =
+    private fun getNotAfkMessage() : String =
         getConfiguration().getString("Messages.NotAfk", "&c%pd% &6is no longer AFK")!!
 
     val lastMovementTrackingMap: MutableMap<String, Long> = mutableMapOf()

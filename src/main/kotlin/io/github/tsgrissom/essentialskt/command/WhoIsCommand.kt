@@ -1,9 +1,12 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -111,8 +114,9 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayTemporaryWhoIs(sender: CommandSender, target: Player) {
+        val essP = EssPlayer(target)
         sender.spigot().sendMessage(
-            *target.generateTemporaryAttributesList(
+            *essP.generateTemporaryAttributesList(
                 withHeader=true,
                 isAfk=getAfkManager().isAfk(target)
             )
@@ -120,8 +124,9 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayPermanentWhoIs(sender: CommandSender, target: Player) {
+        val essP = EssPlayer(target)
         sender.spigot().sendMessage(
-            *target.generatePermanentAttributesList(
+            *essP.generatePermanentAttributesList(
                 withHeader=true,
                 excludeIp=sender.lacksPermission(permIp)
             )
@@ -129,14 +134,15 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayWhoIs(sender: CommandSender, target: Player) {
+        val essP = EssPlayer(target)
         sender.spigot().sendMessage(
-            *target.generatePermanentAttributesList(
+            *essP.generatePermanentAttributesList(
                 withHeader=true,
                 excludeIp=sender.lacksPermission(permIp)
             )
         )
         sender.spigot().sendMessage(
-            *target.generateTemporaryAttributesList(
+            *essP.generateTemporaryAttributesList(
                 withHeader=false,
                 isAfk=getAfkManager().isAfk(target)
             )

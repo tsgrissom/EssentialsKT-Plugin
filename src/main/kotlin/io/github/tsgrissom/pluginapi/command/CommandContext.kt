@@ -15,9 +15,12 @@ class CommandContext(
     val args: Array<out String>
     ) {
 
-    fun noPermission() : String = "&4You do not have permission to do that"
+    companion object {
+        const val TEXT_PERMISSION = "&4You do not have permission to do that"
+    }
+
     fun sendNoPermission(sender: CommandSender, permission: String) {
-        var resp = noPermission()
+        var resp = TEXT_PERMISSION
         if (sender.hasPermission("essentials.disclosepermission")) {
             resp += " (&c$permission&4)"
         }

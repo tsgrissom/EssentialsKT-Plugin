@@ -10,7 +10,7 @@ class PlayerAfkChangeEvent(
     private val goneAfk: Boolean
 ) : Event(), Cancellable {
 
-    private var isCancelled = false;
+    private var isCancelled = false
 
     override fun getHandlers(): HandlerList {
         return HANDLERS
