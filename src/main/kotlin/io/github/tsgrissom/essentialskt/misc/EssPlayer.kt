@@ -1,7 +1,7 @@
 package io.github.tsgrissom.essentialskt.misc
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.essentialskt.command.GamemodeCommand
+import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.getIPString
 import io.github.tsgrissom.pluginapi.extension.palatable
@@ -41,13 +41,13 @@ class EssPlayer(private val uuid: UUID) {
     fun getAvailableGameModes() : Set<GameMode> {
         val set = mutableSetOf<GameMode>()
 
-        if (player.hasPermission(GamemodeCommand.PERM_ADVENTURE))
+        if (player.hasPermission(GameModeCommand.PERM_ADVENTURE))
             set.add(GameMode.ADVENTURE)
-        if (player.hasPermission(GamemodeCommand.PERM_CREATIVE))
+        if (player.hasPermission(GameModeCommand.PERM_CREATIVE))
             set.add(GameMode.CREATIVE)
-        if (player.hasPermission(GamemodeCommand.PERM_SPECTATOR))
+        if (player.hasPermission(GameModeCommand.PERM_SPECTATOR))
             set.add(GameMode.SPECTATOR)
-        if (player.hasPermission(GamemodeCommand.PERM_SURVIVAL))
+        if (player.hasPermission(GameModeCommand.PERM_SURVIVAL))
             set.add(GameMode.SURVIVAL)
 
         return set

@@ -3,7 +3,7 @@ package io.github.tsgrissom.essentialskt.gui
 import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
-import io.github.tsgrissom.essentialskt.command.GamemodeCommand
+import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.flag
 import io.github.tsgrissom.pluginapi.extension.lore
@@ -21,16 +21,16 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
         val changeLore = "&7Click to change"
         val noPermission = "&4You do not have permission"
         val adventureLore =
-            if (p.hasPermission(GamemodeCommand.PERM_ADVENTURE)) changeLore
+            if (p.hasPermission(GameModeCommand.PERM_ADVENTURE)) changeLore
             else noPermission
         val creativeLore =
-            if (p.hasPermission(GamemodeCommand.PERM_CREATIVE)) changeLore
+            if (p.hasPermission(GameModeCommand.PERM_CREATIVE)) changeLore
             else noPermission
         val survivalLore =
-            if (p.hasPermission(GamemodeCommand.PERM_SURVIVAL)) changeLore
+            if (p.hasPermission(GameModeCommand.PERM_SURVIVAL)) changeLore
             else noPermission
         val spectatorLore =
-            if (p.hasPermission(GamemodeCommand.PERM_SPECTATOR)) changeLore
+            if (p.hasPermission(GameModeCommand.PERM_SPECTATOR)) changeLore
             else noPermission
 
         val adventure = GuiItem(

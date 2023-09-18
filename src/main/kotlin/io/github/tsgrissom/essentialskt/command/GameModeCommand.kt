@@ -22,7 +22,7 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
-class GamemodeCommand : CommandBase() {
+class GameModeCommand : CommandBase() {
 
     companion object {
         const val PERM_SELF = "essentials.gamemode"

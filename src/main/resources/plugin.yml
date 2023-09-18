@@ -37,6 +37,9 @@ commands:
   heal:
     description: "Restores a player's health"
     aliases: ["eheal"]
+  ipaddress:
+    description: "View a player's IP address"
+    aliases: ["ip", "address", "eipaddress", "eip", "eaddress"]
   list:
     description: "Display various lists"
     aliases: ["ls"]
@@ -101,6 +104,7 @@ permissions:
       essentials.feed.*: true
       essentials.gamemode.*: true
       essentials.heal.*: true
+      esssentials.ipaddress: true
       essentials.list.*: true
       essentials.nick.*: true
       essentials.ping: true
@@ -212,6 +216,8 @@ permissions:
     description: "Allows you to restore your own health"
   essentials.heal.others:
     description: "Allows you to restore another player's health"
+  essentials.ipaddress:
+    description: "Allows you view a player's IP address"
   essentials.list:
     description: "Allows you to access /ls"
   essentials.list.mobs:

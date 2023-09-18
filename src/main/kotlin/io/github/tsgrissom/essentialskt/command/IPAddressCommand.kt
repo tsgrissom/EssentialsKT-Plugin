@@ -11,37 +11,31 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
-class UniqueIdCommand : CommandBase() {
+class IPAddressCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.uniqueid"
+        const val PERM = "essentials.ipaddress"
     }
 
     override fun execute(context: CommandContext) {
         val args = context.args
+        val label = context.label
         val sender = context.sender
 
         if (sender.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
 
-        val t: Player = if (args.size == 1) {
-            val sub = args[0]
-            Bukkit.getPlayer(sub)
-                ?: return sender.sendColored("&4Could not find player &c\"${sub}\"")
-        } else {
-            if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console Usage: &c/uuid <Player>")
-            if (sender !is Player)
-                return
+        if (args.isEmpty())
+            return sender.sendColored("&4Usage: &c/$label <Target>")
 
-            sender
-        }
+        val sub = args[0]
+        val t: Player = Bukkit.getPlayer(sub)
+            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
 
-        sender.sendChatComponents(generateDisplayUniqueIdAsTextComponent(t))
+        sender.sendChatComponents(generateDisplayIPAddressAsTextComponent(t))
     }
 
     override fun onTabComplete(
@@ -51,10 +45,6 @@ class UniqueIdCommand : CommandBase() {
         args: Array<out String>
     ): MutableList<String> {
         val tab = mutableListOf<String>()
-
-        if (sender.lacksPermission(PERM))
-            return tab
-
         val len = args.size
 
         if (len == 1) {
@@ -64,16 +54,15 @@ class UniqueIdCommand : CommandBase() {
         return tab.sorted().toMutableList()
     }
 
-    private fun generateDisplayUniqueIdAsTextComponent(t: Player) : Array<BaseComponent> {
-        val uuid = t.getUniqueString()
+    private fun generateDisplayIPAddressAsTextComponent(t: Player) : Array<BaseComponent> {
         val data = ClickableText
-            .compose(uuid)
+            .compose(t.getIPString())
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
-            .value(uuid)
+            .value(t.getIPString())
             .toTextComponent()
         val builder = ComponentBuilder()
             .appendc(" ---------------------------------------\n", DARK_GRAY)
-            .appendc(" | ", DARK_GRAY).appendc("UUID of ", GRAY).appendc(t.name, YELLOW).append("\n")
+            .appendc(" | ", DARK_GRAY).appendc("IP Address of ", GRAY).appendc(t.name, YELLOW).append("\n")
             .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).appendc(data, YELLOW).bold(false).append("\n").reset()
             .appendc(" ---------------------------------------", DARK_GRAY)
 
