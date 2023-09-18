@@ -34,6 +34,10 @@ class EssPlayer(private val uuid: UUID) {
     fun getNickname() : String = player.displayName
     fun isAfk() : Boolean = getPlugin().afkManager.isAfk(player)
 
+    fun sendChatComponents(arr: Array<BaseComponent>) {
+        player.spigot().sendMessage(*arr)
+    }
+
     fun getAvailableGameModes() : Set<GameMode> {
         val set = mutableSetOf<GameMode>()
 

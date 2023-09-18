@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.gui.GameModeSelectorGui
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
@@ -20,10 +21,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
-
-/*
- * TODO Per-gamemode permissions
- */
 
 class GamemodeCommand : CommandBase() {
 
@@ -53,26 +50,41 @@ class GamemodeCommand : CommandBase() {
         target.gameMode = mode
     }
 
-    private fun getNextGameMode(target: Player) : GameMode? {
+    private fun getNextGameMode(sender: CommandSender, target: Player) : GameMode? {
+        fun checkPermission(mode: GameMode) : Boolean {
+            return sender.hasPermission("essentials.gamemode.${mode.name.lowercase()}")
+        }
+
         return when (target.gameMode) {
-            ADVENTURE -> CREATIVE
-            CREATIVE -> SURVIVAL
-            SURVIVAL -> ADVENTURE
+            ADVENTURE -> {
+                if (checkPermission(CREATIVE)) CREATIVE
+                else if (checkPermission(SURVIVAL)) SURVIVAL
+                else ADVENTURE
+            }
+            CREATIVE -> {
+                if (checkPermission(SURVIVAL)) SURVIVAL
+                else if (checkPermission(ADVENTURE)) ADVENTURE
+                else CREATIVE
+            }
+            SURVIVAL -> {
+                if (checkPermission(ADVENTURE)) ADVENTURE
+                else if (checkPermission(CREATIVE)) CREATIVE
+                else SURVIVAL
+            }
             else -> null
         }
     }
 
     private fun cycleGameMode(sender: CommandSender, target: Player) {
-        val gm = getNextGameMode(target)
+        val gm = getNextGameMode(sender, target)
             ?: return sender.sendColored("&c${target.name} &4is in a gamemode which cannot be cycled")
         val mn = gm.name.capitalizeAllCaps()
         val tn = target.name
 
-        setGameMode(sender, target, gm)
+        if (gm == target.gameMode)
+            return sender.sendColored("&4You do not have permission to cycle to another gamemode")
 
-        target.sendColored("&6Your gamemode is set to &c$mn")
-        if (sender != target)
-            sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
+        Bukkit.dispatchCommand(sender, "gm $mn $tn")
     }
 
     private fun getAvailableGameModesAsComponent(
@@ -98,8 +110,9 @@ class GamemodeCommand : CommandBase() {
         }
 
         for ((i, mode) in available.withIndex()) {
+            val mn = mode.name.capitalizeAllCaps()
             val clickText = ClickableText
-                .compose("$detailColor$mode")
+                .compose("$detailColor$mn")
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
                 .value("/gm $mode ")
 
@@ -154,7 +167,7 @@ class GamemodeCommand : CommandBase() {
         val label = context.label
 
         when (label.lowercase()) {
-            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2" -> {
+            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2", "gmt", "gmtoggle" -> {
                 handleShorthandLabel(context)
             }
             "gamemode", "gm", "egamemode", "egm" -> {
@@ -195,7 +208,12 @@ class GamemodeCommand : CommandBase() {
         if (target is ConsoleCommandSender)
             return sender.sendColored("&4Console does not have a gamemode to alter")
 
-        val mode = when (label) {
+        if (label.equalsIc("gmt", "gmtoggle")) {
+            cycleGameMode(sender, target)
+            return
+        }
+
+        val mode = when (label.lowercase()) {
             "gm0", "gms" -> {
                 if (sender.lacksPermission(PERM_SURVIVAL))
                     return context.sendNoPermission(sender, PERM_SURVIVAL)
@@ -237,6 +255,16 @@ class GamemodeCommand : CommandBase() {
             return sender.spigot().sendMessage(*getCommandUsageAsComponent(sender))
 
         val sub = args[0]
+
+        if (args.size == 1 && context.hasFlag(flagGui)) {
+            if (sender is ConsoleCommandSender)
+                return sender.sendColored("&4Console cannot open GUIs")
+            if (sender !is Player)
+                return
+
+            GameModeSelectorGui(sender, sender).show(sender)
+            return
+        }
 
         val target: Player = if (args.size == 1) {
             if (sender !is Player)
@@ -307,7 +335,7 @@ class GamemodeCommand : CommandBase() {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val suggestGamemodes = mutableListOf("adventure", "creative", "survival", "spectator", "toggle")
-        val shortLabels = mutableListOf("gma", "gmc", "gms", "gmsp")
+        val shortLabels = mutableListOf("gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle")
 
         val tab = mutableListOf<String>()
         val len = args.size

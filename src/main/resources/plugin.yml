@@ -33,7 +33,7 @@ commands:
     aliases: ["efeed", "eat", "eeat", "sate"]
   gamemode:
     description: "Alter a player's gamemode"
-    aliases: ["gm", "gma", "gmc", "gms", "gmsp"]
+    aliases: ["gm", "gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle"]
   heal:
     description: "Restores a player's health"
     aliases: ["eheal"]

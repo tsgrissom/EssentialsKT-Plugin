@@ -6,6 +6,7 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -116,9 +117,9 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayTemporaryWhoIs(sender: CommandSender, target: Player) {
-        val essP = EssPlayer(target)
-        sender.spigot().sendMessage(
-            *essP.generateTemporaryAttributesList(
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generateTemporaryAttributesList(
                 withHeader=true,
                 isAfk=getAfkManager().isAfk(target)
             )
@@ -126,9 +127,9 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayPermanentWhoIs(sender: CommandSender, target: Player) {
-        val essP = EssPlayer(target)
-        sender.spigot().sendMessage(
-            *essP.generatePermanentAttributesList(
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generatePermanentAttributesList(
                 withHeader=true,
                 excludeIp=sender.lacksPermission(PERM_IP)
             )
@@ -136,15 +137,15 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun displayWhoIs(sender: CommandSender, target: Player) {
-        val essP = EssPlayer(target)
-        sender.spigot().sendMessage(
-            *essP.generatePermanentAttributesList(
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generatePermanentAttributesList(
                 withHeader=true,
                 excludeIp=sender.lacksPermission(PERM_IP)
             )
         )
-        sender.spigot().sendMessage(
-            *essP.generateTemporaryAttributesList(
+        sender.sendChatComponents(
+            essTarget.generateTemporaryAttributesList(
                 withHeader=false,
                 isAfk=getAfkManager().isAfk(target)
             )

@@ -14,4 +14,7 @@ class ConfigManager {
         getFileConfiguration().getConfigurationSection(key)
     fun getMessagesSection() : ConfigurationSection? =
         getSection("Messages")
+
+    fun isDebuggingActive() : Boolean =
+        getFileConfiguration().getBoolean("IsDebuggingActive", false)
 }

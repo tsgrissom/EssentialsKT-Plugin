@@ -14,6 +14,15 @@ class LeadingSpacedString(private val offsetCount: Int = 2, private val text: St
     }
 }
 
+class SubcommandHelp(val subSyntax: String) {
+
+    companion object {
+        fun compose(syntax: String) : SubcommandHelp {
+            return SubcommandHelp(syntax)
+        }
+    }
+}
+
 class CommandHelpGenerator(val context: CommandContext) {
 
     var label: String = String()

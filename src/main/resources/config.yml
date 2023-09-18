@@ -1,3 +1,5 @@
+IsDebuggingActive: false
+
 Commands:
   HealRestoresFoodLevel: true
 

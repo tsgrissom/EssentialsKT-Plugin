@@ -5,6 +5,7 @@ import io.github.tsgrissom.essentialskt.listener.ChatListener
 import io.github.tsgrissom.essentialskt.listener.JoinAndQuitListener
 import io.github.tsgrissom.essentialskt.listener.MovementListener
 import io.github.tsgrissom.essentialskt.manager.AfkManager
+import io.github.tsgrissom.essentialskt.manager.ConfigManager
 import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
@@ -21,6 +22,7 @@ fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
 class EssentialsKTPlugin : JavaPlugin() {
 
     lateinit var afkManager: AfkManager
+    lateinit var configManager: ConfigManager
     lateinit var entityUtility: EntityUtility
     private var checkAfkTaskId: Int = -1
 
@@ -55,6 +57,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         /* Bootstrapping */
         instance = this
         afkManager = AfkManager()
+        configManager = ConfigManager()
         entityUtility = EntityUtility()
 
         config.options().copyDefaults(true)
