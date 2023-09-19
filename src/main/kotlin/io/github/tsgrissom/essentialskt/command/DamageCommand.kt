@@ -2,10 +2,7 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.roundToDigits
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
@@ -57,8 +54,8 @@ class DamageCommand : CommandBase() {
 
         val arg1 = args[1]
 
-        if (isPercentage(arg1)) {
-            return handlePercentage(context, t, arg1)
+        if (arg1.isPercentage()) {
+            return handlePercentageInput(context, t, arg1)
         }
 
         val amount: Double
@@ -76,7 +73,7 @@ class DamageCommand : CommandBase() {
         sender.sendColored("&6Damaged &c${t.name} &6for &c${amount} hearts")
     }
 
-    private fun handlePercentage(context: CommandContext, target: Player, input: String) {
+    private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_PERCENT))
@@ -123,10 +120,5 @@ class DamageCommand : CommandBase() {
         }
 
         return tab.sorted().toMutableList()
-    }
-
-    private fun isPercentage(s: String) : Boolean {
-        val percentagePattern = """^\d+(\.\d+)?%$""".toRegex()
-        return percentagePattern.matches(s)
     }
 }

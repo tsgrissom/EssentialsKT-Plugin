@@ -34,6 +34,12 @@ class EssPlayer(private val uuid: UUID) {
     fun getNickname() : String = player.displayName
     fun isAfk() : Boolean = getPlugin().afkManager.isAfk(player)
 
+    fun getMaxHealth() : Double {
+        val attr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+            ?: return 20.0
+        return attr.value
+    }
+
     fun sendChatComponents(arr: Array<BaseComponent>) {
         player.spigot().sendMessage(*arr)
     }

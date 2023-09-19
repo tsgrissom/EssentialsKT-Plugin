@@ -51,6 +51,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("realname", RealNameCommand())
         registerCommand("remove", RemoveCommand())
         registerCommand("renameitem", RenameItemCommand())
+        registerCommand("setfoodlevel", SetFoodLevelCommand())
+        registerCommand("sethealth", SetHealthCommand())
         registerCommand("whois", WhoIsCommand())
     }
 

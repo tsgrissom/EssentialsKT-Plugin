@@ -56,6 +56,11 @@ commands:
     aliases: ["killall", "eremove"]
   renameitem:
     description: "Rename items without an anvil"
+  setfoodlevel:
+    description: "Set a player's food level"
+    aliases: ["sethunger"]
+  sethealth:
+    description: "Set a player's health"
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
@@ -104,13 +109,15 @@ permissions:
       essentials.feed.*: true
       essentials.gamemode.*: true
       essentials.heal.*: true
-      esssentials.ipaddress: true
+      essentials.ipaddress: true
       essentials.list.*: true
       essentials.nick.*: true
       essentials.ping: true
       essentials.realname: true
       essentials.remove: true
       essentials.renameitem.*: true
+      essentials.setfoodlevel: true
+      essentials.sethealth.*: true
       essentials.suicide: true
       essentials.time.quick.*: true
       essentials.toggledownfall: true
@@ -172,6 +179,12 @@ permissions:
     children:
       essentials.renameitem: true
       essentials.renameitem.bypasslimit: true
+  essentials.sethealth.*:
+    description: "Grants access to all /sethealth permissions"
+    children:
+      essentials.sethealth: true
+      essentials.sethealth.max: true
+      essentials.sethealth.percent: true
   essentials.time.quick.*:
     description: "Grants all quick time setting permissions"
     children:
@@ -244,6 +257,14 @@ permissions:
     description: "Allows you to rename items without an anvil"
   essentials.renameitem.bypasslimit:
     description: "Allows you to exceed the character limit of renaming items"
+  essentials.setfoodlevel:
+    description: "Allows you to set a player's food level"
+  essentials.sethealth:
+    description: "Allows you to set a player's health"
+  essentials.sethealth.max:
+    description: "Allows you to set a player's max health"
+  essentials.sethealth.percent:
+    description: "Allows you to set a player's health to a percent of their max health"
   essentials.suicide:
     description: "Allows you to forcibly end your player's life"
   essentials.time.quick.day:

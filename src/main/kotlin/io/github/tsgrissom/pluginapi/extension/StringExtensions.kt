@@ -63,6 +63,11 @@ fun String.isDoubleQuoted() : Boolean =
 fun String.isQuoted() : Boolean =
     (this.isSingleQuoted() || this.isDoubleQuoted())
 
+fun String.isPercentage() : Boolean {
+    val percentagePattern = """^\d+(\.\d+)?%$""".toRegex()
+    return percentagePattern.matches(this)
+}
+
 /* String Mutations */
 
 /**
