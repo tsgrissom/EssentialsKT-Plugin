@@ -4,10 +4,7 @@ import io.github.tsgrissom.essentialskt.gui.GameModeSelectorGui
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.misc.ClickableText
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
@@ -25,7 +22,7 @@ import org.bukkit.util.StringUtil
 class GameModeCommand : CommandBase() {
 
     companion object {
-        const val PERM_SELF = "essentials.gamemode"
+        const val PERM_BASE = "essentials.gamemode"
         const val PERM_OTHERS = "essentials.gamemode.others"
         const val PERM_DEFENSIVE = "essentials.gamemode.noalter"
         const val PERM_ADVENTURE = "essentials.gamemode.adventure"
@@ -111,10 +108,16 @@ class GameModeCommand : CommandBase() {
 
         for ((i, mode) in available.withIndex()) {
             val mn = mode.name.capitalizeAllCaps()
+            val ml = mode.name.lowercase()
+            var value = "/gm $ml"
+
+            if (sender.hasPermission(PERM_OTHERS))
+                value += " "
+
             val clickText = ClickableText
                 .compose("$detailColor$mn")
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
-                .value("/gm $mode ")
+                .value(value)
 
             builder
                 .append(" ")
@@ -199,8 +202,8 @@ class GameModeCommand : CommandBase() {
             p
         }
 
-        if (target == sender && sender.lacksPermission(PERM_SELF))
-            return context.sendNoPermission(sender, PERM_SELF)
+        if (target == sender && sender.lacksPermission(PERM_BASE))
+            return context.sendNoPermission(sender, PERM_BASE)
 
         if (target != sender && sender.lacksPermission(PERM_OTHERS))
             return context.sendNoPermission(sender, PERM_OTHERS)
@@ -234,7 +237,10 @@ class GameModeCommand : CommandBase() {
                     return context.sendNoPermission(sender, PERM_SPECTATOR)
                 SPECTATOR
             }
-            else -> return sender.sendColored("&4Options: &cadventure, creative, survival, spectator")
+            else -> {
+                val available = getAvailableGameModesAsComponent(sender, true)
+                return sender.sendChatComponents(available)
+            }
         }
 
         setGameMode(sender, target, mode)
@@ -281,8 +287,8 @@ class GameModeCommand : CommandBase() {
             p
         }
 
-        if (target == sender && sender.lacksPermission(PERM_SELF))
-            return context.sendNoPermission(sender, PERM_SELF)
+        if (target == sender && sender.lacksPermission(PERM_BASE))
+            return context.sendNoPermission(sender, PERM_BASE)
         if (target != sender && sender.lacksPermission(PERM_OTHERS))
             return context.sendNoPermission(sender, PERM_OTHERS)
 
@@ -333,28 +339,52 @@ class GameModeCommand : CommandBase() {
             sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val suggestGamemodes = mutableListOf("adventure", "creative", "survival", "spectator", "toggle")
-        val shortLabels = mutableListOf("gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle")
-
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> {
         val tab = mutableListOf<String>()
         val len = args.size
 
-        if (len > 0) {
-            val sub = args[0]
+        if (sender.lacksPermission(PERM_BASE) && sender.lacksPermission(PERM_OTHERS))
+            return tab
 
-            if (len == 1) {
-                if (shortLabels.contains(label.lowercase())) {
-                    if (sender.hasPermission(PERM_OTHERS))
-                        StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
-                } else {
-                    StringUtil.copyPartialMatches(sub, suggestGamemodes, tab)
-                }
-            } else if (len == 2) {
-                if (sub.equalsIc(suggestGamemodes)) {
-                    if (sender.hasPermission(PERM_OTHERS))
-                        StringUtil.copyPartialMatches(args[1], getOnlinePlayerNamesToMutableList(), tab)
-                }
+        val validModeSpecifiers = listOf(
+            "toggle", "0", "survival", "surv", "sur", "s", "1",
+            "creative", "create", "creat", "crtv", "crt", "c",
+            "2", "adventure", "adv", "a",
+            "spectator", "spect", "spec", "sp"
+        )
+        val validShorthandLabels = listOf(
+            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms",
+            "egmsp", "gm0", "gm1", "gm2", "gmt", "gmtoggle"
+        )
+        val validExtendedLabels = listOf(
+            "gamemode", "gm", "egamemode", "egm"
+        )
+        val allGamemodes = listOf("adventure", "creative", "survival", "spectator")
+        val suggestFlags = mutableListOf("--gui")
+        val suggestModes = mutableListOf("toggle")
+        val permittedModes = allGamemodes.filter { sender.hasPermission("essentials.gamemode.$it") }
+        suggestModes.addAll(permittedModes)
+
+        if (len == 0)
+            return tab
+
+        val arg0 = args[0]
+
+        if (len == 1) {
+            if (label.equalsIc(validShorthandLabels) && sender.hasPermission(PERM_OTHERS)) {
+                StringUtil.copyPartialMatches(arg0, getOnlinePlayerNamesToMutableList(), tab)
+            } else if (label.equalsIc(validExtendedLabels)) {
+                StringUtil.copyPartialMatches(arg0, suggestFlags, tab)
+                StringUtil.copyPartialMatches(arg0, suggestModes, tab)
+            }
+        } else if (len == 2) {
+            if (label.equalsIc(validExtendedLabels) && arg0.equalsIc(validModeSpecifiers) && sender.hasPermission(PERM_OTHERS)) {
+                StringUtil.copyPartialMatches(args[1], getOnlinePlayerNamesToMutableList(), tab)
             }
         }
 

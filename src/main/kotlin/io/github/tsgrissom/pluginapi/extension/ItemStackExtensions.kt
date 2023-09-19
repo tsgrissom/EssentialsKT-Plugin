@@ -3,12 +3,27 @@ package io.github.tsgrissom.pluginapi.extension
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.material.MaterialData
+import org.bukkit.profile.PlayerProfile
 import java.util.*
 import java.util.function.Consumer
+
+fun ItemStack.playerHeadOf(player: Player) : ItemStack =
+    this.playerHeadOf(player.playerProfile)
+fun ItemStack.playerHeadOf(profile: PlayerProfile) : ItemStack {
+    if (this.type != Material.PLAYER_HEAD && this.type != Material.PLAYER_WALL_HEAD)
+        error("Cannot set skullOwner for non player head material \"${this.type}\"")
+
+    val meta = this.itemMeta as SkullMeta
+    meta.ownerProfile = profile
+    this.itemMeta = meta
+    return this
+}
 
 fun ItemStack.amount(amount: Int): ItemStack {
     setAmount(amount)
