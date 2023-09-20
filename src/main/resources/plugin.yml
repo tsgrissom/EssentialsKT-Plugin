@@ -9,8 +9,6 @@ website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
   # WIP Commands
-  ntime:
-    description: "View and set world time"
   nickname:
     description: "Set your display name to a custom nickname"
     aliases: ["nick", "enickname", "enick"]
@@ -64,6 +62,9 @@ commands:
   suicide:
     description: "Kills your player by force"
     aliases: ["esuicide", "seppuku", "selfdestruct"]
+  time:
+    description: "View and set world time"
+    aliases: ["etime"]
   toggledownfall:
     description: "Toggles weather in the current world"
     aliases: ["tdf"]
@@ -119,7 +120,7 @@ permissions:
       essentials.setfoodlevel: true
       essentials.sethealth.*: true
       essentials.suicide: true
-      essentials.time.quick.*: true
+      essentials.time.*: true
       essentials.toggledownfall: true
       essentials.uniqueid: true
       essentials.weather: true
@@ -185,6 +186,13 @@ permissions:
       essentials.sethealth: true
       essentials.sethealth.max: true
       essentials.sethealth.percent: true
+  essentials.time.*:
+    description: "Grants all /time permissions, including quick-time permissions"
+    children:
+      essentials.time: true
+      essentials.time.set: true
+      essentials.time.world.all: true
+      essentials.time.quick.*: true
   essentials.time.quick.*:
     description: "Grants all quick time setting permissions"
     children:
@@ -267,6 +275,12 @@ permissions:
     description: "Allows you to set a player's health to a percent of their max health"
   essentials.suicide:
     description: "Allows you to forcibly end your player's life"
+  essentials.time:
+    description: "Allows you to view the in-game time"
+  essentials.time.set:
+    description: "Allows you to add and set the in-game time"
+  essentials.time.world.all:
+    description: "Allows you to set the time in all worlds"
   essentials.time.quick.day:
     description: "Allows you to set the time to day"
   essentials.time.quick.midnight:

@@ -46,6 +46,9 @@ open class QuickTimeCommand(
                 ?: return sender.sendColored("&4Could not find world &c\"$sub\"")
         }
 
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+
         val setMessage = getTimeSetMessage(world, timeName)
 
         world.time = time

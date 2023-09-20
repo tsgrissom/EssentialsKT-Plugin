@@ -1,6 +1,5 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
@@ -9,11 +8,18 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.util.StringUtil
+
+fun CommandSender.hasPermissionSetWorldTime(world: World) : Boolean =
+    this.hasPermission(TimeCommand.PERM_ALL_WORLDS) || this.hasPermission("essentials.time.world.${world.name}")
 
 class TimeCommand : CommandBase() {
+
+    // TODO Build new usage + unknown command help with chat component API
 
     companion object {
         const val PERM_BASE = "essentials.time"
@@ -27,14 +33,6 @@ class TimeCommand : CommandBase() {
         const val TIME_MIDNIGHT: Long = 18000
         const val TIME_SUNRISE: Long = 23000
     }
-
-    private fun getPlugin() = EssentialsKTPlugin.instance ?: error("plugin instance is null")
-
-    /*
-     * /time add <long>
-     * /time query <day|daytime|gametime>
-     * /time set <long|preset>
-     */
 
     private fun getHelpAsComponent(context: CommandContext) : Array<BaseComponent> {
         val label = context.label
@@ -94,6 +92,22 @@ class TimeCommand : CommandBase() {
         return help.getHelpAsComponent()
     }
 
+    override fun execute(context: CommandContext) {
+        val args = context.args
+        val sender = context.sender
+
+        if (args.isEmpty())
+            return handleEmptyArgs(context)
+
+        when (val sub = args[0]) {
+            "help", "?", "h" -> sender.sendChatComponents(getHelpAsComponent(context))
+            "add" -> handleAddSubcommand(context)
+            "query" -> handleQuerySubcommand(context)
+            "set" -> handleSetSubcommand(context)
+            else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4, do &c/time ? &4for help")
+        }
+    }
+
     private fun displayWorldTime(sender: CommandSender) {
         var world = Bukkit.getWorlds()[0]
 
@@ -131,7 +145,7 @@ class TimeCommand : CommandBase() {
         try {
             addend = arg1.toLong()
         } catch (ignored: NumberFormatException) {
-            return sender.sendColored("&c\"$arg1\" &4should be an integer in game ticks (20 per second)")
+            return sender.sendColored("&c\"$arg1\" &4should be an integer as game ticks or a preset")
         }
 
         var world = sender.getCurrentWorldOrDefault()
@@ -142,12 +156,15 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"${arg2}\"")
         }
 
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+
         val currentTime = world.time
 
         world.time = currentTime + addend
 
         val newTime = world.time
-        val percent = (newTime/24000.0) * 100
+        val percent = (newTime / 24000.0) * 100
 
         sender.sendColored("&8&l> &c${addend} ticks &6added to world &c${world.name}'s &6time")
         sender.sendColored("&8&l> &6New time is &c${newTime} ticks&6, or &c${percent.roundToDigits(2)}% &6 of the day")
@@ -155,6 +172,7 @@ class TimeCommand : CommandBase() {
 
     private fun handleQuerySubcommand(context: CommandContext) {
         // TODO Time query subcommand
+        // /time query <day|daytime|gametime>
     }
 
     private fun handleSetSubcommand(context: CommandContext) {
@@ -162,16 +180,17 @@ class TimeCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
 
+        if (sender.lacksPermission(PERM_SET))
+            return context.sendNoPermission(sender, PERM_SET)
+
         if (args.size == 1)
             return sender.sendColored(usage)
 
         val arg1 = args[1]
 
-        /*
-         * day, midnight, night, noon
-         */
-
-        // TODO
+        if (arg1.equalsIc("day", "noon", "sunset", "dusk", "night", "midnight", "sunrise", "dawn")) {
+            return handleSetToPresetSubcommand(context)
+        }
 
         val newTicks = arg1.toLongOrNull()
             ?: return sender.sendColored("&c\"$arg1\" &4should be an integer in game ticks (20 per second)")
@@ -187,33 +206,81 @@ class TimeCommand : CommandBase() {
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendColored("&4Unknown world &c\"${arg2}\"")
+                ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
         }
+
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val oldTime = world.time
         world.time = newTicks
 
-        sender.sendColored("&8&l> &6World &c${world.name}'s &6time went from &c$oldTime&8->&c$newTicks")
+        sender.sendColored("&6World &c${world.name}'s &6time went from &c$oldTime&8->&c$newTicks")
     }
 
-    override fun execute(context: CommandContext) {
+    private fun handleSetToPresetSubcommand(context: CommandContext) {
         val args = context.args
         val sender = context.sender
+        val arg1 = args[1]
 
-        if (args.isEmpty())
-            return handleEmptyArgs(context)
-
-        when (val sub = args[0]) {
-            "help", "?", "h" -> sender.sendChatComponents(getHelpAsComponent(context))
-            "add" -> handleAddSubcommand(context)
-            "query" -> handleQuerySubcommand(context)
-            "set" -> handleSetSubcommand(context)
-            else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4, do &c/time ? &4for help")
+        val newTicks = when (arg1.lowercase()) {
+            "day" -> TIME_DAY
+            "noon" -> TIME_NOON
+            "sunset", "dusk" -> TIME_SUNSET
+            "night" -> TIME_NIGHT
+            "midnight" -> TIME_MIDNIGHT
+            "sunrise", "dawn" -> TIME_SUNRISE
+            else -> error("Unhandled time preset \"$arg1\" reached function")
         }
+
+        var world = sender.getCurrentWorldOrDefault()
+
+        if (args.size > 2) {
+            val arg2 = args[2]
+            world = Bukkit.getWorld(arg2)
+                ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
+        }
+
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+
+        val oldTime = world.time
+        world.time = newTicks
+
+        sender.sendColored("&6World &c${world.name}'s &6time went from &c$oldTime&8->&c$newTicks")
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /time tab completion
-        return mutableListOf()
+        val tab = mutableListOf<String>()
+
+        if (sender.lacksPermission(PERM_BASE) && sender.lacksPermission(PERM_SET))
+            return tab
+
+        val suggestSub = if (sender.hasPermission(PERM_BASE)) mutableListOf("query") else mutableListOf()
+        val queryLabels = listOf("query")
+        val setLabels = listOf("set")
+        val suggestQueryArg1 = listOf("day", "daytime", "gametime")
+        val suggestSetArg1 = listOf("day", "noon", "sunset", "night", "midnight", "sunrise")
+
+        if (sender.hasPermission(PERM_SET))
+            suggestSub.addAll(listOf("add", "set"))
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                StringUtil.copyPartialMatches(sub, suggestSub, tab)
+            } else if (len == 2) {
+                if (sub.equalsIc(queryLabels)) {
+                    StringUtil.copyPartialMatches(args[1], suggestQueryArg1, tab)
+                } else if (sub.equalsIc(setLabels)) {
+                    StringUtil.copyPartialMatches(args[1], suggestSetArg1, tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 }
