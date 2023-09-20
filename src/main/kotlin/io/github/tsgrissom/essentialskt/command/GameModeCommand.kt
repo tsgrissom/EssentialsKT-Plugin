@@ -121,6 +121,7 @@ class GameModeCommand : CommandBase() {
     private fun getHelp(context: CommandContext) : Array<BaseComponent> {
         val sender = context.sender
         val descVerbiage = if (sender.hasPermission(PERM_OTHERS)) "a player's" else "your"
+        val suggestionPostfix = if (sender.hasPermission(PERM_OTHERS)) " " else ""
         val subcSurvival = SubcommandHelp
             .compose("survival")
             .withAliases("0", "surv", "sur", "s")
@@ -128,6 +129,7 @@ class GameModeCommand : CommandBase() {
                 "&7Set $descVerbiage gamemode to &bSurvival"
             )
             .withPermission(PERM_SURVIVAL)
+            .withSuggestion("/gm survival${suggestionPostfix}")
         val subcCreative = SubcommandHelp
             .compose("creative")
             .withAliases("1", "create", "creat", "crtv", "crt", "c")
@@ -135,6 +137,7 @@ class GameModeCommand : CommandBase() {
                 "&7Set $descVerbiage gamemode to &bCreative"
             )
             .withPermission(PERM_CREATIVE)
+            .withSuggestion("/gm creative${suggestionPostfix}")
         val subcAdventure = SubcommandHelp
             .compose("adventure")
             .withAliases("2", "adv", "a")
@@ -142,6 +145,7 @@ class GameModeCommand : CommandBase() {
                 "&7Set $descVerbiage gamemode to &bAdventure"
             )
             .withPermission(PERM_ADVENTURE)
+            .withSuggestion("/gm adventure${suggestionPostfix}")
         val subcSpectator = SubcommandHelp
             .compose("spectator")
             .withAliases("spect", "spec", "sp")
@@ -149,6 +153,7 @@ class GameModeCommand : CommandBase() {
                 "&7Set $descVerbiage gamemode to &bSpectator"
             )
             .withPermission(PERM_SPECTATOR)
+            .withSuggestion("/gm spectator${suggestionPostfix}")
 
         if (sender.hasPermission(PERM_OTHERS)) {
             val targetingRequired = context.sender !is Player
@@ -156,7 +161,6 @@ class GameModeCommand : CommandBase() {
                 .compose("Target")
                 .required(targetingRequired)
                 .hoverText(
-                    "&7Required&8: ${targetingRequired.palatable(withColor=true)}",
                     "&7If provided, will apply the specified",
                     " &7gamemode to the targeted player"
                 )

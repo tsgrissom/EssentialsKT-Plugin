@@ -88,7 +88,7 @@ class CommandHelpGenerator(val context: CommandContext) {
 
         text.addExtra(prefix)
         text.addExtra("/$label ")
-        text.addExtra(TextComponent(*nameAsComponent))
+        text.addExtra(nameAsComponent)
         text.addExtra(if (sub.name.isNotEmpty()) " " else "")
 
         for (arg in sub.arguments) {

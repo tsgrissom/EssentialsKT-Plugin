@@ -1,5 +1,6 @@
 package io.github.tsgrissom.pluginapi.extension
 
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 fun Player.getIPString() : String {
@@ -8,3 +9,6 @@ fun Player.getIPString() : String {
 }
 
 fun Player.getUniqueString() = this.uniqueId.toString()
+
+fun Player.playSound(sound: Sound) =
+    this.playSound(this.location, sound, 1F, 1F)

@@ -53,6 +53,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("setfoodlevel", SetFoodLevelCommand())
         registerCommand("sethealth", SetHealthCommand())
+        registerCommand("uniqueid", UniqueIdCommand())
         registerCommand("whois", WhoIsCommand())
     }
 
@@ -70,7 +71,6 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         /* WIP Commands */
         getCommand("ntime")?.setExecutor(TimeCommand())
-        getCommand("uniqueid")?.setExecutor(UniqueIdCommand())
 
         /* Command Setup (General; A->Z) */
         getCommand("afk")?.setExecutor(AfkCommand())

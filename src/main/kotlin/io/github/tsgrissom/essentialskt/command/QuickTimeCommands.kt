@@ -10,17 +10,17 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
 class DayCommand
-    : QuickTimeCommand("essentials.time.quick.day", 1000, "Day")
+    : QuickTimeCommand("essentials.time.quick.day", TimeCommand.TIME_DAY, "Day")
 class NoonCommand
-    : QuickTimeCommand("essentials.time.quick.noon", 6000, "Noon")
+    : QuickTimeCommand("essentials.time.quick.noon", TimeCommand.TIME_NOON, "Noon")
 class SunsetCommand
-    : QuickTimeCommand("essentials.time.quick.sunset", 12000, "Dusk")
+    : QuickTimeCommand("essentials.time.quick.sunset", TimeCommand.TIME_SUNSET, "Dusk")
 class NightCommand
-    : QuickTimeCommand("essentials.time.quick.night", 15000, "Night")
+    : QuickTimeCommand("essentials.time.quick.night", TimeCommand.TIME_NIGHT, "Night")
 class MidnightCommand
-    : QuickTimeCommand("essentials.time.quick.midnight", 18000, "Midnight")
+    : QuickTimeCommand("essentials.time.quick.midnight", TimeCommand.TIME_MIDNIGHT, "Midnight")
 class SunriseCommand
-    : QuickTimeCommand("essentials.time.quick.sunrise", 23000, "Dawn")
+    : QuickTimeCommand("essentials.time.quick.sunrise", TimeCommand.TIME_SUNRISE, "Dawn")
 
 private fun getTimeSetMessage(w: World, tn: String) =
     "&6You set world &c${w.name}'s &6time to &c$tn"

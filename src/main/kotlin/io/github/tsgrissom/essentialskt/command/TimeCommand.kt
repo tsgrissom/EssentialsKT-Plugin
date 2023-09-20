@@ -3,9 +3,11 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
-import io.github.tsgrissom.pluginapi.extension.roundToDigits
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
+import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
+import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -13,7 +15,18 @@ import org.bukkit.entity.Player
 
 class TimeCommand : CommandBase() {
 
-    // TODO Permissions
+    companion object {
+        const val PERM_BASE = "essentials.time"
+        const val PERM_SET = "essentials.time.set"
+        const val PERM_ALL_WORLDS = "essentials.time.world.all"
+
+        const val TIME_DAY: Long = 1000
+        const val TIME_NOON: Long = 6000
+        const val TIME_SUNSET: Long = 12000
+        const val TIME_NIGHT: Long = 15000
+        const val TIME_MIDNIGHT: Long = 18000
+        const val TIME_SUNRISE: Long = 23000
+    }
 
     private fun getPlugin() = EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
@@ -23,14 +36,63 @@ class TimeCommand : CommandBase() {
      * /time set <long|preset>
      */
 
-    private fun getHelpText() : Array<String> =
-        arrayOf(
-            "&6&l> &7/time add <&e#&7>",
-            "&6&l> &7/time query &eday",
-            "&6&l> &7/time query &edaytime",
-            "&6&l> &7/time query &egametime",
-            "&6&l> &7/time set <&e#&7|&epreset&7>"
-        )
+    private fun getHelpAsComponent(context: CommandContext) : Array<BaseComponent> {
+        val label = context.label
+        val help = CommandHelpGenerator(context)
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("add")
+                    .withArgument(
+                        SubcommandArgumentHelp
+                            .compose("#")
+                            .required(true)
+                            .hoverText(
+                                "&7How many ticks to add to the world's time",
+                                "&7Ticks &8= &7AmountOfFullSeconds &8* &720"
+                            )
+                    )
+                    .withDescription("Add ticks to a world's current time")
+                    .withSuggestion("/$label add ")
+            )
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("query day")
+                    .withSuggestion("/$label query day")
+            )
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("query daytime")
+                    .withSuggestion("/$label query daytime")
+            )
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("query gametime")
+                    .withSuggestion("/$label query gametime")
+            )
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("set")
+                    .withArgument(
+                        SubcommandArgumentHelp
+                            .compose("&e# &8or &epreset".translateColor())
+                            .required(true)
+                            .hoverText(
+                                "&eOne of the following:",
+                                "&f1. &7How many ticks to set the world's time to",
+                                " &8- &7Ticks &8= &ex &8times &720",
+                                " &8- &7Where &ex &7is the desired amount of full seconds",
+                                "&f2. &7A preset like &eday&7, &enight&7, &emidnight&7, etc."
+                            )
+                    )
+                    .withDescription(
+                        "Set a world's current time to an amount",
+                        "of ticks or an available preset"
+                    )
+                    .withSuggestion("/$label set ")
+            )
+
+        return help.getHelpAsComponent()
+    }
 
     private fun displayWorldTime(sender: CommandSender) {
         var world = Bukkit.getWorlds()[0]
@@ -104,13 +166,15 @@ class TimeCommand : CommandBase() {
             return sender.sendColored(usage)
 
         val arg1 = args[1]
-        val newTicks: Long
 
-        try {
-            newTicks = arg1.toLong()
-        } catch (ignored: NumberFormatException) {
-            return sender.sendColored("&c\"$arg1\" &4should be an integer in game ticks (20 per second)")
-        }
+        /*
+         * day, midnight, night, noon
+         */
+
+        // TODO
+
+        val newTicks = arg1.toLongOrNull()
+            ?: return sender.sendColored("&c\"$arg1\" &4should be an integer in game ticks (20 per second)")
 
         if (newTicks < 0)
             return sender.sendColored("&4New time cannot be negative ticks. Specify a positive value of at least 0.")
@@ -140,7 +204,7 @@ class TimeCommand : CommandBase() {
             return handleEmptyArgs(context)
 
         when (val sub = args[0]) {
-            "help", "?", "h" -> getHelpText().forEach { sender.sendColored(it) }
+            "help", "?", "h" -> sender.sendChatComponents(getHelpAsComponent(context))
             "add" -> handleAddSubcommand(context)
             "query" -> handleQuerySubcommand(context)
             "set" -> handleSetSubcommand(context)
