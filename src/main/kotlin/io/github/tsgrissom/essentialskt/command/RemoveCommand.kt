@@ -1,12 +1,11 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.pluginapi.command.CommandBase
-import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import io.github.tsgrissom.pluginapi.command.*
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
+import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
+import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.misc.ClickableText
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
@@ -52,6 +51,47 @@ class RemoveCommand : CommandBase() {
         const val PERM = "essentials.remove"
     }
 
+    private fun getTestHelp(context: CommandContext) : Array<BaseComponent> {
+        return CommandHelpGenerator(context)
+            .withAliases("killall", "eremove")
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("")
+                    .withArgument(
+                        SubcommandArgumentHelp
+                            .compose("Type")
+                            .required(true)
+                            .hoverText(
+                                "&7Type&8: &cRequired",
+                                "&7Type provided can either be a valid entity type",
+                                " &7or a preset entity group"
+                            )
+                    )
+                    .withArgument(
+                        SubcommandArgumentHelp
+                            .compose("Radius OR World")
+                            .required(false)
+                            .hoverText(
+                                "&7Type&8: &aOptional",
+                                "&7One of either&8:",
+                                "&8 - &7An integer or decimal radius within which",
+                                "   &7to clear entities",
+                                "&8 - &7A world name to clear the entities in"
+                            )
+                    )
+                    .withDescription(
+                        "Kill entities of a specified type. By default all",
+                        "that match in the world, otherwise within a set",
+                        "radius or another world"
+                    )
+            )
+            .withSubcommand(
+                SubcommandHelp
+                    .compose("types")
+                    .withDescription("List valid special grouped types")
+            )
+            .getHelpAsComponent()
+    }
     private fun getHelpText(label: String) : Array<String> =
         arrayOf(
             "   &6Command Help &8-> &e/${label}",
@@ -160,6 +200,9 @@ class RemoveCommand : CommandBase() {
         } else if (sub.equalsIc("types", "groups", "list", "ls")) {
             val types = getGroupedTypesAsComponents(context)
             return sender.spigot().sendMessage(*types)
+        } else if (sub.equalsIc("test")) {
+            val help = getTestHelp(context)
+            return sender.sendChatComponents(help)
         }
 
         if (sender is ConsoleCommandSender)
