@@ -2,6 +2,7 @@ package io.github.tsgrissom.pluginapi.extension
 
 import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
@@ -13,7 +14,7 @@ import org.bukkit.profile.PlayerProfile
 import java.util.*
 import java.util.function.Consumer
 
-fun ItemStack.playerHeadOf(player: Player) : ItemStack =
+fun ItemStack.playerHeadOf(player: OfflinePlayer) : ItemStack =
     this.playerHeadOf(player.playerProfile)
 fun ItemStack.playerHeadOf(profile: PlayerProfile) : ItemStack {
     if (this.type != Material.PLAYER_HEAD && this.type != Material.PLAYER_WALL_HEAD)

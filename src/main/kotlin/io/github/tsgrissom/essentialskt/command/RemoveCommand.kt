@@ -122,24 +122,26 @@ class RemoveCommand : CommandBase() {
 
         for ((i, type) in getValidGroupedTypes().withIndex()) {
             val clickText = ClickableText
-                .compose("&e$type")
+                .compose(type)
+                .color(ChatColor.YELLOW)
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
                 .value("/$label $type ")
-            builder.append(clickText.toTextComponent())
+            builder.append(clickText.toComponent())
 
             if (i != (getValidGroupedTypes().size - 1))
                 builder.append(",").color(ChatColor.GRAY)
         }
 
-        val clickText = ClickableText
-            .compose("&e/list mobs")
+        val click = ClickableText
+            .compose("/list mobs")
+            .color(ChatColor.YELLOW)
             .action(ClickEvent.Action.RUN_COMMAND)
             .value("/list mobs")
 
         builder
             .append("\n")
             .append("Do ").color(ChatColor.GOLD)
-            .append(clickText.toTextComponent())
+            .append(click.toComponent())
             .append(" to display valid mob specifiers").color(ChatColor.GOLD)
 
 

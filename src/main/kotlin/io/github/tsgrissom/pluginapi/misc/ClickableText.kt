@@ -1,11 +1,13 @@
 package io.github.tsgrissom.pluginapi.misc
 
 import io.github.tsgrissom.pluginapi.extension.translateColor
+import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.*
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class ClickableText(
@@ -14,61 +16,149 @@ class ClickableText(
     private var value: String?
 ) {
 
-    private var hoverText: List<String>? = null
+    private var prependColor: ChatColor? = null
+    private val hoverText = mutableListOf<String>()
 
     companion object {
-        fun compose(text: String) : ClickableText = ClickableText(text,"https://google.com")
+
+        /**
+         * Begin creating a ClickableText via this static method.
+         * @return A new ClickableText instance for the provided text.
+         */
+        fun compose(text: String) : ClickableText =
+            ClickableText(text,"https://apple.com")
     }
 
     constructor(text: String, value: String) : this(text, COPY_TO_CLIPBOARD, value)
     constructor(text: String) : this(text, COPY_TO_CLIPBOARD, null)
 
+    /**
+     * Chainable. Sets the `ClickEvent.Action` which will be invoked when the user clicks on this TextComponent
+     * in their chat box.
+     * @param a The Action to invoke when the user clicks on the TextComponent.
+     * @return The instance of ClickableText for further building.
+     */
     fun action(a: ClickEvent.Action) : ClickableText {
         this.action = a
         return this
     }
 
-    fun text(t: String) : ClickableText {
-        this.text = t
+    /**
+     * Chainable. Sets a ChatColor to prepend to the text value when the TextComponent is displayed to the user.
+     * @param c The Bungee ChatColor to prepend to the text when the TextComponent is created
+     * @return The instance of ClickableText for further building.
+     */
+    fun color(c: ChatColor) : ClickableText {
+        this.prependColor = c
         return this
     }
 
-    fun value(t: String) : ClickableText {
-        this.value = t
+    /**
+     * Chainable. Sets a String to the text value of the object to be displayed when the TextComponent is served to the
+     * user. Use `ClickableText#color` to prepend a color for the TextComponent.
+     * @param s The String to serve to the Player when the TextComponent is displayed.
+     * @return The instance of ClickableText for further building
+     */
+    fun text(s: String) : ClickableText {
+        this.text = s
         return this
     }
 
-    fun hoverText(vararg text: String) : ClickableText {
-        this.hoverText = text.asList().translateColor()
+    /**
+     * Chainable. Sets a String to the data value of the object which will be acted on by the `ClickEvent.Action` when
+     * the user clicks on the TextComponent. Can be a URL to be copied, a command to be executed, etc.
+     * @param s The String data value to attach to the action of the TextComponent.
+     * @return The instance of ClickableText for further building.
+     */
+    fun value(s: String) : ClickableText {
+        this.value = s
         return this
     }
 
-    fun toTextComponent() : TextComponent {
+    /**
+     * Chainable. Adds hover text which, if present, overrides the default hover text which is derived from the type of
+     * action attached to the ClickableText.
+     * @param l The String values to add to the hover text to be displayed on the TextComponent. Supports `&` color.
+     * @return The instance of ClickableText for further building.
+     */
+    fun hoverText(l: List<String>) : ClickableText {
+        this.hoverText.addAll(l.translateColor())
+        return this
+    }
+
+    /**
+     * Chainable. Adds hover text which, if present, overrides the default hover text which is derived from the type of
+     * action attached to the ClickableText.
+     * @param s The String values to add to the hover text to be displayed on the TextComponent. Supports `&` color.
+     * @return The instance of ClickableText for further building.
+     */
+    fun hoverText(vararg s: String) : ClickableText {
+        this.hoverText.addAll(s.map { it.translateColor() })
+        return this
+    }
+
+    /**
+     * Chainable. Clears the existing hover text and adds the new text, effectively setting the contents of what is an
+     * immutable non-null type. If custom hover text is present, it overrides the default hover text which is
+     * derived from the type of action attached to the ClickableText.
+     * @param l The new String values to appear when hovering over the TextComponent. Supports `&` color.
+     * @return The instance of ClickableText for further building.
+     */
+    fun setHoverText(l: List<String>) : ClickableText {
+        this.hoverText.clear()
+        this.hoverText.addAll(l.translateColor())
+        return this
+    }
+
+    /**
+     * Chainable. Clears the existing hover text. An empty hover text list will be overridden by the default hover text,
+     * derived from the action type of the ClickableText.
+     * @return The instance of ClickableText for further building.
+     */
+    fun resetHoverText() : ClickableText {
+        this.hoverText.clear()
+        return this
+    }
+
+    /**
+     * Builds the completed ClickableText into a TextComponent. This TextComponent can be safely inserted into another
+     * TextComponent, a ComponentBuilder, or sent by itself.
+     * @return The constructed TextComponent.
+     */
+    fun toComponent() : TextComponent {
         fun getShowTextOnHoverEvent(text: String) : HoverEvent =
             HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(text.translateColor()))
 
-        val component = TextComponent(text.translateColor())
-
-        component.clickEvent = ClickEvent(action, value)
-        val hoverEvent: HoverEvent? = if (hoverText != null) {
-            HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText?.map { Text(it) })
+        val text = TextComponent(text)
+        val hoverEvent: HoverEvent? = if (hoverText.isNotEmpty()) {
+            HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText.map { Text(it) })
         } else {
             when (action) {
-                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("&7Click to copy to clipboard")
-                SUGGEST_COMMAND -> getShowTextOnHoverEvent("&7Click to suggest command")
+                CHANGE_PAGE -> getShowTextOnHoverEvent("&7Click to change page")
+                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("&7Click to copy to clipboard: &e$value")
+                OPEN_FILE -> getShowTextOnHoverEvent("&7Click to open file")
+                OPEN_URL -> getShowTextOnHoverEvent("&7Click to open URL: &e$value")
+                SUGGEST_COMMAND -> getShowTextOnHoverEvent("&7Click to suggest command: &e$value")
                 RUN_COMMAND -> getShowTextOnHoverEvent("&7Click to run command: &e$value")
 
                 else -> null
             }
         }
 
+        text.clickEvent = ClickEvent(action, value)
+        if (prependColor != null)
+            text.color = prependColor
         if (hoverEvent != null)
-            component.hoverEvent = hoverEvent
+            text.hoverEvent = hoverEvent
 
-        return component
+        return text
     }
 
-    fun send(to: Player) {
-        to.spigot().sendMessage(toTextComponent())
+    /**
+     * Invokes `ClickableText#toComponent()` and sends the constructed TextComponent to the supplied CommandSender.
+     * @param to Who to send the constructed TextComponent to.
+     */
+    fun send(to: CommandSender) {
+        to.spigot().sendMessage(toComponent())
     }
 }

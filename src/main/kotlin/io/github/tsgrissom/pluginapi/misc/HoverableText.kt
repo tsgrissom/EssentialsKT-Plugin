@@ -1,6 +1,7 @@
 package io.github.tsgrissom.pluginapi.misc
 
 import io.github.tsgrissom.pluginapi.extension.translateColor
+import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
@@ -8,63 +9,146 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
-class HoverableText(
-    private var autoscroll: Boolean,
-    private var text: String,
-    private var hoverText: MutableList<String>
-) {
+class HoverableText(private var text: String) {
+
+    private var autoscroll: Boolean = true
+    private var prependColor: ChatColor? = null
+    private var hoverText: MutableList<String> = mutableListOf()
+
+    /**
+     * Whether newline characters will be automatically appended between lines
+     * of the hover text.
+     */
+    fun shouldAutoscroll() = this.autoscroll
+
+    /**
+     * Whether a color will be applied to the TextComponent.
+     */
+    fun hasPrependColor() = this.prependColor != null
+
+    /**
+     * Whether the hover text field (a List) is empty.
+     */
+    fun hasHoverText() = this.hoverText.isNotEmpty()
 
     companion object {
-        fun compose(initialText: String) : HoverableText = HoverableText(initialText)
+
+        /**
+         * Begin creating a HoverableText via this static method.
+         * @return A new HoverableText instance for the provided text.
+         */
+        fun compose(text: String) : HoverableText = HoverableText(text)
     }
 
-    fun shouldAutoscroll() = this.autoscroll
+    /**
+     * Chainable. Sets whether to append newline characters between each line of the hover
+     * text so that each separate String is automatically on a new line. Default true.
+     * @param b Whether to append newline characters between each line of the hover text.
+     * @return The instance of HoverableText for further building.
+     */
     fun autoscroll(b: Boolean) : HoverableText {
         this.autoscroll = b
         return this
     }
 
-    constructor(text: String) : this(false, text, mutableListOf())
-    constructor(text: String, vararg initialHoverText: String) : this(false, text, initialHoverText.toMutableList())
-
-    fun text(t: String) : HoverableText {
-        this.text = t
+    /**
+     * Chainable. Sets a ChatColor to prepend to the text value when the TextComponent is
+     * displayed to the user.
+     * @param c The Bungee ChatColor to prepend to the text when the TextComponent is created.
+     * @return The instance of HoverableText for further building.
+     */
+    fun color(c: ChatColor) : HoverableText {
+        this.prependColor = c
         return this
     }
 
-    fun hoverText(t: List<String>) : HoverableText {
-        this.hoverText = t.toMutableList()
+    /**
+     * Chainable. Sets a String to the text value of the object to be displayed when the
+     * TextComponent is served to the user. Use `HoverableText#color` to set the
+     * TextComponent's color property.
+     * @param s The String to serve to the Player when the TextComponent is displayed.
+     * @return The instance of HoverableText for further building.
+     */
+    fun text(s: String) : HoverableText {
+        this.text = s
         return this
     }
 
-    fun hoverText(vararg t: String) : HoverableText {
-        this.hoverText = t.toMutableList()
+    /**
+     * Chainable. Adds hover text to be displayed when the user hovers over the TextComponent
+     * in their chat box.
+     * @param l The String values to add to the hover text to be displayed on the TextComponent.
+     * @return The instance of HoverableText for further building.
+     */
+    fun hoverText(l: List<String>) : HoverableText {
+        this.hoverText.addAll(l.map { it.translateColor() })
         return this
     }
 
-    fun addHoverText(t: String) : HoverableText {
-        this.hoverText.add(t)
+    /**
+     * Chainable. Adds hover text to be displayed when the user hovers over the TextComponent
+     * in their chat box.
+     * @param s The String values to add to the hover text to be displayed on the TextComponent.
+     * @return The instance of HoverableText for further building.
+     */
+    fun hoverText(vararg s: String) : HoverableText {
+        this.hoverText.addAll(s.map { it.translateColor() })
         return this
     }
 
-    fun toTextComponent() : TextComponent {
-        val component = TextComponent(text.translateColor())
-        val e = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${hoverText[0].translateColor()}\n"))
+    /**
+     * Chainable. Clears the existing hover text and adds the new text.
+     * @param l The new String values to appear when hovering over the TextComponent.
+     * @return The instance of HoverableText for further building.
+     */
+    fun setHoverText(l: List<String>) : HoverableText {
+        this.hoverText.clear()
+        this.hoverText.addAll(l.translateColor())
+        return this
+    }
 
-        if (hoverText.size > 1) {
-            val subL = hoverText.subList(1, hoverText.size)
-            for (t in subL) {
-                var new = t.translateColor()
-                if (autoscroll)
-                    new += "\n"
-                e.addContent(Text(new))
+    /**
+     * Chainable. Clears the existing hover text.
+     * @return The instance of HoverableText for further building.
+     */
+    fun resetHoverText() : HoverableText {
+        this.hoverText.clear()
+        return this
+    }
+
+    /**
+     * Builds the completed HoverableText into a TextComponent. This TextComponent can be
+     * safely inserted into another TextComponent, a ComponentBuilder, or sent by itself.
+     * @return The constructed TextComponent.
+     */
+    fun toComponent() : TextComponent {
+        val comp = TextComponent(text)
+
+        if (prependColor != null)
+            comp.color = prependColor
+
+        if (hoverText.isNotEmpty()) {
+            var onHover = ""
+
+            for ((i, s) in hoverText.withIndex()) {
+                onHover += s.translateColor()
+
+                if (autoscroll && i != (hoverText.size - 1))
+                    onHover += "\n"
             }
+
+            val e = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(onHover))
+            comp.hoverEvent = e
         }
 
-        component.hoverEvent = e
-        return component
+        return comp
     }
 
+    /**
+     * Invokes `HoverableText#toComponent()` and sends the constructed TextComponent
+     * to the supplied CommandSender.
+     * @param to Who to send the constructed TextComponent to.
+     */
     fun send(to: CommandSender) {
         if (to is ConsoleCommandSender)
             return sendUnfolded(to)
@@ -75,7 +159,7 @@ class HoverableText(
     }
 
     private fun sendHoverText(to: Player) {
-        to.spigot().sendMessage(this.toTextComponent())
+        to.spigot().sendMessage(this.toComponent())
     }
 
     private fun getUnfolded() : List<String> {

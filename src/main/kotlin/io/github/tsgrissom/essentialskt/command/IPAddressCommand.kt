@@ -57,13 +57,14 @@ class IPAddressCommand : CommandBase() {
     private fun generateDisplayIPAddressAsTextComponent(t: Player) : Array<BaseComponent> {
         val data = ClickableText
             .compose(t.getIPString())
+            .color(YELLOW)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
             .value(t.getIPString())
-            .toTextComponent()
+            .toComponent()
         val builder = ComponentBuilder()
             .appendc(" ---------------------------------------\n", DARK_GRAY)
             .appendc(" | ", DARK_GRAY).appendc("IP Address of ", GRAY).appendc(t.name, YELLOW).append("\n")
-            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).appendc(data, YELLOW).bold(false).append("\n").reset()
+            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
             .appendc(" ---------------------------------------", DARK_GRAY)
 
         return builder.create()

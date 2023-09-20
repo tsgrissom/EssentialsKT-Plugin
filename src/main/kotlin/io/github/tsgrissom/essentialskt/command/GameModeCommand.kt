@@ -121,7 +121,7 @@ class GameModeCommand : CommandBase() {
 
             builder
                 .append(" ")
-                .append(clickText.toTextComponent())
+                .append(clickText.toComponent())
 
             if (i != (available.size - 1))
                 builder.append(",").color(ChatColor.DARK_GRAY)
@@ -145,11 +145,12 @@ class GameModeCommand : CommandBase() {
             for ((i, mode) in availableNames.withIndex()) {
                 val clickText = ClickableText
                     .compose(mode)
+                    .color(ChatColor.RED)
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
                     .value("/gm $mode ")
 
                 builder
-                    .append(clickText.toTextComponent()).color(ChatColor.RED)
+                    .append(clickText.toComponent())
 
                 if (i != (available.size - 1))
                     builder.append("/").color(ChatColor.DARK_GRAY)

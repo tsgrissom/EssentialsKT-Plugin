@@ -133,14 +133,15 @@ class ListCommand : CommandBase() {
             val z = loc.z.roundToDigits(1)
             builder.append(
                 HoverableText
-                    .compose("&e${p.name}")
+                    .compose(p.name)
+                    .color(ChatColor.YELLOW)
                     .hoverText(
-                        "&8&l> &7Nickname&8: &r${p.displayName}\n",
-                        "&8&l> &7UUID&8: &e${p.getUniqueString()}\n",
-                        "&8&l> &7Current World&8: &e${p.world.name}\n",
+                        "&8&l> &7Nickname&8: &r${p.displayName}",
+                        "&8&l> &7UUID&8: &e${p.getUniqueString()}",
+                        "&8&l> &7Current World&8: &e${p.world.name}",
                         "&8&l> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
                     )
-                    .toTextComponent()
+                    .toComponent()
             )
             if (index != (onlinePlayers.size - 1))
                 builder.append(" ")

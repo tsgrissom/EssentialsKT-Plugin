@@ -68,13 +68,14 @@ class UniqueIdCommand : CommandBase() {
         val uuid = t.getUniqueString()
         val data = ClickableText
             .compose(uuid)
+            .color(YELLOW)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
             .value(uuid)
-            .toTextComponent()
+            .toComponent()
         val builder = ComponentBuilder()
             .appendc(" ---------------------------------------\n", DARK_GRAY)
             .appendc(" | ", DARK_GRAY).appendc("UUID of ", GRAY).appendc(t.name, YELLOW).append("\n")
-            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).appendc(data, YELLOW).bold(false).append("\n").reset()
+            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
             .appendc(" ---------------------------------------", DARK_GRAY)
 
         return builder.create()
