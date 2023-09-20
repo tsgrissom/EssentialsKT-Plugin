@@ -12,6 +12,14 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.bukkit.permissions.Permission
+
+private fun CommandSender.hasPermission(permission: Permission?): Boolean {
+    return if (permission == null)
+        true
+    else
+        !this.hasPermission(permission)
+}
 
 class CommandHelpGenerator(val context: CommandContext) {
 
@@ -38,9 +46,7 @@ class CommandHelpGenerator(val context: CommandContext) {
     }
 
     private fun getTitleAsComponent() : TextComponent {
-
-
-        val comp = TextComponent("    ")
+        val comp = TextComponent("   ")
         val titleComponent = TextComponent("Command Help")
         val punctuationComponent = TextComponent(": ")
         val labelComponent = TextComponent("/$label")
@@ -106,25 +112,19 @@ class CommandHelpGenerator(val context: CommandContext) {
             }
         }
 
-        // TODO Description
-
         return text
     }
 
     private fun getAllPermittedSubcommandsAsComponent() : Array<BaseComponent> {
         val comp = ComponentBuilder()
+        val permittedSubcommands = subcommands
+            .filter { sender.hasPermission(it.permission) }
+            .toList()
 
-        // TODO Permission check
-
-        for ((i, sub) in subcommands.withIndex()) {
-            if (sub.permission != null) {
-                if (sender.lacksPermission(sub.permission!!))
-                    continue
-            }
-
+        for ((i, sub) in permittedSubcommands.withIndex()) {
             comp.append(getSubcommandAsComponent(sub))
 
-            if (i != (subcommands.size - 1))
+            if (i != (permittedSubcommands.size - 1))
                 comp.append("\n")
         }
 

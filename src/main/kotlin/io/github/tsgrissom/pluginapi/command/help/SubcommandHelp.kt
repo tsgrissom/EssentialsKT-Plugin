@@ -35,6 +35,16 @@ class SubcommandHelp(val name: String) {
         return this
     }
 
+    fun withPermission(s: String) : SubcommandHelp {
+        permission = Permission(s)
+        return this
+    }
+
+    fun withPermission(p: Permission) : SubcommandHelp {
+        permission = p
+        return this
+    }
+
     fun getNameAsComponent() : Array<BaseComponent> {
         val comp = ComponentBuilder(name)
 
