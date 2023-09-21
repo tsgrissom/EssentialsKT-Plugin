@@ -32,16 +32,12 @@ class EssPlayer(private val uuid: UUID) {
     fun getUniqueString() : String = uuid.toString()
     fun getIPString() : String = player.getIPString()
     fun getNickname() : String = player.displayName
-    fun isAfk() : Boolean = getPlugin().afkManager.isAfk(player)
+    fun isAfk() : Boolean = true // TODO Replace with Essentials AFK check
 
     fun getMaxHealth() : Double {
         val attr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
             ?: return 20.0
         return attr.value
-    }
-
-    fun sendChatComponents(arr: Array<BaseComponent>) {
-        player.spigot().sendMessage(*arr)
     }
 
     fun getAvailableGameModes() : Set<GameMode> {

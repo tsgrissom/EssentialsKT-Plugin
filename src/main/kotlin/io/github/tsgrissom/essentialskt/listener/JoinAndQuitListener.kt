@@ -12,7 +12,6 @@ class JoinAndQuitListener : Listener {
 
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getAFKManager() = getPlugin().afkManager
     private fun getConfiguration() : FileConfiguration = getPlugin().config
 
     private fun getJoinMessage() = getConfiguration().getString("Messages.JoinEvent", "&a&l+ &e%pd% &6has joined the server")!!
@@ -26,8 +25,6 @@ class JoinAndQuitListener : Listener {
             .translateColor()
             .replace("%pd%", p.displayName)
             .replace("%pn%", p.name)
-
-        getAFKManager().storeMovement(p)
     }
 
     @EventHandler
@@ -38,7 +35,5 @@ class JoinAndQuitListener : Listener {
             .translateColor()
             .replace("%pd%", p.displayName)
             .replace("%pn%", p.name)
-
-        getAFKManager().lastMovementTrackingMap.remove(p.uniqueId.toString())
     }
 }

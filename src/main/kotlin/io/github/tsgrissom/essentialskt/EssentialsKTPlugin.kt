@@ -3,15 +3,10 @@ package io.github.tsgrissom.essentialskt
 import io.github.tsgrissom.essentialskt.command.*
 import io.github.tsgrissom.essentialskt.listener.ChatListener
 import io.github.tsgrissom.essentialskt.listener.JoinAndQuitListener
-import io.github.tsgrissom.essentialskt.listener.MovementListener
-import io.github.tsgrissom.essentialskt.manager.AfkManager
 import io.github.tsgrissom.essentialskt.manager.ConfigManager
-import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
-import org.bukkit.Bukkit
 import org.bukkit.Bukkit.getPluginManager
-import org.bukkit.Bukkit.getScheduler
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -29,10 +24,8 @@ private fun EssentialsKTPlugin.registerListeners(vararg listeners: Listener) {
 
 class EssentialsKTPlugin : JavaPlugin() {
 
-    lateinit var afkManager: AfkManager
     lateinit var configManager: ConfigManager
     lateinit var entityUtility: EntityUtility
-    private var checkAfkTaskId: Int = -1
 
     /* Static Instance */
     companion object {
@@ -40,16 +33,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         private set
     }
 
-    private fun scheduleCheckAfkTask() {
-        val checkAfkInterval = afkManager.getCheckAfkInterval()
-        val checkAfkTask = CheckAfkRunnable()
-            .runTaskTimer(this, 0, checkAfkInterval)
-        checkAfkTaskId = checkAfkTask.taskId
-    }
-
     private fun registerCommands() {
         /* Register General Commands (A->Z) */
-        registerCommand("afk", AfkCommand())
         registerCommand("damage", DamageCommand())
         registerCommand("clearchat", ClearChatCommand())
         registerCommand("clearweather", ClearWeatherCommand())
@@ -84,7 +69,6 @@ class EssentialsKTPlugin : JavaPlugin() {
     override fun onEnable() {
         /* Bootstrapping */
         instance = this
-        afkManager = AfkManager()
         configManager = ConfigManager()
         entityUtility = EntityUtility()
 
@@ -94,14 +78,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         this.registerCommands()
         this.registerListeners(
             ChatListener(),
-            MovementListener(),
             JoinAndQuitListener()
         )
-
-        scheduleCheckAfkTask()
-    }
-
-    override fun onDisable() {
-        getScheduler().cancelTask(checkAfkTaskId)
     }
 }

@@ -14,9 +14,6 @@ commands:
     aliases: ["nick", "enickname", "enick"]
 
   # General (A-Z)
-  afk:
-    description: "Toggle your AFK status"
-    aliases: ["eafk", "away", "eaway"]
   clearchat:
     description: "Clear the visible chat messages of various players on the server"
     aliases: ["clearc", "cc", "cls"]
@@ -103,7 +100,6 @@ permissions:
   essentials.command.*:
     description: "Grants all command-related permissions for the plugin"
     children:
-      essentials.afk: true
       essentials.clearchat.*: true
       essentials.damage: true
       essentials.damage.percent: true
@@ -203,8 +199,6 @@ permissions:
       essentials.time.quick.sunset: true
       essentials.time.quick.sunrise: true
   # New Command Permissions
-  essentials.afk:
-    description: "Allows you to toggle your AFK status"
   essentials.clearchat:
     description: "Allows you to clear your own chat"
   essentials.clearchat.all:

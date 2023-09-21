@@ -12,7 +12,6 @@ class ChatListener : Listener {
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfiguration() = getPlugin().config
-    private fun getAfkManager() = getPlugin().afkManager
 
     @EventHandler
     fun onAsyncChat(e: AsyncPlayerChatEvent) {
@@ -23,14 +22,5 @@ class ChatListener : Listener {
             .translateColor()
             .replace("%pd%", p.displayName)
             .replace("%message%", e.message)
-    }
-
-    @EventHandler
-    fun onSyncChat(e: AsyncPlayerChatEvent) {
-        val p = e.player
-        val run = Runnable() { getAfkManager().removeAfk(p) }
-        getAfkManager().storeMovement(p)
-
-        Bukkit.getScheduler().runTaskLater(getPlugin(), run, 10)
     }
 }

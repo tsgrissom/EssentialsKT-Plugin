@@ -27,7 +27,7 @@ class ClearChatCommand : CommandBase() {
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfiguration() : FileConfiguration = getPlugin().config
     private fun getConfiguredRepeatCount() : Int =
-        getConfiguration().getInt("Features.ClearChatRepeatBlankLine", 500)
+        getConfiguration().getInt("Commands.ClearChatRepeatBlankLine", 500)
 
     private fun clearChat(t: Player, repeat: Int = 500) {
         repeat(repeat) {

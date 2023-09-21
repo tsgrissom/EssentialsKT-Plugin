@@ -25,7 +25,6 @@ class WhoIsCommand : CommandBase() {
 
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getAfkManager() = getPlugin().afkManager
 
     override fun execute(context: CommandContext) {
         val label = context.label
@@ -121,7 +120,7 @@ class WhoIsCommand : CommandBase() {
         sender.sendChatComponents(
             essTarget.generateTemporaryAttributesList(
                 withHeader=true,
-                isAfk=getAfkManager().isAfk(target)
+                isAfk=true // TODO Replace with Essentials AFK check
             )
         )
     }
@@ -147,7 +146,7 @@ class WhoIsCommand : CommandBase() {
         sender.sendChatComponents(
             essTarget.generateTemporaryAttributesList(
                 withHeader=false,
-                isAfk=getAfkManager().isAfk(target)
+                isAfk=true // TODO Replace with Essentials AFK check
             )
         )
     }

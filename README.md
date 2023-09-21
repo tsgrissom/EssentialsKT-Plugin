@@ -18,7 +18,6 @@ Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 * EssentialsKT imitates the command structure of EssentialsX, including supporting aliases prefixed with `e`
 * Permission structure mirrors that of EssentialsX, allowing it to serve as a drop-in replacement with minimal breakage of permission structure
 #### General-Purpose (A to Z)
-* `/afk`
 * `/clearchat`
 * `/feed`
 * `/gamemode`, `/gmc`, `/gms`, etc.

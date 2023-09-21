@@ -1,18 +1,10 @@
 IsDebuggingActive: false
 
 Commands:
+  ClearChatRepeatBlankLine: 500
   HealRestoresFoodLevel: true
 
-Features:
-  CameraMovementCountsForAfk: false
-  CheckAfkInterval: 200
-  NotifyAfkAfter: 1200
-
-  ClearChatRepeatBlankLine: 500
-
 Messages:
-  Afk: "&c%pd% &6is AFK..."
-  NotAfk: "&c%pd% &6is no longer AFK"
   JoinEvent: "&a&l+ &e%pd% &6has joined the server"
   QuitEvent: "&c&l- &e%pd% &6has left the server"
   ChatEvent: "&e%pd% &7: &f%message%."
