@@ -8,7 +8,7 @@ import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
-import io.github.tsgrissom.pluginapi.misc.ClickableText
+import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent

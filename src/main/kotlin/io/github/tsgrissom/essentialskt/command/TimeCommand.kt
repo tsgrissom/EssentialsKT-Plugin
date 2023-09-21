@@ -11,7 +11,6 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 fun CommandSender.hasPermissionSetWorldTime(world: World) : Boolean =
@@ -55,16 +54,25 @@ class TimeCommand : CommandBase() {
             .withSubcommand(
                 SubcommandHelp
                     .compose("query day")
+                    .withDescription("Displays the amount of days of the game world")
                     .withSuggestion("/$label query day")
             )
             .withSubcommand(
                 SubcommandHelp
                     .compose("query daytime")
+                    .withDescription("Displays the time of day of the game world", "in ticks")
                     .withSuggestion("/$label query daytime")
             )
             .withSubcommand(
                 SubcommandHelp
+                    .compose("query full")
+                    .withDescription("Displays the full time of the game world in", "ticks")
+                    .withSuggestion("/$label query full")
+            )
+            .withSubcommand(
+                SubcommandHelp
                     .compose("query gametime")
+                    .withDescription("Displays the age of the game world in ticks")
                     .withSuggestion("/$label query gametime")
             )
             .withSubcommand(
@@ -109,11 +117,7 @@ class TimeCommand : CommandBase() {
     }
 
     private fun displayWorldTime(sender: CommandSender) {
-        var world = Bukkit.getWorlds()[0]
-
-        if (sender is Player) {
-            world = sender.world
-        }
+        val world = sender.getCurrentWorldOrDefault()
 
         val wn = world.name
         val worldTicks = world.time
@@ -171,8 +175,56 @@ class TimeCommand : CommandBase() {
     }
 
     private fun handleQuerySubcommand(context: CommandContext) {
-        // TODO Time query subcommand
-        // /time query <day|daytime|gametime>
+        val args = context.args
+        val len = args.size
+        val sender = context.sender
+
+        if (len == 1)
+            return sender.sendChatComponents(getHelpAsComponent(context))
+
+        val arg1 = args[1]
+        var world = sender.getCurrentWorldOrDefault()
+
+        if (len == 3) {
+            val arg2 = args[2]
+            world = Bukkit.getWorld(arg2)
+                ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
+        }
+
+        val query = when (arg1.lowercase()) {
+            "day" -> world.fullTime / 24000
+            "daytime" -> world.time
+            "full" -> world.fullTime
+            "gametime" -> world.gameTime
+            else -> {
+                return sender.sendChatComponents(getHelpAsComponent(context))
+            }
+        }
+
+        val qn = arg1.lowercase().capitalize()
+
+        sender.sendColored("&6$qn&8: &c$query")
+
+        val dayLength = " &8- &c24,000 ticks &6is the length of a full Minecraft day"
+
+        if (arg1.equalsIc("day")) {
+            sender.sendColored(
+                "&8- &6Day is the result of world's &cfull time &6\u00F7 &c24,000",
+                dayLength
+            )
+        } else if (arg1.equalsIc("daytime")) {
+            sender.sendColored(
+                "&8- &6Daytime is the amount of ticks since the day began &8(&c0 ticks&8)",
+                dayLength
+            )
+        } else if (arg1.equalsIc("full")) {
+            // TODO Print info about full time
+        } else if (arg1.equalsIc("gametime")) {
+            sender.sendColored(
+                "&8- &6Gametime is the age of the game world in ticks",
+                dayLength
+            )
+        }
     }
 
     private fun handleSetSubcommand(context: CommandContext) {
@@ -193,7 +245,7 @@ class TimeCommand : CommandBase() {
         }
 
         val newTicks = arg1.toLongOrNull()
-            ?: return sender.sendColored("&c\"$arg1\" &4should be an integer in game ticks (20 per second)")
+            ?: return sender.sendColored("&c\"$arg1\" &4should be an integer of game ticks (20 per full second)")
 
         if (newTicks < 0)
             return sender.sendColored("&4New time cannot be negative ticks. Specify a positive value of at least 0.")
@@ -256,14 +308,18 @@ class TimeCommand : CommandBase() {
         if (sender.lacksPermission(PERM_BASE) && sender.lacksPermission(PERM_SET))
             return tab
 
-        val suggestSub = if (sender.hasPermission(PERM_BASE)) mutableListOf("query") else mutableListOf()
-        val queryLabels = listOf("query")
-        val setLabels = listOf("set")
-        val suggestQueryArg1 = listOf("day", "daytime", "gametime")
-        val suggestSetArg1 = listOf("day", "noon", "sunset", "night", "midnight", "sunrise")
+        val suggestSub = mutableListOf("help")
 
+        if (sender.hasPermission(PERM_BASE))
+            suggestSub.add("query")
         if (sender.hasPermission(PERM_SET))
             suggestSub.addAll(listOf("add", "set"))
+
+        val addLabels = listOf("add")
+        val setLabels = listOf("set")
+        val queryLabels = listOf("query")
+        val suggestQueryArg1 = listOf("day", "daytime", "full", "gametime")
+        val suggestSetArg1 = listOf("day", "noon", "sunset", "night", "midnight", "sunrise")
 
         val len = args.size
 
@@ -277,6 +333,12 @@ class TimeCommand : CommandBase() {
                     StringUtil.copyPartialMatches(args[1], suggestQueryArg1, tab)
                 } else if (sub.equalsIc(setLabels)) {
                     StringUtil.copyPartialMatches(args[1], suggestSetArg1, tab)
+                }
+            } else if (len == 3) {
+                if (sub.equalsIc(queryLabels) && args[1].equalsIc(suggestQueryArg1)) {
+                    StringUtil.copyPartialMatches(args[2], getWorldNamesToMutableList(), tab)
+                } else if ((sub.equalsIc(addLabels) || sub.equalsIc(setLabels)) && args[1].isNotEmpty() && sender.hasPermission(PERM_ALL_WORLDS)) {
+                    StringUtil.copyPartialMatches(args[2], getWorldNamesToMutableList(), tab)
                 }
             }
         }

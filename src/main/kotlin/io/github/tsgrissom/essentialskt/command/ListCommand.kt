@@ -4,7 +4,7 @@ import io.github.tsgrissom.essentialskt.gui.PlayerListGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
-import io.github.tsgrissom.pluginapi.misc.HoverableText
+import io.github.tsgrissom.pluginapi.chat.HoverableText
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder

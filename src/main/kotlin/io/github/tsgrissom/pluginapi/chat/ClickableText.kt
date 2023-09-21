@@ -1,4 +1,4 @@
-package io.github.tsgrissom.pluginapi.misc
+package io.github.tsgrissom.pluginapi.chat
 
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor
@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 class ClickableText(
     private var text: String,

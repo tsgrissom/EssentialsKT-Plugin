@@ -6,7 +6,7 @@ import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.getIPString
 import io.github.tsgrissom.pluginapi.extension.palatable
 import io.github.tsgrissom.pluginapi.extension.roundToDigits
-import io.github.tsgrissom.pluginapi.misc.ClickableText
+import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent

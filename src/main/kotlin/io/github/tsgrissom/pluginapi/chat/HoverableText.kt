@@ -1,4 +1,4 @@
-package io.github.tsgrissom.pluginapi.misc
+package io.github.tsgrissom.pluginapi.chat
 
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor
