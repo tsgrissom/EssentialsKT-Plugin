@@ -1,13 +1,16 @@
 package io.github.tsgrissom.essentialskt
 
+import com.earth2me.essentials.Essentials
 import io.github.tsgrissom.essentialskt.command.*
 import io.github.tsgrissom.essentialskt.listener.ChatListener
 import io.github.tsgrissom.essentialskt.listener.JoinAndQuitListener
 import io.github.tsgrissom.essentialskt.manager.ConfigManager
+import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import org.bukkit.Bukkit.getPluginManager
 import org.bukkit.event.Listener
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
 private fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
@@ -24,8 +27,13 @@ private fun EssentialsKTPlugin.registerListeners(vararg listeners: Listener) {
 
 class EssentialsKTPlugin : JavaPlugin() {
 
-    lateinit var configManager: ConfigManager
-    lateinit var entityUtility: EntityUtility
+    private lateinit var configManager: ConfigManager
+    private lateinit var entityUtility: EntityUtility
+    private lateinit var essentialsPlugin: Essentials
+
+    fun getConfigManager() = this.configManager
+    fun getEntityUtility() = this.entityUtility
+    fun getEssentials() = this.essentialsPlugin
 
     /* Static Instance */
     companion object {
@@ -43,10 +51,8 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("heal", HealCommand())
         registerCommand("ipaddress", IPAddressCommand())
         registerCommand("list", ListCommand())
-        registerCommand("nickname", NicknameCommand())
         registerCommand("ping", PingCommand())
         registerCommand("rain", RainCommand())
-        registerCommand("realname", RealNameCommand())
         registerCommand("remove", RemoveCommand())
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("setfoodlevel", SetFoodLevelCommand())
@@ -71,6 +77,17 @@ class EssentialsKTPlugin : JavaPlugin() {
         instance = this
         configManager = ConfigManager()
         entityUtility = EntityUtility()
+
+        val essPlugin: Plugin? = getPluginManager().getPlugin("Essentials")
+
+        if (essPlugin == null) {
+            PluginLogger.severe("[EssentialsKT] Essentials not found! Please install EssentialsX to use EssentialsKT.")
+            return getPluginManager().disablePlugin(this)
+        }
+
+        this.essentialsPlugin = essPlugin as Essentials
+
+        PluginLogger.info("[EssentialsKT] Essentials hook created.")
 
         config.options().copyDefaults(true)
         saveDefaultConfig()

@@ -45,7 +45,7 @@ class RemoveCommand : CommandBase() {
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getEntityUtility() =
-        getPlugin().entityUtility
+        getPlugin().getEntityUtility()
 
     companion object {
         const val PERM = "essentials.remove"

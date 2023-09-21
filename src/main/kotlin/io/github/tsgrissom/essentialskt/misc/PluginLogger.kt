@@ -9,7 +9,7 @@ class PluginLogger {
         private fun getPlugin() : EssentialsKTPlugin =
             EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
-        private val isDebugging: Boolean = getPlugin().configManager.isDebuggingActive()
+        private val isDebugging: Boolean = getPlugin().getConfigManager().isDebuggingActive()
 
         private fun getPrefix(debug: Boolean) = if (debug && isDebugging) "DEBUG: " else String()
 
