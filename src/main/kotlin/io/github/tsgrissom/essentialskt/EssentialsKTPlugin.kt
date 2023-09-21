@@ -9,14 +9,22 @@ import io.github.tsgrissom.essentialskt.manager.ConfigManager
 import io.github.tsgrissom.essentialskt.task.CheckAfkRunnable
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
+import org.bukkit.Bukkit
 import org.bukkit.Bukkit.getPluginManager
 import org.bukkit.Bukkit.getScheduler
+import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
-fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
+private fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
     val bukkitCommand = this.getCommand(label)!!
     bukkitCommand.setExecutor(impl)
     bukkitCommand.tabCompleter = impl
+}
+
+private fun EssentialsKTPlugin.registerListeners(vararg listeners: Listener) {
+    for (l in listeners) {
+        getPluginManager().registerEvents(l, this)
+    }
 }
 
 class EssentialsKTPlugin : JavaPlugin() {
@@ -40,22 +48,37 @@ class EssentialsKTPlugin : JavaPlugin() {
     }
 
     private fun registerCommands() {
+        /* Register General Commands (A->Z) */
+        registerCommand("afk", AfkCommand())
         registerCommand("damage", DamageCommand())
         registerCommand("clearchat", ClearChatCommand())
+        registerCommand("clearweather", ClearWeatherCommand())
         registerCommand("feed", FeedCommand())
         registerCommand("gamemode", GameModeCommand())
         registerCommand("heal", HealCommand())
         registerCommand("ipaddress", IPAddressCommand())
         registerCommand("list", ListCommand())
         registerCommand("nickname", NicknameCommand())
+        registerCommand("ping", PingCommand())
+        registerCommand("rain", RainCommand())
         registerCommand("realname", RealNameCommand())
         registerCommand("remove", RemoveCommand())
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("setfoodlevel", SetFoodLevelCommand())
         registerCommand("sethealth", SetHealthCommand())
+        registerCommand("suicide", SuicideCommand())
         registerCommand("time", TimeCommand())
+        registerCommand("toggledownfall", ToggleDownfallCommand())
         registerCommand("uniqueid", UniqueIdCommand())
         registerCommand("whois", WhoIsCommand())
+
+        /* Quick Time Commands (Early->Late) */
+        registerCommand("day", DayCommand())
+        registerCommand("midnight", MidnightCommand())
+        registerCommand("night", NightCommand())
+        registerCommand("noon", NoonCommand())
+        registerCommand("sunset", SunsetCommand())
+        registerCommand("sunrise", SunriseCommand())
     }
 
     override fun onEnable() {
@@ -68,28 +91,12 @@ class EssentialsKTPlugin : JavaPlugin() {
         config.options().copyDefaults(true)
         saveDefaultConfig()
 
-        registerCommands()
-
-        /* Command Setup (General; A->Z) */
-        getCommand("afk")?.setExecutor(AfkCommand())
-        getCommand("clearweather")?.setExecutor(ClearWeatherCommand())
-        getCommand("ping")?.setExecutor(PingCommand())
-        getCommand("rain")?.setExecutor(RainCommand())
-        getCommand("suicide")?.setExecutor(SuicideCommand())
-        getCommand("toggledownfall")?.setExecutor(ToggleDownfallCommand())
-
-        /* Time Setting (Early->Late) */
-        getCommand("day")?.setExecutor(DayCommand())
-        getCommand("midnight")?.setExecutor(MidnightCommand())
-        getCommand("night")?.setExecutor(NightCommand())
-        getCommand("noon")?.setExecutor(NoonCommand())
-        getCommand("sunset")?.setExecutor(SunsetCommand())
-        getCommand("sunrise")?.setExecutor(SunriseCommand())
-
-        /* Listener Registration */
-        getPluginManager().registerEvents(ChatListener(), this)
-        getPluginManager().registerEvents(MovementListener(), this)
-        getPluginManager().registerEvents(JoinAndQuitListener(), this)
+        this.registerCommands()
+        this.registerListeners(
+            ChatListener(),
+            MovementListener(),
+            JoinAndQuitListener()
+        )
 
         scheduleCheckAfkTask()
     }

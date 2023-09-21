@@ -31,13 +31,13 @@ class AfkCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val p: Player = sender
-
-        getAfkManager().toggleAfk(p)
+        getAfkManager().toggleAfk(sender)
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /afk tab completion
-        return mutableListOf()
-    }
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> = mutableListOf()
 }

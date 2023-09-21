@@ -26,12 +26,13 @@ class SuicideCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        val p: Player = sender
-        p.damage(Double.MAX_VALUE)
+        sender.damage(Double.MAX_VALUE)
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement /suicide tab completion
-        return mutableListOf()
-    }
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> = mutableListOf()
 }

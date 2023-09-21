@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.util.StringUtil
 
 class RainCommand
     : QuickWeatherCommand("Rain") {
@@ -50,8 +51,25 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         sender.sendColored(message)
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Implement quick weather tab completion
-        return mutableListOf()
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> {
+
+        val tab = mutableListOf<String>()
+
+        if (sender.lacksPermission(PERM_ALL))
+            return tab
+
+        val len = args.size
+
+        if (len > 0) {
+            if (len == 1)
+                StringUtil.copyPartialMatches(args[0], getWorldNamesToMutableList(), tab)
+        }
+
+        return tab.sorted().toMutableList()
     }
 }

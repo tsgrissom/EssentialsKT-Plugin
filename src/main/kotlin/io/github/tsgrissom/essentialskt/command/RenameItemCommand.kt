@@ -61,7 +61,5 @@ class RenameItemCommand : CommandBase() {
         command: Command,
         label: String,
         args: Array<out String>
-    ): MutableList<String> {
-        return mutableListOf()
-    }
+    ) : MutableList<String> = mutableListOf()
 }

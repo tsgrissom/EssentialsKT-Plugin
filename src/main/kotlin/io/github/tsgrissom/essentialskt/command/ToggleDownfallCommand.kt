@@ -30,6 +30,10 @@ class ToggleDownfallCommand : CommandBase() {
         sender.sendColored("&6Weather of world &c${wn} &6set to &c${targetCondition}")
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> =
-        emptyList<String>().toMutableList()
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> = mutableListOf()
 }

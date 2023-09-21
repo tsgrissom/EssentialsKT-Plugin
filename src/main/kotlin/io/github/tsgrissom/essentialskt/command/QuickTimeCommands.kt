@@ -8,6 +8,7 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.util.StringUtil
 
 class DayCommand
     : QuickTimeCommand("essentials.time.quick.day", TimeCommand.TIME_DAY, "Day")
@@ -55,8 +56,20 @@ open class QuickTimeCommand(
         sender.sendColored(setMessage)
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        // TODO Quick time tab completion
-        return mutableListOf()
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ):  MutableList<String> {
+        val tab = mutableListOf<String>()
+
+        if (sender.lacksPermission(permission))
+            return tab
+
+        if (args.size == 1)
+            StringUtil.copyPartialMatches(args[0], getWorldNamesToMutableList(), tab)
+
+        return tab.sorted().toMutableList()
     }
 }
