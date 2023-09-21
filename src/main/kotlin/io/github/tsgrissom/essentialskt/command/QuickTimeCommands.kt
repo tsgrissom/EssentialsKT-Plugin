@@ -11,23 +11,22 @@ import org.bukkit.command.CommandSender
 import org.bukkit.util.StringUtil
 
 class DayCommand
-    : QuickTimeCommand("essentials.time.quick.day", TimeCommand.TIME_DAY, "Day")
+    : QuickTimeCommand(TimeCommand.TIME_DAY, "Day")
 class NoonCommand
-    : QuickTimeCommand("essentials.time.quick.noon", TimeCommand.TIME_NOON, "Noon")
+    : QuickTimeCommand(TimeCommand.TIME_NOON, "Noon")
 class SunsetCommand
-    : QuickTimeCommand("essentials.time.quick.sunset", TimeCommand.TIME_SUNSET, "Dusk")
+    : QuickTimeCommand(TimeCommand.TIME_SUNSET, "Dusk")
 class NightCommand
-    : QuickTimeCommand("essentials.time.quick.night", TimeCommand.TIME_NIGHT, "Night")
+    : QuickTimeCommand(TimeCommand.TIME_NIGHT, "Night")
 class MidnightCommand
-    : QuickTimeCommand("essentials.time.quick.midnight", TimeCommand.TIME_MIDNIGHT, "Midnight")
+    : QuickTimeCommand(TimeCommand.TIME_MIDNIGHT, "Midnight")
 class SunriseCommand
-    : QuickTimeCommand("essentials.time.quick.sunrise", TimeCommand.TIME_SUNRISE, "Dawn")
+    : QuickTimeCommand(TimeCommand.TIME_SUNRISE, "Dawn")
 
 private fun getTimeSetMessage(w: World, tn: String) =
     "&6You set world &c${w.name}'s &6time to &c$tn"
 
 open class QuickTimeCommand(
-    private val permission: String,
     private val time: Long,
     private val timeName: String
 ) : CommandBase() {
@@ -36,8 +35,8 @@ open class QuickTimeCommand(
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(permission))
-            return context.sendNoPermission(sender, permission)
+        if (sender.lacksPermission(TimeCommand.PERM_SET))
+            return context.sendNoPermission(sender, TimeCommand.PERM_SET)
 
         var world = Bukkit.getWorlds()[0]
 
@@ -64,7 +63,7 @@ open class QuickTimeCommand(
     ):  MutableList<String> {
         val tab = mutableListOf<String>()
 
-        if (sender.lacksPermission(permission))
+        if (sender.lacksPermission(TimeCommand.PERM_SET))
             return tab
 
         if (args.size == 1)

@@ -15,7 +15,7 @@ import org.bukkit.util.StringUtil
 class SetFoodLevelCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.setfoodlevel"
+        const val PERM = "essentialskt.setfoodlevel"
     }
 
     override fun execute(context: CommandContext) {
@@ -57,7 +57,7 @@ class SetFoodLevelCommand : CommandBase() {
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
-
+        // TODO Handle percent input
     }
 
     override fun onTabComplete(

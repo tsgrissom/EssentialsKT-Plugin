@@ -1,12 +1,13 @@
 package io.github.tsgrissom.essentialskt.misc
 
+import com.earth2me.essentials.User
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
+import io.github.tsgrissom.pluginapi.chat.ClickableText
 import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.getIPString
 import io.github.tsgrissom.pluginapi.extension.palatable
 import io.github.tsgrissom.pluginapi.extension.roundToDigits
-import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
@@ -32,7 +33,9 @@ class EssPlayer(private val uuid: UUID) {
     fun getUniqueString() : String = uuid.toString()
     fun getIPString() : String = player.getIPString()
     fun getNickname() : String = player.displayName
-    fun isAfk() : Boolean = true // TODO Replace with Essentials AFK check
+
+    fun getEssentialsUser() : User = getPlugin().getEssentials().getUser(player)
+    fun isAfk() : Boolean = getEssentialsUser().isAfk // TODO Replace with Essentials AFK check
 
     fun getMaxHealth() : Double {
         val attr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
@@ -56,7 +59,6 @@ class EssPlayer(private val uuid: UUID) {
     }
 
     fun generateTemporaryAttributesList(
-        isAfk: Boolean,
         withHeader: Boolean = true,
         linePrefix: String = " - ",
         excludeGamemode: Boolean = false,
@@ -129,7 +131,7 @@ class EssPlayer(private val uuid: UUID) {
             appendPrefix()
             builder
                 .append("Is AFK: ").color(GRAY)
-                .append(isAfk.palatable(withColor=true)).color(YELLOW)
+                .append(isAfk().palatable(withColor=true)).color(YELLOW)
         }
 
         if (!excludeHealth) {

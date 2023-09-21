@@ -13,8 +13,8 @@ import org.bukkit.util.StringUtil
 class DamageCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.damage"
-        const val PERM_PERCENT = "essentials.damage.percent"
+        const val PERM = "essentialskt.damage"
+        const val PERM_PERCENT = "essentialskt.damage.percent"
     }
 
     private fun sendUsage(context: CommandContext) {

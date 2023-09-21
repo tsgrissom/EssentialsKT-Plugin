@@ -16,9 +16,9 @@ import org.bukkit.util.StringUtil
 class SetHealthCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.sethealth"
-        const val PERM_MAX = "essentials.sethealth.max"
-        const val PERM_PERCENT = "essentials.sethealth.percent"
+        const val PERM = "essentialskt.sethealth"
+        const val PERM_MAX = "essentialskt.sethealth.max"
+        const val PERM_PERCENT = "essentialskt.sethealth.percent"
     }
 
     private val flagMax = Pair("max", "m")

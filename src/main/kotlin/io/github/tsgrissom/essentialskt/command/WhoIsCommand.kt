@@ -18,9 +18,9 @@ import org.bukkit.util.StringUtil
 class WhoIsCommand : CommandBase() {
 
     companion object {
-        const val PERM_SELF = "essentials.whoami"
-        const val PERM_OTHERS = "essentials.whois"
-        const val PERM_IP = "essentials.whois.ip"
+        const val PERM_SELF = "essentialskt.whoami"
+        const val PERM_OTHERS = "essentialskt.whois"
+        const val PERM_IP = "essentialskt.whois.ip"
     }
 
     private fun getPlugin() : EssentialsKTPlugin =
@@ -119,8 +119,7 @@ class WhoIsCommand : CommandBase() {
         val essTarget = EssPlayer(target)
         sender.sendChatComponents(
             essTarget.generateTemporaryAttributesList(
-                withHeader=true,
-                isAfk=true // TODO Replace with Essentials AFK check
+                withHeader=true
             )
         )
     }
@@ -145,8 +144,7 @@ class WhoIsCommand : CommandBase() {
         )
         sender.sendChatComponents(
             essTarget.generateTemporaryAttributesList(
-                withHeader=false,
-                isAfk=true // TODO Replace with Essentials AFK check
+                withHeader=false
             )
         )
     }

@@ -17,10 +17,10 @@ import org.bukkit.util.StringUtil
 class ClearChatCommand : CommandBase() {
 
     companion object {
-        const val PERM_SELF = "essentials.clearchat"
-        const val PERM_ALL = "essentials.clearchat.all"
-        const val PERM_OTHERS = "essentials.clearchat.others"
-        const val PERM_EXEMPT = "essentials.clearchat.exemptall"
+        const val PERM_SELF = "essentialskt.clearchat"
+        const val PERM_ALL = "essentialskt.clearchat.all"
+        const val PERM_OTHERS = "essentialskt.clearchat.others"
+        const val PERM_EXEMPT = "essentialskt.clearchat.exemptall"
     }
 
     private fun getPlugin() : EssentialsKTPlugin =

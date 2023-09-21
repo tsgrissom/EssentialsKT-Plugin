@@ -13,17 +13,14 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
-private fun EssentialsKTPlugin.registerCommand(label: String, impl: CommandBase) {
+private fun JavaPlugin.registerCommand(label: String, impl: CommandBase) {
     val bukkitCommand = this.getCommand(label)!!
     bukkitCommand.setExecutor(impl)
     bukkitCommand.tabCompleter = impl
 }
 
-private fun EssentialsKTPlugin.registerListeners(vararg listeners: Listener) {
-    for (l in listeners) {
-        getPluginManager().registerEvents(l, this)
-    }
-}
+private fun JavaPlugin.registerListeners(vararg listeners: Listener) =
+    listeners.forEach { getPluginManager().registerEvents(it, this) }
 
 class EssentialsKTPlugin : JavaPlugin() {
 
@@ -41,53 +38,53 @@ class EssentialsKTPlugin : JavaPlugin() {
         private set
     }
 
+    private fun createEssentialsHook() {
+        val pl: Plugin? = getPluginManager().getPlugin("Essentials")
+
+        if (pl == null) {
+            PluginLogger.severe("[EssentialsKT] Essentials not found! Please install EssentialsX to use EssentialsKT.")
+            return getPluginManager().disablePlugin(this)
+        }
+
+        this.essentialsPlugin = pl as Essentials
+        PluginLogger.info("[EssentialsKT] Essentials hook created.")
+    }
+
     private fun registerCommands() {
         /* Register General Commands (A->Z) */
-        registerCommand("damage", DamageCommand())
         registerCommand("clearchat", ClearChatCommand())
-        registerCommand("clearweather", ClearWeatherCommand())
-        registerCommand("feed", FeedCommand())
+        registerCommand("damage", DamageCommand())
         registerCommand("gamemode", GameModeCommand())
-        registerCommand("heal", HealCommand())
         registerCommand("ipaddress", IPAddressCommand())
         registerCommand("list", ListCommand())
-        registerCommand("ping", PingCommand())
-        registerCommand("rain", RainCommand())
         registerCommand("remove", RemoveCommand())
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("setfoodlevel", SetFoodLevelCommand())
         registerCommand("sethealth", SetHealthCommand())
-        registerCommand("suicide", SuicideCommand())
         registerCommand("time", TimeCommand())
         registerCommand("toggledownfall", ToggleDownfallCommand())
         registerCommand("uniqueid", UniqueIdCommand())
         registerCommand("whois", WhoIsCommand())
 
-        /* Quick Time Commands (Early->Late) */
+        /* Time Commands (Early->Late) */
         registerCommand("day", DayCommand())
         registerCommand("midnight", MidnightCommand())
         registerCommand("night", NightCommand())
         registerCommand("noon", NoonCommand())
         registerCommand("sunset", SunsetCommand())
         registerCommand("sunrise", SunriseCommand())
+
+        /* Weather Commands */
+        registerCommand("clearweather", ClearWeatherCommand())
+        registerCommand("rain", RainCommand())
     }
 
     override fun onEnable() {
-        /* Bootstrapping */
         instance = this
         configManager = ConfigManager()
         entityUtility = EntityUtility()
 
-        val essPlugin: Plugin? = getPluginManager().getPlugin("Essentials")
-
-        if (essPlugin == null) {
-            PluginLogger.severe("[EssentialsKT] Essentials not found! Please install EssentialsX to use EssentialsKT.")
-            return getPluginManager().disablePlugin(this)
-        }
-
-        this.essentialsPlugin = essPlugin as Essentials
-
-        PluginLogger.info("[EssentialsKT] Essentials hook created.")
+        createEssentialsHook()
 
         config.options().copyDefaults(true)
         saveDefaultConfig()

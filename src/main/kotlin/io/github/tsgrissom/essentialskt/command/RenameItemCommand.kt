@@ -16,8 +16,8 @@ import org.bukkit.inventory.ItemStack
 class RenameItemCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.renameitem"
-        const val PERM_BYPASS_LENGTH_LIMIT = "essentials.renameitem.bypasslimit"
+        const val PERM = "essentialskt.renameitem"
+        const val PERM_BYPASS_LENGTH_LIMIT = "essentialskt.renameitem.bypasslimit"
     }
 
     override fun execute(context: CommandContext) {

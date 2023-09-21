@@ -18,9 +18,9 @@ import org.bukkit.util.StringUtil
 class ListCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.list"
-        const val PERM_PLAYERS = "essentials.list.players"
-        const val PERM_MOBS = "essentials.list.mobs"
+        const val PERM = "essentialskt.list"
+        const val PERM_PLAYERS = "essentialskt.list.players"
+        const val PERM_MOBS = "essentialskt.list.mobs"
     }
 
     private fun getAvailableLists() : Array<String> =

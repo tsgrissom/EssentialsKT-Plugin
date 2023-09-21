@@ -17,7 +17,7 @@ import org.bukkit.util.StringUtil
 class IPAddressCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.ipaddress"
+        const val PERM = "essentialskt.ipaddress"
     }
 
     override fun execute(context: CommandContext) {

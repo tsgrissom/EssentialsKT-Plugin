@@ -18,7 +18,7 @@ import org.bukkit.util.StringUtil
 class UniqueIdCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.uniqueid"
+        const val PERM = "essentialskt.uniqueid"
     }
 
     override fun execute(context: CommandContext) {

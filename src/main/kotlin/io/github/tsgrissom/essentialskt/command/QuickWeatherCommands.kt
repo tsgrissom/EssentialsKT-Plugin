@@ -21,10 +21,6 @@ class ClearWeatherCommand
 
 abstract class QuickWeatherCommand(private val weatherName: String) : CommandBase() {
 
-    companion object {
-        const val PERM_ALL = "essentials.weather"
-    }
-
     private fun getWeatherSetMessage(w: World) =
         "&6You set world &c${w.name}'s &6weather to &c$weatherName"
 
@@ -34,8 +30,8 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(PERM_ALL))
-            return context.sendNoPermission(sender, PERM_ALL)
+        if (sender.lacksPermission(WeatherCommand.PERM))
+            return context.sendNoPermission(sender, WeatherCommand.PERM)
 
         var world = sender.getCurrentWorldOrDefault()
 
@@ -60,7 +56,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
 
         val tab = mutableListOf<String>()
 
-        if (sender.lacksPermission(PERM_ALL))
+        if (sender.lacksPermission(WeatherCommand.PERM))
             return tab
 
         val len = args.size

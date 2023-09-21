@@ -8,8 +8,3 @@ Messages:
   JoinEvent: "&a&l+ &e%pd% &6has joined the server"
   QuitEvent: "&c&l- &e%pd% &6has left the server"
   ChatEvent: "&e%pd% &7: &f%message%."
-
-Data:
-  NicknameBlacklist:
-    - "uuid1"
-    - "uuid2"

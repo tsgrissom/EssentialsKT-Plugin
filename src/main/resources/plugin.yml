@@ -20,24 +20,15 @@ commands:
   damage:
     description: "Damage a player for an amount of HP"
     aliases: [ "dmg", "hurt", "wound", "injure" ]
-  feed:
-    description: "Restore a player's food level"
-    aliases: ["efeed", "eat", "eeat", "sate"]
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["egamemode", "gm", "egm", "gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2"]
-  heal:
-    description: "Restores a player's health"
-    aliases: ["eheal"]
   ipaddress:
     description: "View a player's IP address"
     aliases: ["ip", "address", "eipaddress", "eip", "eaddress"]
   list:
     description: "Display various lists"
     aliases: ["ls"]
-  ping:
-    description: "Check how long it takes to receive a response from the server"
-    aliases: ["eping", "epong", "pong"]
   rain:
     description: "Set a world's weather to be raining"
   remove:
@@ -50,9 +41,6 @@ commands:
     aliases: ["sethunger"]
   sethealth:
     description: "Set a player's health"
-  suicide:
-    description: "Kills your player by force"
-    aliases: ["esuicide", "seppuku", "selfdestruct"]
   time:
     description: "View and set world time"
     aliases: ["etime"]
@@ -86,196 +74,117 @@ commands:
 
 permissions:
   # Grouped Permissions
-  essentials.*:
+  essentialskt.*:
     description: "Grants all permissions for the plugin"
     children:
-      essentials.command.*: true
-      essentials.disclosepermission: true
-  essentials.command.*:
+      essentialskt.command.*: true
+      essentialskt.disclosepermission: true
+  essentialskt.command.*:
     description: "Grants all command-related permissions for the plugin"
     children:
-      essentials.clearchat.*: true
-      essentials.damage: true
-      essentials.damage.percent: true
-      essentials.feed.*: true
+      essentialskt.clearchat.*: true
+      essentialskt.damage: true
+      essentialskt.damage.percent: true
       essentials.gamemode.*: true
-      essentials.heal.*: true
-      essentials.ipaddress: true
-      essentials.list.*: true
-      essentials.ping: true
-      essentials.remove: true
-      essentials.renameitem.*: true
-      essentials.setfoodlevel: true
-      essentials.sethealth.*: true
-      essentials.suicide: true
-      essentials.time.*: true
-      essentials.toggledownfall: true
-      essentials.uniqueid: true
-      essentials.weather: true
-      essentials.whois: true
-      essentials.whoami: true
-  essentials.clearchat.*:
+      essentialskt.ipaddress: true
+      essentialskt.list.*: true
+      essentialskt.remove: true
+      essentialskt.renameitem.*: true
+      essentialskt.setfoodlevel: true
+      essentialskt.sethealth.*: true
+      essentialskt.toggledownfall: true
+      essentialskt.uniqueid: true
+      essentialskt.whois: true
+      essentialskt.whoami: true
+  essentialskt.clearchat.*:
     description: "Grants all permissions related to /cls"
     children:
-      essentials.clearchat: true
-      essentials.clearchat.all: true
-      essentials.clearchat.others: true
-      essentials.clearchat.exemptall: true
-  essentials.damage.*:
+      essentialskt.clearchat: true
+      essentialskt.clearchat.all: true
+      essentialskt.clearchat.others: true
+      essentialskt.clearchat.exemptall: true
+  essentialskt.damage.*:
     description: "Grants all permissions related to /damage"
     children:
-      essentials.damage: true
-      essentials.damage.percent: true
-  essentials.feed.*:
-    description: "Grants all feed-related permissions"
-    children:
-      essentials.feed: true
-      essentials.feed.others: true
-  essentials.gamemode.*:
-    description: "Grants all gamemode-related permissions for the plugin"
-    children:
-      essentials.gamemode: true
-      essentials.gamemode.others: true
-      essentials.gamemode.all: true
-  essentials.gamemode.all:
-    description: "Grants access to all gamemodes in /gamemode"
-    children:
-      essentials.gamemode.adventure: true
-      essentials.gamemode.creative: true
-      essentials.gamemode.survival: true
-      essentials.gamemode.spectator: true
-  essentials.heal.*:
-    description: "Grants all heal-related permissions"
-    children:
-      essentials.heal: true
-      essentials.heal.others: true
-  essentials.list.*:
+      essentialskt.damage: true
+      essentialskt.damage.percent: true
+  essentialskt.list.*:
     description: "Grants all /list related permissions"
     children:
-      essentials.list: true
-      essentials.list.players: true
-      essentials.list.mobs: true
-  essentials.renameitem.*:
+      essentialskt.list: true
+      essentialskt.list.players: true
+      essentialskt.list.mobs: true
+  essentialskt.renameitem.*:
     description: "Grants access to all /renameitem permissions"
     children:
-      essentials.renameitem: true
-      essentials.renameitem.bypasslimit: true
-  essentials.sethealth.*:
+      essentialskt.renameitem: true
+      essentialskt.renameitem.bypasslimit: true
+  essentialskt.sethealth.*:
     description: "Grants access to all /sethealth permissions"
     children:
-      essentials.sethealth: true
-      essentials.sethealth.max: true
-      essentials.sethealth.percent: true
-  essentials.time.*:
-    description: "Grants all /time permissions, including quick-time permissions"
-    children:
-      essentials.time: true
-      essentials.time.set: true
-      essentials.time.world.all: true
-      essentials.time.quick.*: true
-  essentials.time.quick.*:
-    description: "Grants all quick time setting permissions"
-    children:
-      essentials.time.quick.day: true
-      essentials.time.quick.midnight: true
-      essentials.time.quick.night: true
-      essentials.time.quick.noon: true
-      essentials.time.quick.sunset: true
-      essentials.time.quick.sunrise: true
+      essentialskt.sethealth: true
+      essentialskt.sethealth.max: true
+      essentialskt.sethealth.percent: true
   # New Command Permissions
-  essentials.clearchat:
+  essentialskt.clearchat:
     description: "Allows you to clear your own chat"
-  essentials.clearchat.all:
+  essentialskt.clearchat.all:
     description: "Allows you clear the chats of everyone on the server"
-  essentials.clearchat.others:
+  essentialskt.clearchat.others:
     description: "Allows you clear the chat of another player"
-  essentials.clearchat.exemptall:
+  essentialskt.clearchat.exemptall:
     description: "Allows you to bypass having your chat cleared when someone executes /cls all"
-  essentials.damage:
+  essentialskt.damage:
     description: "Allows you to damage a player by force, either with direct damage or a percent of their max health"
-  essentials.damage.percent:
+  essentialskt.damage.percent:
     description: "Allows you to damage a percentage of a player's max health"
-  essentials.feed:
-    description: "Allows you to restore your own hunger"
-  essentials.feed.others:
-    description: "Allows you to restore another player's hunger"
-  essentials.gamemode:
+  essentialskt.gamemode:
     description: "Allows you to alter your own gamemode"
-  essentials.gamemode.others:
+  essentialskt.gamemode.others:
     description: "Allows you to alter another player's gamemode"
-  essentials.gamemode.adventure:
+  essentialskt.gamemode.adventure:
     description: "Allows you to set your gamemode to Adventure"
-  essentials.gamemode.creative:
+  essentialskt.gamemode.creative:
     description: "Allows you to set your gamemode to Creative"
-  essentials.gamemode.survival:
+  essentialskt.gamemode.survival:
     description: "Allows you to set your gamemode to Survival"
-  essentials.gamemode.spectator:
+  essentialskt.gamemode.spectator:
     description: "Allows you to set your gamemode to Spectator"
-  essentials.heal:
-    description: "Allows you to restore your own health"
-  essentials.heal.others:
-    description: "Allows you to restore another player's health"
-  essentials.ipaddress:
+  essentialskt.ipaddress:
     description: "Allows you view a player's IP address"
-  essentials.list:
+  essentialskt.list:
     description: "Allows you to access /ls"
-  essentials.list.mobs:
+  essentialskt.list.mobs:
     description: "Allows you to access /ls mobs"
-  essentials.list.players:
+  essentialskt.list.players:
     description: "Allows you to access /ls players"
-  essentials.ping:
-    description: "Allows you to view your ping to the server"
-  essentials.remove:
-    description: "Allows you to use /remove"
-  essentials.renameitem:
+  essentialskt.renameitem:
     description: "Allows you to rename items without an anvil"
-  essentials.renameitem.bypasslimit:
+  essentialskt.renameitem.bypasslimit:
     description: "Allows you to exceed the character limit of renaming items"
-  essentials.setfoodlevel:
+  essentialskt.setfoodlevel:
     description: "Allows you to set a player's food level"
-  essentials.sethealth:
+  essentialskt.sethealth:
     description: "Allows you to set a player's health"
-  essentials.sethealth.max:
+  essentialskt.sethealth.max:
     description: "Allows you to set a player's max health"
-  essentials.sethealth.percent:
+  essentialskt.sethealth.percent:
     description: "Allows you to set a player's health to a percent of their max health"
-  essentials.suicide:
-    description: "Allows you to forcibly end your player's life"
-  essentials.time:
-    description: "Allows you to view the in-game time"
-  essentials.time.set:
-    description: "Allows you to add and set the in-game time"
-  essentials.time.world.all:
-    description: "Allows you to set the time in all worlds"
-  essentials.time.quick.day:
-    description: "Allows you to set the time to day"
-  essentials.time.quick.midnight:
-    description: "Allows you to set the time to midnight"
-  essentials.time.quick.night:
-    description: "Allows you to set the time to night"
-  essentials.time.quick.noon:
-    description: "Allows you to set the time to noon"
-  essentials.time.quick.sunset:
-    description: "Allows you to set the time to sunset"
-  essentials.time.quick.sunrise:
-    description: "Allows you to set the time to sunrise"
-  essentials.toggledownfall:
+  essentialskt.toggledownfall:
     description: "Allows you to toggle the weather"
-  essentials.uniqueid:
+  essentialskt.uniqueid:
     description: "Allows you to view and copy the UUIDs of players"
-  essentials.weather:
-    description: "Allows you to set the weather"
-  essentials.whois:
+  essentialskt.whois:
     description: "Allows you view a player's /whois profile"
-  essentials.whois.ip:
+  essentialskt.whois.ip:
     description: "Allows you to view a player's IP address in /whois"
-  essentials.whoami:
+  essentialskt.whoami:
     description: "Allows you to view your own /whois profile"
 
   # Special Permissions
   essentials.gamemode.noalter:
     description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
     default: false
-  essentials.disclosepermission:
+  essentialskt.disclosepermission:
     description: "Displays missing permission when failing a permission check"
     default: op

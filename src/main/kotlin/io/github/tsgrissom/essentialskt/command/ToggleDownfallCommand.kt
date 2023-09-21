@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 class ToggleDownfallCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentials.toggledownfall"
+        const val PERM = "essentialskt.toggledownfall"
     }
 
     override fun execute(context: CommandContext) {

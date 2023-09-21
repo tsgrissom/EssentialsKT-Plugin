@@ -12,6 +12,7 @@ class ConfigManager {
     fun getFileConfiguration() : FileConfiguration = getPlugin().config
     fun getSection(key: String) : ConfigurationSection? =
         getFileConfiguration().getConfigurationSection(key)
+
     fun getMessagesSection() : ConfigurationSection? =
         getSection("Messages")
 

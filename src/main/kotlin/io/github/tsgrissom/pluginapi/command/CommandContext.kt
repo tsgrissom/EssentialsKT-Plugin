@@ -16,12 +16,12 @@ class CommandContext(
     ) {
 
     companion object {
-        const val TEXT_PERMISSION = "&4You do not have permission to do that"
+        const val TEXT_PERMISSION = "&4You do not have access to that command."
     }
 
     fun sendNoPermission(sender: CommandSender, permission: String) {
         var resp = TEXT_PERMISSION
-        if (sender.hasPermission("essentials.disclosepermission")) {
+        if (sender.hasPermission("essentialskt.disclosepermission")) {
             resp += " (&c$permission&4)"
         }
         sender.sendColored(resp)
