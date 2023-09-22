@@ -19,7 +19,7 @@ repositories {
 dependencies {
     implementation(group="com.uchuhimo", name="kotlinx-bimap", version="1.2")
     compileOnly(group="org.spigotmc", name="spigot-api", version="1.20.1-R0.1-SNAPSHOT")
-    compileOnly(group="net.essentialsx", name="EssentialsX", version="2.20.1-SNAPSHOT")
+    compileOnly(group="net.essentialsx", name="EssentialsX", version="2.21.0-SNAPSHOT")
     implementation(group="com.github.stefvanschie.inventoryframework", name="IF", version="0.10.11")
 }
 

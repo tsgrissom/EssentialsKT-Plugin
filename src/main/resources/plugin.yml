@@ -90,7 +90,7 @@ permissions:
       essentialskt.list.*: true
       essentialskt.remove: true
       essentialskt.renameitem.*: true
-      essentialskt.setfoodlevel: true
+      essentialskt.setfoodlevel.*: true
       essentialskt.sethealth.*: true
       essentialskt.toggledownfall: true
       essentialskt.uniqueid: true
@@ -119,6 +119,11 @@ permissions:
     children:
       essentialskt.renameitem: true
       essentialskt.renameitem.bypasslimit: true
+  essentialskt.setfoodlevel.*:
+    description: "Grants access to all /setfoodlevel permissions"
+    children:
+      essentialskt.setfoodlevel: true
+      essentialskt.setfoodlevel.percent: true
   essentialskt.sethealth.*:
     description: "Grants access to all /sethealth permissions"
     children:
@@ -164,6 +169,8 @@ permissions:
     description: "Allows you to exceed the character limit of renaming items"
   essentialskt.setfoodlevel:
     description: "Allows you to set a player's food level"
+  essentialskt.setfoodlevel.percent:
+    description: "Allows you to set a player's food level to a percent of 20"
   essentialskt.sethealth:
     description: "Allows you to set a player's health"
   essentialskt.sethealth.max:

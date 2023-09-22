@@ -84,13 +84,13 @@ class SetHealthCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_PERCENT)
 
         val sansPercent = input.removeSuffix("%")
-        val percent = sansPercent.toDoubleOrNull()
+        val value = sansPercent.toDoubleOrNull()
             ?: return sender.sendColored("&c\"$input\" is not a valid percentage value")
 
-        if (percent <= 0)
+        if (value <= 0)
             return sender.sendColored("&4A percentage of max health must be a positive nonzero number")
 
-        val chunk = percent / 100
+        val chunk = value / 100
         val attr = t.getAttribute(Attribute.GENERIC_MAX_HEALTH)
         val max = attr?.value ?: 20.0
         val amount = chunk * max

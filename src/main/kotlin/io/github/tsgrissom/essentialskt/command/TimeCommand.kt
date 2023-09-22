@@ -16,6 +16,9 @@ import org.bukkit.util.StringUtil
 fun CommandSender.hasPermissionSetWorldTime(world: World) : Boolean =
     this.hasPermission(TimeCommand.PERM_ALL_WORLDS) || this.hasPermission("essentials.time.world.${world.name}")
 
+private fun String.isInputInSeconds() : Boolean =
+    "^(?i)\\d+[sS]\$".toRegex().matches(this)
+
 class TimeCommand : CommandBase() {
 
     // TODO Build new usage + unknown command help with chat component API
@@ -24,6 +27,8 @@ class TimeCommand : CommandBase() {
         const val PERM_BASE = "essentials.time"
         const val PERM_SET = "essentials.time.set"
         const val PERM_ALL_WORLDS = "essentials.time.world.all"
+
+        const val REGEX_INPUT_SECONDS = "^\\d+s\$"
 
         const val TIME_DAY: Long = 1000
         const val TIME_NOON: Long = 6000
@@ -144,6 +149,10 @@ class TimeCommand : CommandBase() {
             return sender.sendColored(usage)
 
         val arg1 = args[1]
+
+        if (arg1.isInputInSeconds())
+            return handleAddSeconds(context, arg1)
+
         val addend: Long
 
         try {
@@ -169,9 +178,42 @@ class TimeCommand : CommandBase() {
 
         val newTime = world.time
         val percent = (newTime / 24000.0) * 100
+        val pRounded = percent.roundToDigits(2)
+        val wn = world.name
 
-        sender.sendColored("&8&l> &c${addend} ticks &6added to world &c${world.name}'s &6time")
-        sender.sendColored("&8&l> &6New time is &c${newTime} ticks&6, or &c${percent.roundToDigits(2)}% &6 of the day")
+        sender.sendColored("&8&l> &c$addend ticks &6added to world &c${wn}'s &6time")
+        sender.sendColored("&8&l> &6New time is &c$newTime ticks&6, or &c${pRounded}% &6 of the day")
+    }
+
+    private fun handleAddSeconds(context: CommandContext, input: String) {
+        val args = context.args
+        val sender = context.sender
+        val sansSuffix = input.lowercase().removeSuffix("s")
+        val value = sansSuffix.toIntOrNull()
+            ?: return sender.sendColored("&4Time in seconds must be an integer followed by the letter s")
+        var world = sender.getCurrentWorldOrDefault()
+
+        if (args.size > 2) {
+            val arg2 = args[2]
+            world = Bukkit.getWorld(arg2)
+                ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
+        }
+
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+
+        val addend = value * 20
+        val currentTime = world.time
+
+        world.time = currentTime + addend
+
+        val newTime = world.time
+        val percent = (newTime / 24000.0) * 100
+        val pRounded = percent.roundToDigits(2)
+        val wn = world.name
+
+        sender.sendColored("&8&l> &c$value seconds &8(&c$addend ticks&8) &6added to world &c${wn}'s &6time")
+        sender.sendColored("&8&l> &6New time is &c$newTime ticks&6, or &c${pRounded}% &6 of the day")
     }
 
     private fun handleQuerySubcommand(context: CommandContext) {

@@ -1,6 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
+import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.isPercentage
@@ -11,11 +12,13 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
+import kotlin.math.roundToInt
 
 class SetFoodLevelCommand : CommandBase() {
 
     companion object {
         const val PERM = "essentialskt.setfoodlevel"
+        const val PERM_PERCENT = "essentialskt.setfoodlevel.percent"
     }
 
     override fun execute(context: CommandContext) {
@@ -56,8 +59,26 @@ class SetFoodLevelCommand : CommandBase() {
         sender.sendColored("&6You set &c${t.name}'s &6food level to &c$arg1")
     }
 
-    private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
-        // TODO Handle percent input
+    private fun handlePercentageInput(context: CommandContext, t: Player, input: String) {
+        val sender = context.sender
+
+        if (sender.lacksPermission(PERM_PERCENT))
+            return context.sendNoPermission(sender, PERM_PERCENT)
+
+        val sansPercent = input.removeSuffix("%")
+        val value = sansPercent.toIntOrNull()
+            ?: return sender.sendColored("&c\"$input\" is not a valid percentage value")
+
+        if (value <= 0)
+            return sender.sendColored("&4A percentage of max food level must be a positive nonzero integer")
+
+        val chunk = value / 100.0
+        val amount = chunk * 20
+
+        PluginLogger.info("Food level chunk: $chunk + Amount: $amount")
+
+        t.foodLevel = amount.roundToInt()
+        sender.sendColored("&6You set &c${t.name}'s &6food level to &c${input}")
     }
 
     override fun onTabComplete(
