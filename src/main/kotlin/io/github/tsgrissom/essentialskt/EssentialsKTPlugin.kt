@@ -8,6 +8,7 @@ import io.github.tsgrissom.essentialskt.manager.ConfigManager
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
+import io.github.tsgrissom.pluginapi.utility.TimeUtility
 import org.bukkit.Bukkit.getPluginManager
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
@@ -26,10 +27,13 @@ class EssentialsKTPlugin : JavaPlugin() {
 
     private lateinit var configManager: ConfigManager
     private lateinit var entityUtility: EntityUtility
+    private lateinit var timeUtility: TimeUtility
+
     private lateinit var essentialsPlugin: Essentials
 
     fun getConfigManager() = this.configManager
     fun getEntityUtility() = this.entityUtility
+    fun getTimeUtility() = this.timeUtility
     fun getEssentials() = this.essentialsPlugin
 
     /* Static Instance */
@@ -83,6 +87,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         instance = this
         configManager = ConfigManager()
         entityUtility = EntityUtility()
+        timeUtility = TimeUtility()
 
         createEssentialsHook()
 

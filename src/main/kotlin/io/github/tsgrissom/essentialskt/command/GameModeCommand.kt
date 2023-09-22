@@ -9,7 +9,7 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -44,17 +44,15 @@ class GameModeCommand : CommandBase() {
             EssPlayer(sender).getAvailableGameModes()
         else
             GameMode.entries.toSet()
-        val mainColor = if (negative) ChatColor.DARK_RED else ChatColor.GRAY
-        val detailColor = if (negative) ChatColor.RED else ChatColor.YELLOW
+        val mainColor = if (negative) DARK_RED else GRAY
+        val detailColor = if (negative) RED else YELLOW
 
         val builder = ComponentBuilder()
-            .append("Available gamemodes").color(mainColor)
-            .append(":").color(ChatColor.DARK_GRAY)
+            .appendc("Available gamemodes", mainColor)
+            .appendc(":", DARK_GRAY)
 
         if (available.isEmpty()) {
-            builder
-                .append(" ")
-                .append("None").color(ChatColor.RED)
+            builder.appendc(" None", RED)
             return builder.create()
         }
 
@@ -76,7 +74,7 @@ class GameModeCommand : CommandBase() {
                 .append(clickText.toComponent())
 
             if (i != (available.size - 1))
-                builder.append(",").color(ChatColor.DARK_GRAY)
+                builder.appendc(",", DARK_GRAY)
         }
 
         return builder.create()
@@ -90,14 +88,14 @@ class GameModeCommand : CommandBase() {
             GameMode.entries.toSet()
         val availableNames = available.map { it.name.lowercase() }.toSet()
         val builder = ComponentBuilder()
-            .append(if (isConsole) "Console Usage: " else "Usage: ").color(ChatColor.DARK_RED)
-            .append("/gm <").color(ChatColor.RED)
+            .appendc(if (isConsole) "Console Usage: " else "Usage: ", DARK_RED)
+            .appendc("/gm <", RED)
 
         if (available.isNotEmpty()) {
             for ((i, mode) in availableNames.withIndex()) {
                 val clickText = ClickableText
                     .compose(mode)
-                    .color(ChatColor.RED)
+                    .color(RED)
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
                     .value("/gm $mode ")
 
@@ -105,15 +103,15 @@ class GameModeCommand : CommandBase() {
                     .append(clickText.toComponent())
 
                 if (i != (available.size - 1))
-                    builder.append("/").color(ChatColor.DARK_GRAY)
+                    builder.appendc("/", DARK_GRAY)
             }
         } else {
             builder.append("No Available Gamemodes")
         }
 
         builder
-            .append("> ").color(ChatColor.RED)
-            .append(if (isConsole) "<Target>" else "[Target]")
+            .appendc("> ", RED)
+            .appendc(if (isConsole) "<Target>" else "[Target]", RED)
 
         return builder.create()
     }

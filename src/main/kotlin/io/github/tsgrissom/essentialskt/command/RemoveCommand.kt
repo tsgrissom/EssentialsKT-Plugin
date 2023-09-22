@@ -7,7 +7,7 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -21,27 +21,6 @@ import org.bukkit.util.StringUtil
 
 class RemoveCommand : CommandBase() {
 
-    /*
-     * /remove <Type> [Radius/World]
-     * Valid Types:
-     * all (confirm))
-     * tamed
-     * named
-     * drops
-     * arrows
-     * boats
-     * minecarts
-     * xp
-     * paintings
-     * itemframes
-     * endercrystals
-     * monsters
-     * animals
-     * ambient
-     * mobs
-     * [mobType]
-     */
-
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getEntityUtility() =
@@ -51,6 +30,7 @@ class RemoveCommand : CommandBase() {
         const val PERM = "essentials.remove"
     }
 
+    // TODO Exchange old help for this one
     private fun getTestHelp(context: CommandContext) : Array<BaseComponent> {
         return CommandHelpGenerator(context)
             .withAliases("killall", "eremove")
@@ -117,32 +97,32 @@ class RemoveCommand : CommandBase() {
     private fun getGroupedTypesAsComponents(context: CommandContext) : Array<BaseComponent> {
         val label = context.label
         val builder = ComponentBuilder()
-            .append("Types").color(ChatColor.GOLD)
-            .append(": ").color(ChatColor.DARK_GRAY)
+            .appendc("Types", GOLD)
+            .appendc(": ", DARK_GRAY)
 
         for ((i, type) in getValidGroupedTypes().withIndex()) {
             val clickText = ClickableText
                 .compose(type)
-                .color(ChatColor.YELLOW)
+                .color(YELLOW)
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
                 .value("/$label $type ")
             builder.append(clickText.toComponent())
 
             if (i != (getValidGroupedTypes().size - 1))
-                builder.append(",").color(ChatColor.GRAY)
+                builder.appendc(",", GRAY)
         }
 
         val click = ClickableText
             .compose("/list mobs")
-            .color(ChatColor.YELLOW)
+            .color(YELLOW)
             .action(ClickEvent.Action.RUN_COMMAND)
             .value("/list mobs")
 
         builder
             .append("\n")
-            .append("Do ").color(ChatColor.GOLD)
+            .appendc("Do ", GOLD)
             .append(click.toComponent())
-            .append(" to display valid mob specifiers").color(ChatColor.GOLD)
+            .appendc(" to display valid mob specifiers", GOLD)
 
 
         return builder.create()

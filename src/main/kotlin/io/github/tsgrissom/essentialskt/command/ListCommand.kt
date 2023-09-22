@@ -5,7 +5,7 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.HoverableText
-import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
@@ -101,30 +101,28 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
     }
 
-    private fun createPlayerListAsTextComponents() : Array<BaseComponent> {
+    private fun generatePlayerListAsTextComponents() : Array<BaseComponent> {
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val count = onlinePlayers.size
         val max = Bukkit.getMaxPlayers()
         val builder = ComponentBuilder()
-            .append("Player List").color(ChatColor.GRAY)
-            .append(" ")
+            .appendc("Player List ", GRAY)
 
         if (onlinePlayers.isEmpty()) {
             builder
-                .append("(").color(ChatColor.DARK_GRAY)
-                .append("None").color(ChatColor.RED)
-                .append(")").color(ChatColor.DARK_GRAY)
+                .appendc("(", DARK_GRAY)
+                .appendc("None", RED)
+                .appendc(")", DARK_GRAY)
 
             return builder.create()
         }
 
         builder
-            .append("(").color(ChatColor.DARK_GRAY)
-            .append("$count").color(ChatColor.GOLD)
-            .append("/").color(ChatColor.DARK_GRAY)
-            .append("$max").color(ChatColor.GOLD)
-            .append(")").color(ChatColor.DARK_GRAY)
-            .append(" ")
+            .appendc("(", DARK_GRAY)
+            .appendc("$count", GOLD)
+            .appendc("/", DARK_GRAY)
+            .appendc("$max", GOLD)
+            .appendc(") ", DARK_GRAY)
 
         for ((index, p) in onlinePlayers.withIndex()) {
             val loc = p.location
@@ -134,7 +132,7 @@ class ListCommand : CommandBase() {
             builder.append(
                 HoverableText
                     .compose(p.name)
-                    .color(ChatColor.YELLOW)
+                    .color(YELLOW)
                     .hoverText(
                         "&8&l> &7Nickname&8: &r${p.displayName}",
                         "&8&l> &7UUID&8: &e${p.getUniqueString()}",
@@ -153,11 +151,12 @@ class ListCommand : CommandBase() {
     private fun handleSubcPlayersText(context: CommandContext) {
         val sender = context.sender
 
-        sender.spigot().sendMessage(*createPlayerListAsTextComponents())
+        sender.sendChatComponents(generatePlayerListAsTextComponents())
     }
 
     private fun createMobListAsTextComponents() : Array<BaseComponent> {
-        TODO("WIP")
+        // TODO Create mob list as text components
+        return ComponentBuilder().create()
     }
 
     private fun handleSubcMobs(context: CommandContext) {
@@ -166,6 +165,7 @@ class ListCommand : CommandBase() {
         if (sender.lacksPermission(PERM_MOBS))
             return context.sendNoPermission(sender, PERM_MOBS)
 
-        sender.sendMessage("TODO Display mods as text")
+        sender.sendMessage("TODO Display mobs as text")
+        // TODO Display mobs as text components
     }
 }

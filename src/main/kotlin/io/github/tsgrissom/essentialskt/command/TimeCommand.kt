@@ -1,12 +1,19 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -16,19 +23,17 @@ import org.bukkit.util.StringUtil
 fun CommandSender.hasPermissionSetWorldTime(world: World) : Boolean =
     this.hasPermission(TimeCommand.PERM_ALL_WORLDS) || this.hasPermission("essentials.time.world.${world.name}")
 
-private fun String.isInputInSeconds() : Boolean =
-    "^(?i)\\d+[sS]\$".toRegex().matches(this)
-
 class TimeCommand : CommandBase() {
 
-    // TODO Build new usage + unknown command help with chat component API
+    private fun getPlugin() =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getTimeUtility() =
+        getPlugin().getTimeUtility()
 
     companion object {
         const val PERM_BASE = "essentials.time"
         const val PERM_SET = "essentials.time.set"
         const val PERM_ALL_WORLDS = "essentials.time.world.all"
-
-        const val REGEX_INPUT_SECONDS = "^\\d+s\$"
 
         const val TIME_DAY: Long = 1000
         const val TIME_NOON: Long = 6000
@@ -138,20 +143,97 @@ class TimeCommand : CommandBase() {
         sender.sendColored("&8&l> &e${percent.roundToDigits(1)}%")
     }
 
+    private fun getAddUsage() : Array<BaseComponent> {
+        val comp = TextComponent("${DARK_RED}Usage: ${RED}/time ")
+
+        val subcComp = TextComponent("add ")
+        subcComp.color = RED
+        subcComp.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/time add ")
+        subcComp.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${GRAY}Click to suggest command"))
+
+        val arg0Comp = TextComponent("<Amount> ")
+        arg0Comp.color = RED
+        arg0Comp.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_TEXT,
+            Text("${GRAY}Required: ${GREEN}Yes\n"),
+            Text("${DARK_GRAY}- ${GRAY}An amount of time to add to the world's\n"),
+            Text("   ${GRAY}current time\n"),
+            Text("${DARK_GRAY}- ${GRAY}Usually ticks, which is full seconds multiplied by 20\n"),
+            Text("${DARK_GRAY}- ${GRAY}Otherwise, an amount of time followed by s or m")
+        )
+
+        val arg1Comp = TextComponent("[World]")
+        arg1Comp.color = RED
+
+        comp.addExtra(subcComp)
+        comp.addExtra(arg0Comp)
+        comp.addExtra(arg1Comp)
+
+        return ComponentBuilder(comp).create()
+    }
+
+    private fun getSetUsage() : Array<BaseComponent> {
+        val comp = TextComponent("${DARK_RED}Usage: ${RED}/time ")
+
+        val subcComp = TextComponent("set ")
+        subcComp.color = RED
+        subcComp.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/time set ")
+        subcComp.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${GRAY}Click to suggest command"))
+
+        val arg0Comp = TextComponent("<")
+        arg0Comp.color = RED
+        val arg0FirstComp = TextComponent("Amount")
+        arg0FirstComp.color = RED
+        arg0FirstComp.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_TEXT,
+            Text("${GRAY}Required: ${GREEN}Yes ${GRAY}or ${GREEN}Preset\n"),
+            Text("${DARK_GRAY}- ${GRAY}An amount of ticks to set the world's\n"),
+            Text("   ${GRAY}current time to\n"),
+            Text("${DARK_GRAY}- ${GRAY}Usually ticks, which is full seconds multiplied by 20")
+        )
+        val arg0Between = TextComponent("/")
+        arg0Between.color = DARK_GRAY
+        val arg0SecondComp = TextComponent("Preset")
+        arg0SecondComp.color = RED
+        arg0SecondComp.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_TEXT,
+            Text("${GRAY}Required: ${GREEN}Yes ${GRAY}or ${GREEN}Amount\n"),
+            Text("${GRAY}One of the following: ${YELLOW}day${DARK_GRAY},${YELLOW}noon${DARK_GRAY},${YELLOW}sunset\n"),
+            Text("  ${YELLOW}night${DARK_GRAY},${YELLOW}midnight${DARK_GRAY},${YELLOW}sunrise")
+        )
+        val arg0Postfix = TextComponent("> ")
+        arg0Postfix.color = RED
+
+        arg0Comp.addExtra(arg0FirstComp)
+        arg0Comp.addExtra(arg0Between)
+        arg0Comp.addExtra(arg0SecondComp)
+        arg0Comp.addExtra(arg0Postfix)
+
+        val arg1Comp = TextComponent("[World]")
+        arg1Comp.color = RED
+
+        comp.addExtra(subcComp)
+        comp.addExtra(arg0Comp)
+        comp.addExtra(arg1Comp)
+
+        return ComponentBuilder(comp).create()
+    }
+
     private fun handleEmptyArgs(context: CommandContext) = displayWorldTime(context.sender)
 
     private fun handleAddSubcommand(context: CommandContext) {
-        val usage = "&4Usage: &c/time add <AmountInTicks> [WorldName]"
         val args = context.args
         val sender = context.sender
 
         if (args.size == 1)
-            return sender.sendColored(usage)
+            return sender.sendChatComponents(getAddUsage())
 
         val arg1 = args[1]
-
-        if (arg1.isInputInSeconds())
+        val util = getTimeUtility()
+        if (util.isInputInSeconds(arg1))
             return handleAddSeconds(context, arg1)
+        else if (util.isInputInMinutes(arg1))
+            return handleAddMinutes(context, arg1)
 
         val addend: Long
 
@@ -172,17 +254,21 @@ class TimeCommand : CommandBase() {
         if (!sender.hasPermissionSetWorldTime(world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
-        val currentTime = world.time
+        val oldTime = world.time
 
-        world.time = currentTime + addend
+        world.time = oldTime + addend
 
         val newTime = world.time
-        val percent = (newTime / 24000.0) * 100
-        val pRounded = percent.roundToDigits(2)
+        val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
         val wn = world.name
+        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
+        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
 
-        sender.sendColored("&8&l> &c$addend ticks &6added to world &c${wn}'s &6time")
-        sender.sendColored("&8&l> &6New time is &c$newTime ticks&6, or &c${pRounded}% &6 of the day")
+        sender.sendColored(
+            "&8&l> &c$addend ticks &6added to world &c${wn}'s &6time",
+            "&8&l> &6New time is &c$newTime ticks&6, or &c${percent}% &6 of the day",
+            "&8&l> &6Converted to real time $oldTimeF &8-> $newTimeF"
+        )
     }
 
     private fun handleAddSeconds(context: CommandContext, input: String) {
@@ -203,17 +289,59 @@ class TimeCommand : CommandBase() {
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val addend = value * 20
-        val currentTime = world.time
+        val oldTime = world.time
 
-        world.time = currentTime + addend
+        world.time = oldTime + addend
 
         val newTime = world.time
-        val percent = (newTime / 24000.0) * 100
-        val pRounded = percent.roundToDigits(2)
+        val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
         val wn = world.name
+        val util = getTimeUtility()
+        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
+        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
 
-        sender.sendColored("&8&l> &c$value seconds &8(&c$addend ticks&8) &6added to world &c${wn}'s &6time")
-        sender.sendColored("&8&l> &6New time is &c$newTime ticks&6, or &c${pRounded}% &6 of the day")
+        sender.sendColored(
+            "&8&l> &c$value seconds &8(&c$addend ticks&8) &6added to world &c${wn}'s &6time",
+            "&8&l> &6New time is &c$newTime ticks&6, or &c${percent}% &6 of the day",
+            "&8&l> &6Converted to real time $oldTimeF &8-> $newTimeF"
+        )
+    }
+
+    private fun handleAddMinutes(context: CommandContext, input: String) {
+        val args = context.args
+        val sender = context.sender
+        val sansSuffix = input.lowercase().removeSuffix("m")
+        val value = sansSuffix.toIntOrNull()
+            ?: return sender.sendColored("&4Time in minutes must be an integer followed by the letter m")
+
+        var world = sender.getCurrentWorldOrDefault()
+
+        if (args.size > 2) {
+            val arg2 = args[2]
+            world = Bukkit.getWorld(arg2)
+                ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
+        }
+
+        if (!sender.hasPermissionSetWorldTime(world))
+            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+
+        val addend = value * 60 * 20
+        val oldTime = world.time
+
+        world.time = oldTime + addend
+
+        val newTime = world.time
+        val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
+        val wn = world.name
+        val util = getTimeUtility()
+        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
+        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
+
+        sender.sendColored(
+            "&8&l> &c$value minutes &8(&c$addend ticks&8) &6added to world &c${wn}'s &6time",
+            "&8&l> &6New time is &c$newTime ticks&6, or &c${percent}% &6 of the day",
+            "&8&l> &6Converted to real time $oldTimeF &8-> $newTimeF"
+        )
     }
 
     private fun handleQuerySubcommand(context: CommandContext) {
@@ -247,7 +375,7 @@ class TimeCommand : CommandBase() {
 
         sender.sendColored("&6$qn&8: &c$query")
 
-        val dayLength = " &8- &c24,000 ticks &6is the length of a full Minecraft day"
+        val dayLength = "&8- &c24,000 ticks &6is the length of a full Minecraft day"
 
         if (arg1.equalsIc("day")) {
             sender.sendColored(
@@ -270,7 +398,6 @@ class TimeCommand : CommandBase() {
     }
 
     private fun handleSetSubcommand(context: CommandContext) {
-        val usage = "&4Usage: &c/time set <AmountInTicks|Preset> [WorldName]"
         val args = context.args
         val sender = context.sender
 
@@ -278,7 +405,7 @@ class TimeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_SET)
 
         if (args.size == 1)
-            return sender.sendColored(usage)
+            return sender.sendChatComponents(getSetUsage())
 
         val arg1 = args[1]
 
