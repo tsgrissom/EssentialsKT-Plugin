@@ -30,8 +30,7 @@ class RemoveCommand : CommandBase() {
         const val PERM = "essentials.remove"
     }
 
-    // TODO Exchange old help for this one
-    private fun getTestHelp(context: CommandContext) : Array<BaseComponent> {
+    private fun generateHelpText(context: CommandContext) : Array<BaseComponent> {
         return CommandHelpGenerator(context)
             .withAliases("killall", "eremove")
             .withSubcommand(
@@ -72,20 +71,6 @@ class RemoveCommand : CommandBase() {
             )
             .getHelpAsComponent()
     }
-    private fun getHelpText(label: String) : Array<String> =
-        arrayOf(
-            "   &6Command Help &8-> &e/${label}",
-            "&8&l> &e/${label} <Type> [Radius OR World]",
-            "    &7Kill entities of a specified type. By default all",
-            "     &7that match in the world, otherwise within a set",
-            "     &7radius or another world",
-            "&8&l> &e/${label} types",
-            "    &7List valid special grouped types",
-            "&8&l> &e/ls mobs",
-            "    &7List valid mob types"
-        )
-    private fun sendHelp(context: CommandContext) =
-        getHelpText(context.label).forEach { context.sender.sendColored(it) }
 
     private fun getValidGroupedTypes() =
         arrayOf(
@@ -136,7 +121,7 @@ class RemoveCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
-            return sendHelp(context)
+            return sender.sendChatComponents(generateHelpText(context))
 
         if (args.size == 1)
             handleOneArgument(context)
@@ -178,13 +163,10 @@ class RemoveCommand : CommandBase() {
         val sub = args[0]
 
         if (sub.equalsIc("help", "h", "?")) {
-            return sendHelp(context)
+            return sender.sendChatComponents(generateHelpText(context))
         } else if (sub.equalsIc("types", "groups", "list", "ls")) {
             val types = getGroupedTypesAsComponents(context)
             return sender.spigot().sendMessage(*types)
-        } else if (sub.equalsIc("test")) {
-            val help = getTestHelp(context)
-            return sender.sendChatComponents(help)
         }
 
         if (sender is ConsoleCommandSender)

@@ -35,6 +35,20 @@ class ClearChatCommand : CommandBase() {
         }
     }
 
+    override fun execute(context: CommandContext) {
+        val args = context.args
+
+        if (args.isEmpty())
+            return handleEmptyArgs(context)
+
+        val sub = args[0]
+
+        if (sub.equalsIc("all"))
+            return handleSubcAll(context)
+
+        handleOneOrMoreArgs(context)
+    }
+
     private fun handleEmptyArgs(context: CommandContext) {
         val sender = context.sender
 
@@ -61,37 +75,51 @@ class ClearChatCommand : CommandBase() {
         sender.sendColored("&6You cleared the chat messages of all players on the server")
     }
 
-    private fun handleTargeted(context: CommandContext) {
+    private fun handleOneOrMoreArgs(context: CommandContext) {
         val args = context.args
         val sender = context.sender
 
-        if (sender.lacksPermission(PERM_OTHERS))
-            return context.sendNoPermission(sender, PERM_OTHERS)
+        val clearedPlayers = mutableListOf<String>()
 
-        val sub = args[0]
-        val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+        for (i in 0..args.size) {
+            val arg = args[i]
+            val t: Player = Bukkit.getPlayer(arg)
+                ?: return sender.sendColored("&4Could not find player &c\"$arg\"")
+            val tn = t.name
+            if (clearedPlayers.contains(tn)) {
+                sender.sendColored("&4You already cleared &c${tn}'s &4chat")
+                continue
+            }
+            if (t == sender && sender.lacksPermission(PERM_SELF)) {
+                context.sendNoPermission(sender, PERM_SELF)
+                continue
+            }
+            if (t != sender && sender.lacksPermission(PERM_OTHERS)) {
+                context.sendNoPermission(sender, PERM_OTHERS)
+                continue
+            }
 
-        clearChat(t, getConfiguredRepeatCount())
+            clearChat(t, getConfiguredRepeatCount())
+            clearedPlayers.add(tn)
+        }
 
-        if (t != sender)
-            sender.sendColored("&6You cleared &c${t.name}'s &6chat messages")
+        var self = false
+        val howMany = clearedPlayers.size
 
-        // TODO Accept multiple named targets with corresponding chat completion
-    }
+        if (howMany == 0)
+            return
 
-    override fun execute(context: CommandContext) {
-        val args = context.args
+        val who = if (howMany == 1) {
+            val first = clearedPlayers[0]
+            if (first == sender.name)
+                self = true
+            "${first}'s"
+        } else {
+            "$howMany players"
+        }
 
-        if (args.isEmpty())
-            return handleEmptyArgs(context)
-
-        val sub = args[0]
-
-        if (sub.equalsIc("all"))
-            return handleSubcAll(context)
-
-        handleTargeted(context)
+        if (!self)
+            sender.sendColored("&6You cleared &c${who} &6chat messages")
     }
 
     override fun onTabComplete(
@@ -112,9 +140,10 @@ class ClearChatCommand : CommandBase() {
         val len = args.size
 
         if (len > 0) {
-            val sub = args[0]
-            if (len == 1 && !suggestPlayers.contains(sub))
-                StringUtil.copyPartialMatches(sub, suggestPlayers, tab)
+            for (i in 0..len) {
+                val arg = args[i]
+                StringUtil.copyPartialMatches(arg, suggestPlayers, tab)
+            }
         }
 
         return tab.sorted().toMutableList()
