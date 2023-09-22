@@ -1,7 +1,5 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.misc.EssPlayer
-import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.isPercentage
@@ -74,8 +72,6 @@ class SetFoodLevelCommand : CommandBase() {
 
         val chunk = value / 100.0
         val amount = chunk * 20
-
-        PluginLogger.info("Food level chunk: $chunk + Amount: $amount")
 
         t.foodLevel = amount.roundToInt()
         sender.sendColored("&6You set &c${t.name}'s &6food level to &c${input}")

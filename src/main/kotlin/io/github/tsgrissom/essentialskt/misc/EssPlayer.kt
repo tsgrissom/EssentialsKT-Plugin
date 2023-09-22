@@ -35,7 +35,7 @@ class EssPlayer(private val uuid: UUID) {
     fun getNickname() : String = player.displayName
 
     fun getEssentialsUser() : User = getPlugin().getEssentials().getUser(player)
-    fun isAfk() : Boolean = getEssentialsUser().isAfk // TODO Replace with Essentials AFK check
+    fun isAfk() : Boolean = getEssentialsUser().isAfk // FIXME I don't think Essentials API is working here
 
     fun getMaxHealth() : Double {
         val attr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)

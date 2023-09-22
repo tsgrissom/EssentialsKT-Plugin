@@ -20,9 +20,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.util.StringUtil
 
-fun CommandSender.hasPermissionSetWorldTime(world: World) : Boolean =
-    this.hasPermission(TimeCommand.PERM_ALL_WORLDS) || this.hasPermission("essentials.time.world.${world.name}")
-
 class TimeCommand : CommandBase() {
 
     private fun getPlugin() =
@@ -41,6 +38,15 @@ class TimeCommand : CommandBase() {
         const val TIME_NIGHT: Long = 15000
         const val TIME_MIDNIGHT: Long = 18000
         const val TIME_SUNRISE: Long = 23000
+
+        fun getTimeSetPerWorldPermission(world: World) =
+            "essentials.time.world.${world.name}"
+
+        fun hasPermissionToSetWorldTime(who: CommandSender, world: World) =
+            who.hasPermission(PERM_ALL_WORLDS) || who.hasPermission(getTimeSetPerWorldPermission(world))
+
+        fun lacksPermissionToSetWorldTime(who: CommandSender, world: World) =
+            !hasPermissionToSetWorldTime(who, world)
     }
 
     private fun getHelpAsComponent(context: CommandContext) : Array<BaseComponent> {
@@ -251,7 +257,7 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"${arg2}\"")
         }
 
-        if (!sender.hasPermissionSetWorldTime(world))
+        if (lacksPermissionToSetWorldTime(sender, world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val oldTime = world.time
@@ -285,7 +291,7 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
         }
 
-        if (!sender.hasPermissionSetWorldTime(world))
+        if (lacksPermissionToSetWorldTime(sender, world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val addend = value * 20
@@ -322,7 +328,7 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
         }
 
-        if (!sender.hasPermissionSetWorldTime(world))
+        if (lacksPermissionToSetWorldTime(sender, world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val addend = value * 60 * 20
@@ -430,7 +436,7 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
         }
 
-        if (!sender.hasPermissionSetWorldTime(world))
+        if (lacksPermissionToSetWorldTime(sender, world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val oldTime = world.time
@@ -462,7 +468,7 @@ class TimeCommand : CommandBase() {
                 ?: return sender.sendColored("&4Unknown world &c\"$arg2\"")
         }
 
-        if (!sender.hasPermissionSetWorldTime(world))
+        if (lacksPermissionToSetWorldTime(sender, world))
             return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
 
         val oldTime = world.time
