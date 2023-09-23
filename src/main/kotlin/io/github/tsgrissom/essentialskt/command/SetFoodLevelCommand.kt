@@ -4,7 +4,14 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.isPercentage
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -19,9 +26,42 @@ class SetFoodLevelCommand : CommandBase() {
         const val PERM_PERCENT = "essentialskt.setfoodlevel.percent"
     }
 
+    private fun generateUsageAsComponent(context: CommandContext) : Array<BaseComponent> {
+        val comp = TextComponent("${DARK_RED}Usage: ")
+        comp.color = RED
+
+        val arg0Comp = TextComponent("<")
+        val arg0Inner = TextComponent("Target")
+        arg0Comp.color = RED
+        arg0Inner.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_TEXT,
+            Text("${GRAY}Required: ${GREEN}Yes\n"),
+            Text("${GRAY}The player whose food level to set")
+        )
+        arg0Comp.addExtra(arg0Inner)
+        arg0Comp.addExtra("> ")
+
+        val arg1Comp = TextComponent("<")
+        val arg1Inner = TextComponent(if (context.sender.hasPermission(PERM_PERCENT)) "AmountOrPercent" else "Amount")
+        arg1Comp.color = RED
+        arg1Inner.hoverEvent = HoverEvent(
+            HoverEvent.Action.SHOW_TEXT,
+            Text("${GRAY}Required: ${GREEN}Yes\n"),
+            Text("${DARK_GRAY}- ${GRAY}The amount to set the player's food level to\n"),
+            Text("${DARK_GRAY}- ${GRAY}Must be an integer less than 20 or a percentage")
+        )
+        arg1Comp.addExtra(arg1Inner)
+        arg1Comp.addExtra("> ")
+
+        comp.addExtra("/${context.label} ")
+        comp.addExtra(arg0Comp)
+        comp.addExtra(arg1Comp)
+
+        return ComponentBuilder(comp).create()
+    }
+
     override fun execute(context: CommandContext) {
         val args = context.args
-        val label = context.label
         val len = args.size
         val sender = context.sender
 
@@ -29,7 +69,7 @@ class SetFoodLevelCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (len == 0)
-            return sender.sendColored("&4Usage: &c/$label <Target> <AmountAsDouble>")
+            return sender.sendChatComponents(generateUsageAsComponent(context))
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
