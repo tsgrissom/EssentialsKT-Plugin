@@ -1,6 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.manager.ConfigManager
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
@@ -10,7 +11,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
@@ -25,12 +25,11 @@ class ClearChatCommand : CommandBase() {
 
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getConfiguration() : FileConfiguration = getPlugin().config
-    private fun getConfiguredRepeatCount() : Int =
-        getConfiguration().getInt("Commands.ClearChatRepeatBlankLine", 500)
+    private fun getConfig() = getPlugin().getConfigManager()
+    private fun getConfiguredRepeatCount() = getConfig().getClearChatRepeatBlankLineCount()
 
-    private fun clearChat(t: Player, repeat: Int = 500) {
-        repeat(repeat) {
+    private fun clearChat(t: Player, count: Int = getConfiguredRepeatCount()) {
+        repeat(count) {
             t.sendMessage("")
         }
     }
@@ -60,7 +59,7 @@ class ClearChatCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        clearChat(sender, getConfiguredRepeatCount())
+        clearChat(sender)
     }
 
     private fun handleSubcAll(context: CommandContext) {
@@ -99,7 +98,7 @@ class ClearChatCommand : CommandBase() {
                 continue
             }
 
-            clearChat(t, getConfiguredRepeatCount())
+            clearChat(t)
             clearedPlayers.add(tn)
         }
 

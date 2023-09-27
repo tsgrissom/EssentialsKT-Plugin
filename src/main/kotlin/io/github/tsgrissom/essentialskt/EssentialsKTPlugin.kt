@@ -2,8 +2,8 @@ package io.github.tsgrissom.essentialskt
 
 import com.earth2me.essentials.Essentials
 import io.github.tsgrissom.essentialskt.command.*
-import io.github.tsgrissom.essentialskt.listener.ChatListener
-import io.github.tsgrissom.essentialskt.listener.JoinAndQuitListener
+import io.github.tsgrissom.essentialskt.listener.JoinListener
+import io.github.tsgrissom.essentialskt.listener.QuitListener
 import io.github.tsgrissom.essentialskt.manager.ConfigManager
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
@@ -96,8 +96,8 @@ class EssentialsKTPlugin : JavaPlugin() {
 
         this.registerCommands()
         this.registerListeners(
-            ChatListener(),
-            JoinAndQuitListener()
+            JoinListener(),
+            QuitListener()
         )
     }
 }

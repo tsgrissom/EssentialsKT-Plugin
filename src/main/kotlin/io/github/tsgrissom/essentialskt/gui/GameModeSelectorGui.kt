@@ -18,8 +18,8 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
 
     companion object {
         private const val STR_CURRENT = "&eYour current gamemode"
-        private const val STR_CLICK = "&aClick to change to"
-        private const val STR_NOPERMISSION = "&cYou do not have permission"
+        private const val STR_CLICK = "&aClick to use"
+        private const val STR_NOPERMISSION = "&cYou do not have permission to use this"
     }
 
     private fun alterGameMode(whoClicked: HumanEntity, mode: String) =

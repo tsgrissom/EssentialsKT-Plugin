@@ -2,25 +2,23 @@ package io.github.tsgrissom.essentialskt.listener
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.extension.translateColor
-import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerQuitEvent
 
-class ChatListener : Listener {
+class QuitListener : Listener {
 
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getConfiguration() = getPlugin().config
+    private fun getConfig() = getPlugin().getConfigManager()
 
     @EventHandler
-    fun onAsyncChat(e: AsyncPlayerChatEvent) {
+    fun onQuit(e: PlayerQuitEvent) {
         val p = e.player
 
-        e.message = getConfiguration()
-            .getString("Messages.ChatEvent", "&e%pd% &7: &f%message%")!!
+        e.quitMessage = getConfig().getQuitMessage()
             .translateColor()
             .replace("%pd%", p.displayName)
-            .replace("%message%", e.message)
+            .replace("%pn%", p.name)
     }
 }
