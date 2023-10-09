@@ -38,7 +38,7 @@ class CommandHelpGenerator(val context: CommandContext) {
         return this
     }
 
-    fun getHelpAsComponent() : Array<BaseComponent> {
+    fun toComponents() : Array<BaseComponent> {
         val comp = ComponentBuilder()
             .append(getTitleAsComponent())
             .append(getAllPermittedSubcommandsAsComponent())

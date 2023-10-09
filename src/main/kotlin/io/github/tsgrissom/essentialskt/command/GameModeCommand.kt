@@ -175,7 +175,7 @@ class GameModeCommand : CommandBase() {
             .withSubcommand(subcAdventure)
             .withSubcommand(subcSpectator)
 
-        return help.getHelpAsComponent()
+        return help.toComponents()
     }
 
     override fun execute(context: CommandContext) {

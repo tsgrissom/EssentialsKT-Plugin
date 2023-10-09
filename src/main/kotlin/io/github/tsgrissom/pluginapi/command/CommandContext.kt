@@ -7,6 +7,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
+import org.bukkit.permissions.Permission
 
 class CommandContext(
     val sender: CommandSender,
@@ -26,6 +27,15 @@ class CommandContext(
         }
         sender.sendColored(resp)
     }
+
+    fun hasPermission(permission: String) =
+        sender.hasPermission(permission)
+    fun hasPermission(permission: Permission) =
+        sender.hasPermission(permission)
+    fun lacksPermission(permission: String) =
+        !sender.hasPermission(permission)
+    fun lacksPermission(permission: Permission) =
+        !sender.hasPermission(permission)
 
     fun hasFlag(pair: Pair<String, String>) : Boolean =
         hasFlag(pair.first, pair.second)
@@ -78,6 +88,4 @@ class CommandContext(
         else if (sender is Player)
             sender.performCommand(command)
     }
-
-
 }

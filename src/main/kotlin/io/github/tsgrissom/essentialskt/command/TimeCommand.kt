@@ -113,7 +113,7 @@ class TimeCommand : CommandBase() {
                     .withSuggestion("/$label set ")
             )
 
-        return help.getHelpAsComponent()
+        return help.toComponents()
     }
 
     override fun execute(context: CommandContext) {

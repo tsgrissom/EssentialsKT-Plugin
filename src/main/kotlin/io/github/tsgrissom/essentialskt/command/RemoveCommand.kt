@@ -69,7 +69,7 @@ class RemoveCommand : CommandBase() {
                     .compose("types")
                     .withDescription("List valid special grouped types")
             )
-            .getHelpAsComponent()
+            .toComponents()
     }
 
     private fun getValidGroupedTypes() =

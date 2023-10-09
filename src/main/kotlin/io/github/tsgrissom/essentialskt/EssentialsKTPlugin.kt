@@ -58,6 +58,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         /* Register General Commands (A->Z) */
         registerCommand("clearchat", ClearChatCommand())
         registerCommand("damage", DamageCommand())
+        registerCommand("esskt", EssKtCommand())
         registerCommand("gamemode", GameModeCommand())
         registerCommand("ipaddress", IPAddressCommand())
         registerCommand("list", ListCommand())

@@ -20,6 +20,9 @@ commands:
   damage:
     description: "Damage a player for an amount of HP"
     aliases: [ "dmg", "hurt", "wound", "injure" ]
+  esskt:
+    description: "View plugin information"
+    aliases: ["essentialskt"]
   gamemode:
     description: "Alter a player's gamemode"
     aliases: ["egamemode", "gm", "egm", "gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2"]
@@ -85,6 +88,7 @@ permissions:
       essentialskt.clearchat.*: true
       essentialskt.damage: true
       essentialskt.damage.percent: true
+      essentialskt.essentialskt: true
       essentials.gamemode.*: true
       essentialskt.ipaddress: true
       essentialskt.list.*: true
@@ -143,6 +147,8 @@ permissions:
     description: "Allows you to damage a player by force, either with direct damage or a percent of their max health"
   essentialskt.damage.percent:
     description: "Allows you to damage a percentage of a player's max health"
+  essentialskt.essentialskt:
+    description: "Allows you to view plugin info with /esskt"
   essentialskt.gamemode:
     description: "Allows you to alter your own gamemode"
   essentialskt.gamemode.others:
