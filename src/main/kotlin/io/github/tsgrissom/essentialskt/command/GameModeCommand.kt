@@ -24,16 +24,18 @@ import org.bukkit.util.StringUtil
 
 class GameModeCommand : CommandBase() {
 
+    // MARK: Static Declarations
     companion object {
-        const val PERM_BASE = "essentials.gamemode"
-        const val PERM_OTHERS = "essentials.gamemode.others"
+        const val PERM_BASE      = "essentials.gamemode"
+        const val PERM_OTHERS    = "essentials.gamemode.others"
         const val PERM_DEFENSIVE = "essentials.gamemode.noalter"
         const val PERM_ADVENTURE = "essentials.gamemode.adventure"
-        const val PERM_CREATIVE = "essentials.gamemode.creative"
-        const val PERM_SURVIVAL = "essentials.gamemode.survival"
+        const val PERM_CREATIVE  = "essentials.gamemode.creative"
+        const val PERM_SURVIVAL  = "essentials.gamemode.survival"
         const val PERM_SPECTATOR = "essentials.gamemode.spectator"
     }
 
+    // MARK: Text Helper Functions
     private fun getAvailableGameModesAsComponent(
         sender: CommandSender,
         negative: Boolean = true
@@ -176,6 +178,59 @@ class GameModeCommand : CommandBase() {
         return help.toComponents()
     }
 
+    // MARK: Operational Helper Functions
+    private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {
+        if (sender != target && target.hasPermission(PERM_DEFENSIVE)) {
+            val s = sender.name
+            val t = target.name
+            Bukkit.getLogger().info(
+                "$s attempted to set ${t}'s gamemode but the target had \"$PERM_DEFENSIVE\""
+            )
+            sender.sendColored("&4You are not able to set &c${t}'s &4gamemode")
+            return
+        }
+
+        target.gameMode = mode
+    }
+
+    private fun getNextGameMode(sender: CommandSender, target: Player) : GameMode? {
+        fun checkPermission(mode: GameMode) : Boolean {
+            return sender.hasPermission("essentials.gamemode.${mode.name.lowercase()}")
+        }
+
+        return when (target.gameMode) {
+            ADVENTURE -> {
+                if (checkPermission(CREATIVE)) CREATIVE
+                else if (checkPermission(SURVIVAL)) SURVIVAL
+                else ADVENTURE
+            }
+            CREATIVE -> {
+                if (checkPermission(SURVIVAL)) SURVIVAL
+                else if (checkPermission(ADVENTURE)) ADVENTURE
+                else CREATIVE
+            }
+            SURVIVAL -> {
+                if (checkPermission(ADVENTURE)) ADVENTURE
+                else if (checkPermission(CREATIVE)) CREATIVE
+                else SURVIVAL
+            }
+            else -> null
+        }
+    }
+
+    private fun cycleGameMode(sender: CommandSender, target: Player) {
+        val gm = getNextGameMode(sender, target)
+            ?: return sender.sendColored("&c${target.name} &4is in a gamemode which cannot be cycled")
+        val mn = gm.name.capitalizeAllCaps()
+        val tn = target.name
+
+        if (gm == target.gameMode)
+            return sender.sendColored("&4You do not have permission to cycle to another gamemode")
+
+        Bukkit.dispatchCommand(sender, "gm $mn $tn")
+    }
+
+    // MARK: Command Body
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val label = context.label
@@ -193,6 +248,7 @@ class GameModeCommand : CommandBase() {
         }
     }
 
+    // Mark: Handlers
     private fun handleShorthandLabel(context: CommandContext) {
         val label = context.label
         val sender = context.sender
@@ -352,57 +408,7 @@ class GameModeCommand : CommandBase() {
             sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
     }
 
-    private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {
-        if (sender != target && target.hasPermission(PERM_DEFENSIVE)) {
-            val s = sender.name
-            val t = target.name
-            Bukkit.getLogger().info(
-                "$s attempted to set ${t}'s gamemode but the target had \"$PERM_DEFENSIVE\""
-            )
-            sender.sendColored("&4You are not able to set &c${t}'s &4gamemode")
-            return
-        }
-
-        target.gameMode = mode
-    }
-
-    private fun getNextGameMode(sender: CommandSender, target: Player) : GameMode? {
-        fun checkPermission(mode: GameMode) : Boolean {
-            return sender.hasPermission("essentials.gamemode.${mode.name.lowercase()}")
-        }
-
-        return when (target.gameMode) {
-            ADVENTURE -> {
-                if (checkPermission(CREATIVE)) CREATIVE
-                else if (checkPermission(SURVIVAL)) SURVIVAL
-                else ADVENTURE
-            }
-            CREATIVE -> {
-                if (checkPermission(SURVIVAL)) SURVIVAL
-                else if (checkPermission(ADVENTURE)) ADVENTURE
-                else CREATIVE
-            }
-            SURVIVAL -> {
-                if (checkPermission(ADVENTURE)) ADVENTURE
-                else if (checkPermission(CREATIVE)) CREATIVE
-                else SURVIVAL
-            }
-            else -> null
-        }
-    }
-
-    private fun cycleGameMode(sender: CommandSender, target: Player) {
-        val gm = getNextGameMode(sender, target)
-            ?: return sender.sendColored("&c${target.name} &4is in a gamemode which cannot be cycled")
-        val mn = gm.name.capitalizeAllCaps()
-        val tn = target.name
-
-        if (gm == target.gameMode)
-            return sender.sendColored("&4You do not have permission to cycle to another gamemode")
-
-        Bukkit.dispatchCommand(sender, "gm $mn $tn")
-    }
-
+    // MARK: Tab Completion Handler
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
