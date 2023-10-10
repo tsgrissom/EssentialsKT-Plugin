@@ -16,15 +16,11 @@ import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
-
     companion object {
         const val PERM_SELF = "essentialskt.whoami"
         const val PERM_OTHERS = "essentialskt.whois"
         const val PERM_IP = "essentialskt.whois.ip"
     }
-
-    private fun getPlugin() : EssentialsKTPlugin =
-        EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
     override fun execute(context: CommandContext) {
         val label = context.label
@@ -33,21 +29,26 @@ class WhoIsCommand : CommandBase() {
         when (label) {
             "whoami", "ewhoami" -> handleWhoAmI(context)
             "whois", "ewhois" -> handleWhoIs(context)
-            else -> sender.sendColored("&4Unknown /whois subcommand (error)")
+            else -> {
+                sender.sendColored("&4Unknown &c/whois &4command label (this should not happen)")
+                error("Unhandled command label \"$label\" was passed to /whois handler")
+            }
         }
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> {
         val len = args.size
         val tab = mutableListOf<String>()
         val options = listOf("temporary", "permanent", "help")
 
-        if (label.equalsIc("whoami")) {
-            if (len == 1)
-                StringUtil.copyPartialMatches(args[0], options, tab)
-
-            return tab
-        } else {
+        if (label.equalsIc("whoami", "ewhoami") && len == 1)
+            StringUtil.copyPartialMatches(args[0], options, tab)
+        else {
             if (len == 1 && sender.hasPermission(PERM_OTHERS))
                 StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
             if (len == 2)
@@ -76,10 +77,12 @@ class WhoIsCommand : CommandBase() {
         } else {
             val sub = args[0]
 
+            if (sub.equalsIc(KEYS_SUBC_HELP))
+                return sender.sendColored("&4Usage: &c/$label [temporary,permanent]")
+
             when (sub.lowercase()) {
                 "temporary", "temp" -> displayTemporaryWhoIs(sender, sender)
                 "permanent", "perm" -> displayPermanentWhoIs(sender, sender)
-                "help", "h", "?", "usage" -> sender.sendColored("&4Usage: &c/$label [temporary,permanent]")
                 else -> displayWhoIs(sender, sender)
             }
         }
@@ -106,10 +109,12 @@ class WhoIsCommand : CommandBase() {
         } else {
             val arg1 = args[1]
 
+            if (arg1.equalsIc(KEYS_SUBC_HELP_OR_USAGE))
+                return sender.sendColored("&4Usage: &c/$label <Target> [temporary,permanent]")
+
             when (arg1.lowercase()) {
                 "temporary", "temp" -> displayTemporaryWhoIs(sender, t)
                 "permanent", "perm" -> displayPermanentWhoIs(sender, t)
-                "help", "h", "?", "usage" -> sender.sendColored("&4Usage: &c/$label <Target> [temporary,permanent]")
                 else -> displayWhoIs(sender, t)
             }
         }

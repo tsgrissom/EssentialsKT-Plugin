@@ -16,19 +16,22 @@ import org.bukkit.util.StringUtil
 
 class ClearChatCommand : CommandBase() {
 
-    companion object {
-        const val PERM_SELF = "essentialskt.clearchat"
-        const val PERM_ALL = "essentialskt.clearchat.all"
-        const val PERM_OTHERS = "essentialskt.clearchat.others"
-        const val PERM_EXEMPT = "essentialskt.clearchat.exemptall"
-    }
-
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
     private fun getConfiguredRepeatCount() = getConfig().getClearChatRepeatBlankLineCount()
 
-    private fun clearChat(t: Player, count: Int = getConfiguredRepeatCount()) {
+    companion object {
+        const val PERM_SELF   = "essentialskt.clearchat"
+        const val PERM_ALL    = "essentialskt.clearchat.all"
+        const val PERM_OTHERS = "essentialskt.clearchat.others"
+        const val PERM_EXEMPT = "essentialskt.clearchat.exemptall"
+    }
+
+    private fun performClearChatOperation(
+        t: Player,
+        count: Int = getConfiguredRepeatCount()
+    ) {
         repeat(count) {
             t.sendMessage("")
         }
@@ -59,7 +62,7 @@ class ClearChatCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        clearChat(sender)
+        performClearChatOperation(sender)
     }
 
     private fun handleSubcAll(context: CommandContext) {
@@ -70,7 +73,7 @@ class ClearChatCommand : CommandBase() {
 
         Bukkit.getOnlinePlayers()
             .filter { it.lacksPermission(PERM_EXEMPT) }
-            .forEach { clearChat(it, getConfiguredRepeatCount()) }
+            .forEach { performClearChatOperation(it, getConfiguredRepeatCount()) }
         sender.sendColored("&6You cleared the chat messages of all players on the server")
     }
 
@@ -98,7 +101,7 @@ class ClearChatCommand : CommandBase() {
                 continue
             }
 
-            clearChat(t)
+            performClearChatOperation(t)
             clearedPlayers.add(tn)
         }
 
@@ -127,7 +130,6 @@ class ClearChatCommand : CommandBase() {
         label: String,
         args: Array<out String>
     ) : MutableList<String> {
-
         val tab = mutableListOf<String>()
         val suggestPlayers =
             if (sender.hasPermission(PERM_ALL)) mutableListOf("all")
