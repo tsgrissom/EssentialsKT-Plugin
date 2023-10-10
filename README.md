@@ -63,3 +63,11 @@ Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 ## Permissions
 * Permissions are structured identically between EssentialsX and EssentialsKT to ensure minimal breakage
 * See [`plugin.yml`](https://github.com/tsgrissom/EssentialsKT/blob/main/src/main/resources/plugin.yml) until Permissions page on the wiki is built-out
+
+## Source Code Notes
+* All files are organized while striving to meet best practices.
+* For very large files, it is recommended to enable a custom TODO marker in your IntelliJ IDE as such:
+  1. Go to `Settings>Editor>TODO`
+  2. Create a new TODO marker with the following settings (the regex & case-insensitive are the important parts)
+![TODO Marker Settings](https://i.ibb.co/0fDYPpH/SCR-20231010-nhmn.png)
+* This will allow you to highlight the Xcode-style markers placed throughout larger files to highlight and break-up larger sections of code.

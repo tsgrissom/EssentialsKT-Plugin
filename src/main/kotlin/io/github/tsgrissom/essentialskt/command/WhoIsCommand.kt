@@ -1,6 +1,5 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
@@ -16,6 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
+
     companion object {
         const val PERM_SELF = "essentialskt.whoami"
         const val PERM_OTHERS = "essentialskt.whois"
