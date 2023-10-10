@@ -17,89 +17,22 @@ import org.bukkit.util.StringUtil
 
 class ListCommand : CommandBase() {
 
+    // MARK: Static Declarations
     companion object {
         const val PERM = "essentialskt.list"
         const val PERM_PLAYERS = "essentialskt.list.players"
         const val PERM_MOBS = "essentialskt.list.mobs"
     }
 
+    // MARK: Text Helper Functions
     private fun getAvailableLists() : Array<String> =
         arrayOf(
             "&6Available Lists",
             "&bOptional flag available to players",
             "&8&l> &emobs",
-            "&8&l> &eplayers &b--gui"
+            "&8&l> &eplayers &b--gui",
+            "&8&l> &eworlds &b--gui"
         )
-
-    override fun execute(context: CommandContext) {
-        val args = context.args
-        val sender = context.sender
-
-        if (sender.lacksPermission(PERM))
-            return context.sendNoPermission(sender, PERM)
-
-        if (args.isEmpty())
-            return getAvailableLists().forEach { sender.sendColored(it) }
-
-        val sub = args[0]
-
-        when (sub.lowercase()) {
-            "players", "pl", "online" -> handleSubcPlayers(context)
-            "mobs", "mob" -> handleSubcMobs(context)
-            "worlds", "world" -> handleSubcWorlds(context)
-            else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
-        }
-    }
-
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val suggestSub = mutableListOf("players", "online", "mobs", "worlds")
-        val suggestGraphical = mutableListOf("--gui", "-g")
-        val tab = mutableListOf<String>()
-
-        val len = args.size
-
-        if (len > 0) {
-            val sub = args[0]
-
-            if (len == 1) {
-                if (!suggestSub.contains(sub)) {
-                    StringUtil.copyPartialMatches(sub, suggestSub, tab)
-                }
-            } else if (len == 2) {
-                if (sub.equalsIc("players", "online", "worlds", "world")) {
-                    StringUtil.copyPartialMatches(args[1], suggestGraphical, tab)
-                }
-            }
-        }
-
-        return tab.sorted().toMutableList()
-    }
-
-    private fun handleSubcPlayers(context: CommandContext) {
-        val sender = context.sender
-
-        if (sender.lacksPermission(PERM_PLAYERS))
-            return context.sendNoPermission(sender, PERM_PLAYERS)
-
-        val hasGraphicalFlag = context.hasFlag(FLAG_GRAPHICAL)
-
-        if (sender is ConsoleCommandSender) {
-            handleSubcPlayersText(context)
-
-            if (hasGraphicalFlag)
-                sender.sendColored("&4Console cannot view GUIs")
-
-            return
-        }
-        if (sender !is Player) {
-            return
-        }
-
-        return if (hasGraphicalFlag)
-            PlayerListGui().show(sender)
-        else
-            handleSubcPlayersText(context)
-    }
 
     private fun generatePlayerListAsTextComponents() : Array<BaseComponent> {
         val onlinePlayers = Bukkit.getOnlinePlayers()
@@ -148,6 +81,54 @@ class ListCommand : CommandBase() {
         return builder.create()
     }
 
+    // MARK: Command Body
+    override fun execute(context: CommandContext) {
+        val args = context.args
+        val sender = context.sender
+
+        if (sender.lacksPermission(PERM))
+            return context.sendNoPermission(sender, PERM)
+
+        if (args.isEmpty())
+            return getAvailableLists().forEach { sender.sendColored(it) }
+
+        val sub = args[0]
+
+        when (sub.lowercase()) {
+            "players", "pl", "online" -> handleSubcPlayers(context)
+            "mobs", "mob" -> handleSubcMobs(context)
+            "worlds", "world" -> handleSubcWorlds(context)
+            else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
+        }
+    }
+
+    // MARK: Handlers
+    private fun handleSubcPlayers(context: CommandContext) {
+        val sender = context.sender
+
+        if (sender.lacksPermission(PERM_PLAYERS))
+            return context.sendNoPermission(sender, PERM_PLAYERS)
+
+        val hasGraphicalFlag = context.hasFlag(FLAG_GRAPHICAL)
+
+        if (sender is ConsoleCommandSender) {
+            handleSubcPlayersText(context)
+
+            if (hasGraphicalFlag)
+                sender.sendColored("&4Console cannot view GUIs")
+
+            return
+        }
+        if (sender !is Player) {
+            return
+        }
+
+        return if (hasGraphicalFlag)
+            PlayerListGui().show(sender)
+        else
+            handleSubcPlayersText(context)
+    }
+
     private fun handleSubcPlayersText(context: CommandContext) {
         val sender = context.sender
 
@@ -176,5 +157,30 @@ class ListCommand : CommandBase() {
             command += " --gui"
 
         context.performCommand(command)
+    }
+
+    // MARK: Tab Completion Handler
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        val suggestSub = mutableListOf("players", "online", "mobs", "worlds")
+        val suggestGraphical = mutableListOf("--gui", "-g")
+        val tab = mutableListOf<String>()
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                if (!suggestSub.contains(sub)) {
+                    StringUtil.copyPartialMatches(sub, suggestSub, tab)
+                }
+            } else if (len == 2) {
+                if (sub.equalsIc("players", "online", "worlds", "world")) {
+                    StringUtil.copyPartialMatches(args[1], suggestGraphical, tab)
+                }
+            }
+        }
+
+        return tab.sorted().toMutableList()
     }
 }
