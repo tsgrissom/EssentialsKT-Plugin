@@ -59,6 +59,9 @@ commands:
   whois:
     description: "Displays a bunch of player-related information"
     aliases: ["ewhoami", "ewhoami", "whoami"]
+  worlds:
+    description: "Displays list of worlds"
+    aliases: ["eworlds", "listworlds", "elistworlds"]
   # Time Setting (Earliest-Latest)
   day:
     description: "Sets a world's time to day"

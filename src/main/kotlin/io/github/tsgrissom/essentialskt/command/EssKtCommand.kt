@@ -7,8 +7,10 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -51,7 +53,7 @@ class EssKtCommand : CommandBase() {
         val args = context.args
         val len = context.args.size
 
-        if (len == 0 || (len == 1 && args[0].equalsIc(VALID_HELP_KEYS)))
+        if (len == 0 || (len == 1 && args[0].equalsIc(KEYS_SUBC_HELP)))
             return sender.sendChatComponents(getHelpAsComponents(context))
 
         val sub = args[0]
@@ -61,7 +63,9 @@ class EssKtCommand : CommandBase() {
         } else if (sub.equalsIc("test")) {
             val convF = ConversationFactory(getPlugin())
             val conv = convF
+                .thatExcludesNonPlayersWithMessage("${RED}Console cannot use this conversation")
                 .withTimeout(10)
+                .withEscapeSequence("exit")
                 .withModality(true)
                 .withFirstPrompt(WorldNamePrompt())
                 .buildConversation(sender as Conversable)
@@ -79,7 +83,10 @@ class EssKtCommand : CommandBase() {
     ) : MutableList<String> {
         val tab = mutableListOf<String>()
 
+        if (sender.lacksPermission(PERM))
+            return tab
 
+        tab.addAll(listOf("test", "version"))
 
         return tab.sorted().toMutableList()
     }

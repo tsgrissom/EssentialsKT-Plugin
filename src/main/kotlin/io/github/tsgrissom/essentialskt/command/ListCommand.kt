@@ -46,13 +46,14 @@ class ListCommand : CommandBase() {
         when (sub.lowercase()) {
             "players", "pl", "online" -> handleSubcPlayers(context)
             "mobs", "mob" -> handleSubcMobs(context)
+            "worlds", "world" -> handleSubcWorlds(context)
             else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
         }
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val suggestSub = mutableListOf("players", "online", "mobs")
-        val suggestPlayersArg1 = mutableListOf("--gui", "-g")
+        val suggestSub = mutableListOf("players", "online", "mobs", "worlds")
+        val suggestGraphical = mutableListOf("--gui", "-g")
         val tab = mutableListOf<String>()
 
         val len = args.size
@@ -65,8 +66,8 @@ class ListCommand : CommandBase() {
                     StringUtil.copyPartialMatches(sub, suggestSub, tab)
                 }
             } else if (len == 2) {
-                if (sub.equalsIc("players", "online")) {
-                    StringUtil.copyPartialMatches(args[1], suggestPlayersArg1, tab)
+                if (sub.equalsIc("players", "online", "worlds", "world")) {
+                    StringUtil.copyPartialMatches(args[1], suggestGraphical, tab)
                 }
             }
         }
@@ -80,13 +81,12 @@ class ListCommand : CommandBase() {
         if (sender.lacksPermission(PERM_PLAYERS))
             return context.sendNoPermission(sender, PERM_PLAYERS)
 
-        val guiFlag = Pair("gui", "g")
-        val hasGuiFlag = context.hasFlag(guiFlag)
+        val hasGraphicalFlag = context.hasFlag(FLAG_GRAPHICAL)
 
         if (sender is ConsoleCommandSender) {
             handleSubcPlayersText(context)
 
-            if (hasGuiFlag)
+            if (hasGraphicalFlag)
                 sender.sendColored("&4Console cannot view GUIs")
 
             return
@@ -95,7 +95,7 @@ class ListCommand : CommandBase() {
             return
         }
 
-        return if (hasGuiFlag)
+        return if (hasGraphicalFlag)
             PlayerListGui().show(sender)
         else
             handleSubcPlayersText(context)
@@ -167,5 +167,14 @@ class ListCommand : CommandBase() {
 
         sender.sendMessage("TODO Display mobs as text")
         // TODO Display mobs as text components
+    }
+
+    private fun handleSubcWorlds(context: CommandContext) {
+        var command = "worlds"
+
+        if (context.hasFlag(FLAG_GRAPHICAL))
+            command += " --gui"
+
+        context.performCommand(command)
     }
 }

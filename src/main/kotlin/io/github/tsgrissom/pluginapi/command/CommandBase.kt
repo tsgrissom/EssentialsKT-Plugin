@@ -9,7 +9,8 @@ import org.bukkit.command.TabCompleter
 abstract class CommandBase : CommandExecutor, TabCompleter {
 
     companion object {
-        val VALID_HELP_KEYS = listOf("help", "h", "?", "--help", "-h")
+        val KEYS_SUBC_HELP = listOf("help", "h", "?", "--help", "-h")
+        val FLAG_GRAPHICAL = Pair("gui", "g")
     }
 
     fun getOnlinePlayerNamesToMutableList() : MutableList<String> =

@@ -70,6 +70,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("toggledownfall", ToggleDownfallCommand())
         registerCommand("uniqueid", UniqueIdCommand())
         registerCommand("whois", WhoIsCommand())
+        registerCommand("worlds", WorldsCommand())
 
         /* Time Commands (Early->Late) */
         registerCommand("day", DayCommand())

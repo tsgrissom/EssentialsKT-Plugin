@@ -34,8 +34,6 @@ class GameModeCommand : CommandBase() {
         const val PERM_SPECTATOR = "essentials.gamemode.spectator"
     }
 
-    private val flagGui = Pair("gui", "g")
-
     private fun getAvailableGameModesAsComponent(
         sender: CommandSender,
         negative: Boolean = true
@@ -275,7 +273,7 @@ class GameModeCommand : CommandBase() {
 
         val sub = args[0]
 
-        if (args.size == 1 && context.hasFlag(flagGui)) {
+        if (args.size == 1 && context.hasFlag(FLAG_GRAPHICAL)) {
             if (sender is ConsoleCommandSender)
                 return sender.sendColored("&4Console cannot open GUIs")
             if (sender !is Player)
