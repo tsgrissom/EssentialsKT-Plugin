@@ -21,15 +21,18 @@ import org.bukkit.util.StringUtil
 
 class RemoveCommand : CommandBase() {
 
+    // MARK: Dependency Injection
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getEntityUtility() =
         getPlugin().getEntityUtility()
 
+    // MARK: Static Declarations
     companion object {
         const val PERM = "essentials.remove"
     }
 
+    // MARK: Text Helper Functions
     private fun generateHelpText(context: CommandContext) : Array<BaseComponent> {
         return CommandHelpGenerator(context)
             .withAliases("killall", "eremove")
@@ -79,6 +82,7 @@ class RemoveCommand : CommandBase() {
             "itemframes", "endercrystals", "monsters",
             "animals", "ambient", "mobs"
         )
+
     private fun getGroupedTypesAsComponents(context: CommandContext) : Array<BaseComponent> {
         val label = context.label
         val builder = ComponentBuilder()
@@ -113,6 +117,30 @@ class RemoveCommand : CommandBase() {
         return builder.create()
     }
 
+    // MARK: Operational Helper Functions
+    private fun removeEntities(
+        sender: CommandSender,
+        world: World,
+        targetedType: String,
+        radius: Double
+    ) {
+        val validGroups = getValidGroupedTypes()
+        val validMobs = getEntityUtility().getMobTypes()
+            .map { it.name.lowercase() }
+            .toSet()
+
+        if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
+            sender.sendColored("&4Unknown entity type &c\"$targetedType\"")
+            sender.sendColored("&4Do &c/remove types &4to view valid groups, or &c/list mobs &4to view valid mobs.")
+            return
+        }
+
+        val radiusStr: String = if (radius < 0) "infinite" else radius.toString()
+
+        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius")
+    }
+
+    // MARK: Command Body
     override fun execute(context: CommandContext) {
         val args = context.args
         val sender = context.sender
@@ -129,33 +157,7 @@ class RemoveCommand : CommandBase() {
             handleMoreThanOneArgument(context)
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val tab = mutableListOf<String>()
-
-        if (sender.lacksPermission(PERM))
-            return tab
-
-        val suggestSub = mutableListOf<String>()
-        suggestSub.addAll(getValidGroupedTypes())
-        suggestSub.addAll(getEntityUtility().getAllMobKeys())
-
-        val len = args.size
-
-        if (len > 0) {
-            val sub = args[0]
-
-            if (len == 1) {
-                StringUtil.copyPartialMatches(sub, suggestSub, tab)
-            } else if (len == 2) {
-                if (suggestSub.contains(sub.lowercase())) {
-                    StringUtil.copyPartialMatches(args[1], getWorldNamesToMutableList(), tab)
-                }
-            }
-        }
-
-        return tab.sorted().toMutableList()
-    }
-
+    // MARK: Handlers
     private fun handleOneArgument(context: CommandContext) {
         val args = context.args
         val label = context.label
@@ -207,25 +209,31 @@ class RemoveCommand : CommandBase() {
         removeEntities(sender, world, sub, radius)
     }
 
-    private fun removeEntities(
-        sender: CommandSender,
-        world: World,
-        targetedType: String,
-        radius: Double
-    ) {
-        val validGroups = getValidGroupedTypes()
-        val validMobs = getEntityUtility().getMobTypes()
-            .map { it.name.lowercase() }
-            .toSet()
+    // MARK: Tab Completion Handler
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
+        val tab = mutableListOf<String>()
 
-        if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
-            sender.sendColored("&4Unknown entity type &c\"$targetedType\"")
-            sender.sendColored("&4Do &c/remove types &4to view valid groups, or &c/list mobs &4to view valid mobs.")
-            return
+        if (sender.lacksPermission(PERM))
+            return tab
+
+        val suggestSub = mutableListOf<String>()
+        suggestSub.addAll(getValidGroupedTypes())
+        suggestSub.addAll(getEntityUtility().getAllMobKeys())
+
+        val len = args.size
+
+        if (len > 0) {
+            val sub = args[0]
+
+            if (len == 1) {
+                StringUtil.copyPartialMatches(sub, suggestSub, tab)
+            } else if (len == 2) {
+                if (suggestSub.contains(sub.lowercase())) {
+                    StringUtil.copyPartialMatches(args[1], getWorldNamesToMutableList(), tab)
+                }
+            }
         }
 
-        val radiusStr: String = if (radius < 0) "infinite" else radius.toString()
-
-        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius")
+        return tab.sorted().toMutableList()
     }
 }

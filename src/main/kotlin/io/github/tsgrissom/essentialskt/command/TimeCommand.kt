@@ -22,11 +22,13 @@ import org.bukkit.util.StringUtil
 
 class TimeCommand : CommandBase() {
 
+    // MARK: Dependency Injection
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getTimeUtility() =
         getPlugin().getTimeUtility()
 
+    // MARK: Static Declarations
     companion object {
         const val PERM_BASE = "essentials.time"
         const val PERM_SET = "essentials.time.set"
@@ -49,6 +51,7 @@ class TimeCommand : CommandBase() {
             !hasPermissionToSetWorldTime(who, world)
     }
 
+    // MARK: Text Helper Functions
     private fun getHelpAsComponent(context: CommandContext) : Array<BaseComponent> {
         val label = context.label
         val help = CommandHelpGenerator(context)
@@ -114,39 +117,6 @@ class TimeCommand : CommandBase() {
             )
 
         return help.toComponents()
-    }
-
-    override fun execute(context: CommandContext) {
-        val args = context.args
-        val sender = context.sender
-
-        if (args.isEmpty())
-            return handleEmptyArgs(context)
-
-        when (val sub = args[0]) {
-            "help", "?", "h" -> sender.sendChatComponents(getHelpAsComponent(context))
-            "add" -> handleAddSubcommand(context)
-            "query" -> handleQuerySubcommand(context)
-            "set" -> handleSetSubcommand(context)
-            else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4, do &c/time ? &4for help")
-        }
-    }
-
-    private fun displayWorldTime(sender: CommandSender) {
-        val world = sender.getCurrentWorldOrDefault()
-
-        val wn = world.name
-        val worldTicks = world.time
-        val wtAsSecs = world.time / 20
-        val wtAsMins = wtAsSecs/60.0
-
-        val percent = (worldTicks/24000.0) * 100
-
-        sender.sendColored("&6Time info for world &c$wn")
-        sender.sendColored("&8&l> &e$worldTicks&7/&e24000 ticks")
-        sender.sendColored("&8&l> &e$wtAsSecs&7/&e1200 seconds")
-        sender.sendColored("&8&l> &e${wtAsMins.roundToDigits(1)}&7/&e20 minutes")
-        sender.sendColored("&8&l> &e${percent.roundToDigits(1)}%")
     }
 
     private fun getAddUsage() : Array<BaseComponent> {
@@ -225,6 +195,41 @@ class TimeCommand : CommandBase() {
         return ComponentBuilder(comp).create()
     }
 
+    private fun displayWorldTime(sender: CommandSender) {
+        val world = sender.getCurrentWorldOrDefault()
+
+        val wn = world.name
+        val worldTicks = world.time
+        val wtAsSecs = world.time / 20
+        val wtAsMins = wtAsSecs/60.0
+
+        val percent = (worldTicks/24000.0) * 100
+
+        sender.sendColored("&6Time info for world &c$wn")
+        sender.sendColored("&8&l> &e$worldTicks&7/&e24000 ticks")
+        sender.sendColored("&8&l> &e$wtAsSecs&7/&e1200 seconds")
+        sender.sendColored("&8&l> &e${wtAsMins.roundToDigits(1)}&7/&e20 minutes")
+        sender.sendColored("&8&l> &e${percent.roundToDigits(1)}%")
+    }
+
+    // MARK: Command Body
+    override fun execute(context: CommandContext) {
+        val args = context.args
+        val sender = context.sender
+
+        if (args.isEmpty())
+            return handleEmptyArgs(context)
+
+        when (val sub = args[0]) {
+            "help", "?", "h" -> sender.sendChatComponents(getHelpAsComponent(context))
+            "add" -> handleAddSubcommand(context)
+            "query" -> handleQuerySubcommand(context)
+            "set" -> handleSetSubcommand(context)
+            else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4, do &c/time ? &4for help")
+        }
+    }
+
+    // MARK: Handlers
     private fun handleEmptyArgs(context: CommandContext) = displayWorldTime(context.sender)
 
     private fun handleAddSubcommand(context: CommandContext) {
@@ -477,6 +482,7 @@ class TimeCommand : CommandBase() {
         sender.sendColored("&6World &c${world.name}'s &6time went from &c$oldTime&8->&c$newTicks")
     }
 
+    // MARK: Tab Completion Handler
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val tab = mutableListOf<String>()
 
