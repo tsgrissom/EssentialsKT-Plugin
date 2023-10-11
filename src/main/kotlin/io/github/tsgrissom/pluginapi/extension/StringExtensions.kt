@@ -95,6 +95,23 @@ fun String.capitalize() : String {
  */
 fun String.capitalizeAllCaps() : String = this.lowercase().capitalize()
 
+fun String.capitalizeEachWordAllCaps() : String {
+    if (!this.contains("_"))
+        return this.capitalizeAllCaps()
+
+    val split = this.split("_")
+    var build = String()
+
+    for ((i, s) in split.withIndex()) {
+        build += s.capitalize()
+
+        if (i != (split.size - 1))
+            build += " "
+    }
+
+    return build
+}
+
 /**
  * Replaces placeholders (map keys surrounded by percent signs) with their corresponding
  * map value to allow the user to access a variety of info at configuration time.

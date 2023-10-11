@@ -1,10 +1,12 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.gui.PlayerListGui
+import io.github.tsgrissom.essentialskt.gui.ListEntitiesGui
+import io.github.tsgrissom.essentialskt.gui.ListOnlinePlayersGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.HoverableText
+import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -12,6 +14,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
@@ -22,6 +25,13 @@ class ListCommand : CommandBase() {
         const val PERM = "essentialskt.list"
         const val PERM_PLAYERS = "essentialskt.list.players"
         const val PERM_MOBS = "essentialskt.list.mobs"
+
+        private val VALID_SUBC = listOf(
+            "entities", "entity", "entitytype",
+            "mobs", "mob",
+            "players", "online",
+            "worlds", "world"
+        )
     }
 
     // MARK: Text Helper Functions
@@ -29,6 +39,7 @@ class ListCommand : CommandBase() {
         arrayOf(
             "&6Available Lists",
             "&bOptional flag available to players",
+            "&8&l> &eentities",
             "&8&l> &emobs",
             "&8&l> &eplayers &b--gui",
             "&8&l> &eworlds &b--gui"
@@ -95,8 +106,9 @@ class ListCommand : CommandBase() {
         val sub = args[0]
 
         when (sub.lowercase()) {
-            "players", "pl", "online" -> handleSubcPlayers(context)
+            "entities", "entity", "entitytype" -> handleSubcEntities(context)
             "mobs", "mob" -> handleSubcMobs(context)
+            "players", "pl", "online" -> handleSubcPlayers(context)
             "worlds", "world" -> handleSubcWorlds(context)
             else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
         }
@@ -124,9 +136,21 @@ class ListCommand : CommandBase() {
         }
 
         return if (hasGraphicalFlag)
-            PlayerListGui().show(sender)
+            ListOnlinePlayersGui().show(sender)
         else
             handleSubcPlayersText(context)
+    }
+
+    private fun handleSubcEntities(context: CommandContext) {
+        val sender = context.sender
+
+        if (context.hasFlag(FLAG_GRAPHICAL))
+            if (sender is Player)
+                return ListEntitiesGui(EntityType.entries).show(sender)
+            else if (sender is ConsoleCommandSender)
+                return sender.sendColored("&4Console cannot open GUIs")
+
+        // TODO Send text list of entities
     }
 
     private fun handleSubcPlayersText(context: CommandContext) {
@@ -146,6 +170,12 @@ class ListCommand : CommandBase() {
         if (sender.lacksPermission(PERM_MOBS))
             return context.sendNoPermission(sender, PERM_MOBS)
 
+        if (context.hasFlag(FLAG_GRAPHICAL))
+            if (sender is Player)
+                return ListEntitiesGui(EntityUtility().getMobTypes()).show(sender)
+            else if (sender is ConsoleCommandSender)
+                return sender.sendColored("&4Console cannot open GUIs")
+
         sender.sendMessage("TODO Display mobs as text")
         // TODO Display mobs as text components
     }
@@ -161,7 +191,7 @@ class ListCommand : CommandBase() {
 
     // MARK: Tab Completion Handler
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val suggestSub = mutableListOf("players", "online", "mobs", "worlds")
+        val suggestSub = mutableListOf("entities", "mobs", "players", "worlds")
         val suggestGraphical = mutableListOf("--gui", "-g")
         val tab = mutableListOf<String>()
 
@@ -175,7 +205,7 @@ class ListCommand : CommandBase() {
                     StringUtil.copyPartialMatches(sub, suggestSub, tab)
                 }
             } else if (len == 2) {
-                if (sub.equalsIc("players", "online", "worlds", "world")) {
+                if (sub.equalsIc(VALID_SUBC)) {
                     StringUtil.copyPartialMatches(args[1], suggestGraphical, tab)
                 }
             }

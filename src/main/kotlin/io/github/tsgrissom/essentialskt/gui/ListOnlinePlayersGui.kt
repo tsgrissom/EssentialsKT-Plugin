@@ -9,9 +9,8 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
 
-class PlayerListGui : ChestGui(5, "Online Players") {
+class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
 
     init {
         val op = Bukkit.getOnlinePlayers()

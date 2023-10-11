@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.inventory.ItemStack
 
-class WorldListGui : ChestGui(1, "Worlds") {
+class ListWorldsGui : ChestGui(1, "Worlds") {
 
     private fun calculateRows() : Int {
         val size = Bukkit.getWorlds().size

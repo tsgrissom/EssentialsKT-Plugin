@@ -1,6 +1,8 @@
 package io.github.tsgrissom.pluginapi.utility
 
 import com.uchuhimo.collections.mutableBiMapOf
+import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
+import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
 import org.bukkit.Location
 import org.bukkit.entity.*
 

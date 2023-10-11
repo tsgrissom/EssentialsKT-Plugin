@@ -1,6 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
-import io.github.tsgrissom.essentialskt.gui.WorldListGui
+import io.github.tsgrissom.essentialskt.gui.ListWorldsGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
@@ -77,7 +77,7 @@ class WorldsCommand : CommandBase() {
 
         if (sender is Player) {
             if (context.hasFlag(FLAG_GRAPHICAL))
-                return WorldListGui().show(sender)
+                return ListWorldsGui().show(sender)
 
             return sender.sendChatComponents(getWorldsAsComponents())
         }
