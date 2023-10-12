@@ -1,56 +1,35 @@
 package io.github.tsgrissom.pluginapi.extension
 
-import org.bukkit.ChatColor
+import net.md_5.bungee.api.ChatColor.GREEN
+import net.md_5.bungee.api.ChatColor.RED
+
+enum class BooleanFormat(val trueStr: String, val falseStr: String) {
+    ENABLE_DISABLE("enable", "disable"),
+    ENABLED_DISABLED("enabled", "disabled"),
+    TRUE_FALSE("true", "false"),
+    ON_OFF("on", "off"),
+    YES_NO("yes", "no");
+}
 
 fun Boolean.palatable(withColor: Boolean = false) : String {
-    val s = if (this) "Yes" else "No"
+    val str = if (this) "Yes" else "No"
     val pre = if (withColor)
-        if (this)
-            ChatColor.GREEN.toString()
-        else
-            ChatColor.RED.toString()
+        if (this) GREEN.toString() else RED.toString()
     else
-        ""
-    return pre + s
+        String()
+    return pre + str
 }
 
 fun Boolean.format(
-    format: String,
+    format: BooleanFormat,
     capitalize: Boolean = false,
     withColor: Boolean = true
 ) : String {
-    val validFormats = arrayOf("enabledisable", "enableddisabled", "truefalse", "yesno")
-    fun appendValidFormats() : String {
-        var s = String()
-        validFormats.forEach { s += " $it" }
-        return s.trim()
-    }
+    val tStr = format.trueStr
+    val fStr = format.falseStr
 
-    val tStr: String
-    val fStr: String
-
-    when (format) {
-        "enabledisable", "disableenable" -> {
-            tStr = "enable"
-            fStr = "disable"
-        }
-        "enableddisabled", "disabledenabled" -> {
-            tStr = "enabled"
-            fStr = "disabled"
-        }
-        "truefalse", "falsetrue" -> {
-            tStr = "true"
-            fStr = "false"
-        }
-        "yesno", "noyes" -> {
-            tStr = "yes"
-            fStr = "no"
-        }
-        else -> error("Valid formats are: ${appendValidFormats()}")
-    }
-
-    val prefix = if (withColor)
-        if (this) "&a" else "&c"
+    val pre = if (withColor)
+        if (this) GREEN.toString() else RED.toString()
     else
         String()
     var str = if (this) tStr else fStr
@@ -58,5 +37,5 @@ fun Boolean.format(
     if (capitalize)
         str = str.capitalize()
 
-    return "$prefix$str"
+    return pre + str
 }

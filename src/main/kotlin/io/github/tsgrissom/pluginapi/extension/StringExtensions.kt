@@ -120,9 +120,8 @@ fun String.capitalizeEachWordAllCaps() : String {
  */
 fun String.replaceMap(replacements: Map<String, String>) : String {
     var str = this
-    for (en in replacements) {
-        val formattedKey = "%${en.key}%"
-        str = str.replace(formattedKey, en.value)
+    replacements.entries.forEach { (key, value) ->
+        str = str.replace("%${key}", value)
     }
     return str
 }

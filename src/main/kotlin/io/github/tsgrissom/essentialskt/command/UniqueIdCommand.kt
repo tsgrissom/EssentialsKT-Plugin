@@ -33,10 +33,10 @@ class UniqueIdCommand : CommandBase() {
         val t: Player = if (args.size == 1) {
             val sub = args[0]
             Bukkit.getPlayer(sub)
-                ?: return sender.sendColored("${D_RED}Could not find player ${RED}\"${sub}\"")
+                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"${sub}\"")
         } else {
             if (sender is ConsoleCommandSender)
-                return sender.sendColored("${D_RED}Console Usage: ${RED}/uuid <Player>")
+                return sender.sendMessage("${D_RED}Console Usage: ${RED}/uuid <Player>")
             if (sender !is Player)
                 return
 

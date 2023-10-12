@@ -1,29 +1,27 @@
 package io.github.tsgrissom.pluginapi.command
 
 import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.sendColored
 import net.md_5.bungee.api.ChatColor.RED
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permission
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 
 class CommandContext(
     val sender: CommandSender,
     val command: Command,
     val label: String,
     val args: Array<out String>
-    ) {
+) {
 
     fun sendNoPermission(sender: CommandSender, permission: String) {
         var resp = "${D_RED}You do not have access to that command."
-        if (sender.hasPermission("essentialskt.disclosepermission")) {
+        if (sender.hasPermission("essentialskt.disclosepermission"))
             resp += " ${D_RED}(${RED}$permission${D_RED})"
-        }
-        sender.sendColored(resp)
+        sender.sendMessage(resp)
     }
 
     fun hasPermission(permission: String) =
@@ -44,10 +42,9 @@ class CommandContext(
         val longFlag = "--$long"
         val shortFlag = "-$short"
 
-        for (a in args) {
+        for (a in args)
             if (a.equalsIc(longFlag, shortFlag))
                 return true
-        }
 
         return false
     }
@@ -66,9 +63,8 @@ class CommandContext(
         if (endIndex > args.size)
             error("endIndex is out of bounds of arguments")
 
-        for (i in startIndex..endIndex) {
+        for (i in startIndex..endIndex)
             builder += " ${args[i]}"
-        }
 
         return builder.trim()
     }
@@ -81,9 +77,12 @@ class CommandContext(
     }
 
     fun performCommand(command: String) {
-        if (sender is ConsoleCommandSender)
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)
-        else if (sender is Player)
-            sender.performCommand(command)
+        when (sender) {
+            is ConsoleCommandSender -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)
+            is Player -> sender.performCommand(command)
+            else -> {
+                throw IllegalStateException("Cannot performCommand for a CommandSender who is neither Player nor Console")
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package io.github.tsgrissom.essentialskt.manager
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import net.md_5.bungee.api.ChatColor.*
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 
@@ -30,12 +31,12 @@ class ConfigManager {
         getSection("Messages")
 
     fun getJoinMessage() : String {
-        val def = "&a&l+ &e%pd% &6has joined the server"
+        val def = "${GREEN}${BOLD}+ ${YELLOW}%pd% ${GOLD}has joined the server"
         val sect = getMessagesSection() ?: return def
         return sect.getString("JoinEvent", def) ?: def
     }
     fun getQuitMessage() : String {
-        val def = "&c&l- &e%pd% &6has left the server"
+        val def = "${RED}${BOLD}- ${YELLOW}%pd% ${GOLD}has left the server"
         val sect = getMessagesSection() ?: return def
         return sect.getString("QuitEvent", def) ?: def
     }

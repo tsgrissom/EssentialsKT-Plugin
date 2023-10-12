@@ -2,6 +2,8 @@ package io.github.tsgrissom.pluginapi.chat
 
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.GRAY
+import net.md_5.bungee.api.ChatColor.YELLOW
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.*
 import net.md_5.bungee.api.chat.HoverEvent
@@ -133,12 +135,12 @@ class ClickableText(
             HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText.map { Text(it) })
         } else {
             when (action) {
-                CHANGE_PAGE -> getShowTextOnHoverEvent("&7Click to change page")
-                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("&7Click to copy to clipboard: &e$value")
-                OPEN_FILE -> getShowTextOnHoverEvent("&7Click to open file")
-                OPEN_URL -> getShowTextOnHoverEvent("&7Click to open URL: &e$value")
-                SUGGEST_COMMAND -> getShowTextOnHoverEvent("&7Click to suggest command: &e$value")
-                RUN_COMMAND -> getShowTextOnHoverEvent("&7Click to run command: &e$value")
+                CHANGE_PAGE -> getShowTextOnHoverEvent("${GRAY}Click to change page")
+                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("${GRAY}Click to copy to clipboard: ${YELLOW}$value")
+                OPEN_FILE -> getShowTextOnHoverEvent("${GRAY}Click to open file")
+                OPEN_URL -> getShowTextOnHoverEvent("${GRAY}Click to open URL: ${YELLOW}$value")
+                SUGGEST_COMMAND -> getShowTextOnHoverEvent("${GRAY}Click to suggest command: ${YELLOW}$value")
+                RUN_COMMAND -> getShowTextOnHoverEvent("${GRAY}Click to run command: ${YELLOW}$value")
 
                 else -> null
             }

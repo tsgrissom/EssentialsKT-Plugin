@@ -4,11 +4,9 @@ import com.earth2me.essentials.User
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
-import io.github.tsgrissom.pluginapi.extension.getIPString
-import io.github.tsgrissom.pluginapi.extension.palatable
-import io.github.tsgrissom.pluginapi.extension.roundToDigits
+import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -80,31 +78,31 @@ class EssPlayer(private val uuid: UUID) {
         fun hasPrefix() : Boolean = linePrefix.isNotEmpty()
         fun appendPrefix() {
             if (hasPrefix())
-                builder.append(linePrefix).color(DARK_GRAY)
+                builder.appendc(linePrefix, D_GRAY)
         }
 
         if (withHeader)
             builder
-                .append("/whois for ").color(GOLD)
-                .append(player.name).color(YELLOW)
-                .append(" : ").color(DARK_GRAY)
-                .append("Temporary").color(GRAY)
+                .appendc("/whois for ", GOLD)
+                .appendc(player.name, YELLOW)
+                .appendc(" : ", D_GRAY)
+                .appendc("Temporary", GRAY)
                 .append("\n")
 
         if (!excludeGamemode) {
             val gm = player.gameMode.name.capitalizeAllCaps()
             appendPrefix()
             builder
-                .append("Gamemode: ").color(GRAY)
-                .append(gm).color(AQUA)
+                .appendc("Gamemode: ", GRAY)
+                .appendc(gm, AQUA)
                 .append("\n")
         }
 
         if (!excludeWorld) {
             appendPrefix()
             builder
-                .append("World: ").color(GRAY)
-                .append(player.name).color(YELLOW)
+                .appendc("World: ", GRAY)
+                .appendc(player.name, YELLOW)
                 .append("\n")
         }
 
@@ -116,22 +114,22 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Location ").color(GRAY)
-                .append("X").color(RED)
-                .append("Y").color(GREEN)
-                .append("Z").color(AQUA)
-                .append(": ").color(GRAY)
-                .append("$x ").color(RED)
-                .append("$y ").color(GREEN)
-                .append("$z").color(AQUA)
+                .appendc("Location ", GRAY)
+                .appendc("X", RED)
+                .appendc("Y", GREEN)
+                .appendc("Z", AQUA)
+                .appendc(": ", GRAY)
+                .appendc("$x ", RED)
+                .appendc("$y ", GREEN)
+                .appendc("$z", AQUA)
                 .append("\n")
         }
 
         if (!excludeAfk) {
             appendPrefix()
             builder
-                .append("Is AFK: ").color(GRAY)
-                .append(isAfk().palatable(withColor=true)).color(YELLOW)
+                .appendc("Is AFK: ", GRAY)
+                .append(isAfk().palatable(withColor=true))
         }
 
         if (!excludeHealth) {
@@ -141,11 +139,11 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Health: ").color(GRAY)
-                .append("$health").color(YELLOW)
-                .append(" / ").color(DARK_GRAY)
-                .append("Max: ").color(GRAY)
-                .append("$maxHealth").color(YELLOW)
+                .appendc("Health: ", GRAY)
+                .appendc("$health", YELLOW)
+                .appendc(" / ", D_GRAY)
+                .appendc("Max: ", GRAY)
+                .appendc("$maxHealth", YELLOW)
                 .append("\n")
         }
 
@@ -155,23 +153,23 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Food Level: ").color(GRAY)
-                .append("$foodLevel").color(YELLOW)
-                .append("/").color(DARK_GRAY)
-                .append("20").color(YELLOW)
-                .append(" + ").color(DARK_GRAY)
-                .append("Hunger: ").color(GRAY)
-                .append("$hunger").color(YELLOW)
+                .appendc("Food Level: ", GRAY)
+                .appendc("$foodLevel", YELLOW)
+                .appendc("/", D_GRAY)
+                .appendc("20", YELLOW)
+                .appendc(" + ", D_GRAY)
+                .appendc("Hunger: ", GRAY)
+                .appendc("$hunger", YELLOW)
                 .append("\n")
         }
 
         if (!excludeOxygen) {
             appendPrefix()
             builder
-                .append("Oxygen: ").color(GRAY)
-                .append("${player.remainingAir}").color(YELLOW)
-                .append("/").color(DARK_GRAY)
-                .append("300").color(YELLOW)
+                .appendc("Oxygen: ", GRAY)
+                .appendc("${player.remainingAir}", YELLOW)
+                .appendc("/", D_GRAY)
+                .appendc("300", YELLOW)
                 .append("\n")
         }
 
@@ -179,16 +177,16 @@ class EssPlayer(private val uuid: UUID) {
             val ticks = player.fireTicks
 
             appendPrefix()
-            builder.append("On Fire: ").color(GRAY)
+            builder.appendc("On Fire: ", GRAY)
             if (ticks > 0) {
                 builder
-                    .append("Yes").color(GREEN)
-                    .append(" + ").color(DARK_GRAY)
-                    .append("Ticks Left: ").color(GRAY)
-                    .append("$ticks").color(YELLOW)
+                    .appendc("Yes", GREEN)
+                    .appendc(" + ", D_GRAY)
+                    .appendc("Ticks Left: ", GRAY)
+                    .appendc("$ticks", YELLOW)
             } else {
                 builder
-                    .append("No").color(RED)
+                    .appendc("No", RED)
             }
             builder.append("\n")
         }
@@ -199,11 +197,11 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Flying Speed: ").color(GRAY)
-                .append(fly).color(YELLOW)
-                .append(" + ").color(DARK_GRAY)
-                .append("Walking Speed: ").color(GRAY)
-                .append(walk).color(YELLOW)
+                .appendc("Flying Speed: ", GRAY)
+                .appendc(fly, YELLOW)
+                .appendc(" + ", D_GRAY)
+                .appendc("Walking Speed: ", GRAY)
+                .appendc(walk, YELLOW)
                 .append("\n")
         }
 
@@ -213,10 +211,10 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Can Fly: ").color(GRAY)
+                .appendc("Can Fly: ", GRAY)
                 .append(canFly)
-                .append(" + ").color(DARK_GRAY)
-                .append("Is Flying: ").color(GRAY)
+                .appendc(" + ", D_GRAY)
+                .appendc("Is Flying: ", GRAY)
                 .append(isFlying)
                 .append("\n")
         }
@@ -229,17 +227,17 @@ class EssPlayer(private val uuid: UUID) {
 
             if (!excludeSneaking) {
                 builder
-                    .append("Is Sneaking: ").color(GRAY)
-                    .append(isSneaking).color(YELLOW)
+                    .appendc("Is Sneaking: ", GRAY)
+                    .appendc(isSneaking, YELLOW)
             }
 
             if (!excludeSneaking && !excludeSprinting)
-                builder.append(" + ").color(DARK_GRAY)
+                builder.appendc(" + ", D_GRAY)
 
             if (!excludeSprinting) {
                 builder
-                    .append("Is Sprinting: ").color(GRAY)
-                    .append(isSprinting).color(YELLOW)
+                    .appendc("Is Sprinting: ", GRAY)
+                    .appendc(isSprinting, YELLOW)
             }
 
             builder.append("\n")
@@ -248,14 +246,14 @@ class EssPlayer(private val uuid: UUID) {
         if (!excludeExperience) {
             appendPrefix()
             builder
-                .append("Level: ").color(GRAY)
-                .append("${player.level}").color(YELLOW)
-                .append(" + ").color(DARK_GRAY)
-                .append("Exp: ").color(GRAY)
-                .append("${player.exp}").color(YELLOW)
-                .append(" + ").color(DARK_GRAY)
-                .append("Total Exp: ").color(GRAY)
-                .append("${player.totalExperience}").color(YELLOW)
+                .appendc("Level: ", GRAY)
+                .appendc("${player.level}", YELLOW)
+                .appendc(" + ", D_GRAY)
+                .appendc("Exp: ", GRAY)
+                .appendc("${player.exp}", YELLOW)
+                .appendc(" + ", D_GRAY)
+                .appendc("Total Exp: ", GRAY)
+                .appendc("${player.totalExperience}", YELLOW)
         }
 
         return builder.create()
@@ -274,13 +272,13 @@ class EssPlayer(private val uuid: UUID) {
         fun hasPrefix() : Boolean = linePrefix.isNotEmpty()
         fun appendPrefix() {
             if (hasPrefix())
-                builder.append(linePrefix).color(DARK_GRAY)
+                builder.appendc(linePrefix, D_GRAY)
         }
 
         if (withHeader)
             builder
-                .append("/whois for ").color(GOLD)
-                .append(player.name).color(YELLOW)
+                .appendc("/whois for ", GOLD)
+                .appendc(player.name, YELLOW)
                 .append("\n")
 
         if (!excludeNames) {
@@ -297,11 +295,11 @@ class EssPlayer(private val uuid: UUID) {
 
             appendPrefix()
             builder
-                .append("Username: ").color(GRAY)
-                .append(player.name).color(YELLOW)
-                .append(" + ").color(DARK_GRAY)
-                .append("Display Name: ").color(GRAY)
-                .append(nickname).color(nicknameColor)
+                .appendc("Username: ", GRAY)
+                .appendc(player.name, YELLOW)
+                .appendc(" + ", D_GRAY)
+                .appendc("Display Name: ", GRAY)
+                .appendc(nickname, nicknameColor)
                 .append("\n")
         }
 
@@ -310,14 +308,14 @@ class EssPlayer(private val uuid: UUID) {
             val data = ClickableText
                 .compose(uuid)
                 .color(YELLOW)
-                .hoverText("&7Click to copy UUID")
+                .hoverText("${GRAY}Click to copy UUID")
                 .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
                 .value(uuid)
                 .toComponent()
 
             appendPrefix()
             builder
-                .append("Unique ID: ").color(GRAY)
+                .appendc("Unique ID: ", GRAY)
                 .append(data).append("\n").reset()
         }
 
@@ -326,14 +324,14 @@ class EssPlayer(private val uuid: UUID) {
             val data = ClickableText
                 .compose(ip)
                 .color(YELLOW)
-                .hoverText("&7Click to copy IP address")
+                .hoverText("${GRAY}Click to copy IP address")
                 .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
                 .value(ip)
                 .toComponent()
 
             appendPrefix()
             builder
-                .append("IP Address: ").color(GRAY)
+                .appendc("IP Address: ", GRAY)
                 .append(data).append("\n").reset()
         }
 
@@ -341,8 +339,8 @@ class EssPlayer(private val uuid: UUID) {
             val isOp = player.isOp.palatable(withColor=true)
             appendPrefix()
             builder
-                .append("Is Op: ").color(GRAY)
-                .append(isOp).color(YELLOW)
+                .appendc("Is Op: ", GRAY)
+                .appendc(isOp, YELLOW)
         }
 
         return builder.create()
