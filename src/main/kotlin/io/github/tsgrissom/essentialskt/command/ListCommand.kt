@@ -105,7 +105,7 @@ class ListCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
-            return getAvailableLists().forEach { sender.sendColored(it) }
+            return getAvailableLists().forEach { sender.sendMessage(it) }
 
         val sub = args[0]
 
@@ -114,7 +114,7 @@ class ListCommand : CommandBase() {
             "mobs", "mob" -> handleSubcMobs(context)
             "players", "pl", "online" -> handleSubcPlayers(context)
             "worlds", "world" -> handleSubcWorlds(context)
-            else -> sender.sendColored("${D_RED}Unknown list type ${RED}\"$sub\"${D_RED}. Do ${RED}/ls ${D_RED}to view valid types.")
+            else -> sender.sendMessage("${D_RED}Unknown list type ${RED}\"$sub\"${D_RED}. Do ${RED}/ls ${D_RED}to view valid types.")
         }
     }
 
@@ -131,7 +131,7 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
 
             if (hasGraphicalFlag)
-                sender.sendColored("${D_RED}Console cannot view GUIs")
+                sender.sendMessage("${D_RED}Console cannot view GUIs")
 
             return
         }
@@ -152,7 +152,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendColored("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${D_RED}Console cannot open GUIs")
 
         // TODO Send text list of entities
     }
@@ -178,7 +178,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendColored("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${D_RED}Console cannot open GUIs")
 
         sender.sendMessage("TODO Display mobs as text")
         // TODO Display mobs as text components

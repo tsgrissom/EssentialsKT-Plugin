@@ -5,6 +5,7 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -29,11 +30,11 @@ class IPAddressCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
-            return sender.sendColored("&4Usage: &c/$label <Target>")
+            return sender.sendMessage("${D_RED}Usage: ${RED}/$label <Target>")
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
 
         sender.sendChatComponents(generateDisplayIPAddressAsTextComponent(t))
     }

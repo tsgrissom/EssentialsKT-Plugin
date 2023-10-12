@@ -3,6 +3,9 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -29,10 +32,10 @@ class WeatherCommand : CommandBase() {
             "     &7Enable rain for a world",
             " &8/&e${label} thunder &a[World]&8:",
             "     &7Enable thunderstorms for a world"
-        )
+        ) // TODO Convert to CommandHelpGenerator
     }
     private fun sendHelp(context: CommandContext) =
-        getHelpText(context).forEach { context.sender.sendColored(it) }
+        getHelpText(context).forEach { context.sender.sendMessage(it) }
 
     override fun execute(context: CommandContext) {
         val args = context.args
@@ -52,7 +55,7 @@ class WeatherCommand : CommandBase() {
             "display", "d", "info", "i" -> delegateSubcDisplay(context)
             "rain" -> delegateSubcRain(context)
             "thunder" -> delegateSubcThunder(context)
-            else -> sender.sendColored("&4Unknown subcommand &c\"$sub\"&4. Do &c/wthr ? &4for help.")
+            else -> sender.sendMessage("${D_RED}Unknown subcommand ${RED}\"$sub\"${D_RED}. Do ${RED}/wthr ? ${D_RED}for help.")
         }
     }
 
@@ -86,11 +89,11 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendColored("&4Unknown world &c\"${arg1}\"")
+                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
         }
 
         w.clearRain()
-        sender.sendColored("&6Weather cleared for world &c${w.name}")
+        sender.sendMessage("${GOLD}Weather cleared for world ${RED}${w.name}")
     }
 
     private fun delegateSubcDisplay(context: CommandContext) {
@@ -101,7 +104,7 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendColored("&4Unknown world &c\"${arg1}\"")
+                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
         }
 
         val wTicks = w.weatherDuration
@@ -109,9 +112,11 @@ class WeatherCommand : CommandBase() {
         val wSecs = wTicks / 20.0
         val cSecs = cTicks / 20.0
 
-        sender.sendColored("&8&l> &7Is Clear: &r${w.isClearWeather.palatable(withColor=true)}")
-        sender.sendColored("&8&l> &7Weather Remaining: &e$wTicks ticks &7or &e${wSecs.roundToDigits(1)} seconds")
-        sender.sendColored("&8&l> &7Clear Remaining: &e$cTicks ticks &7or &e${cSecs.roundToDigits(1)} seconds")
+        sender.sendMessage(
+            "${D_GRAY}> ${GRAY}Is Clear: ${RESET}${w.isClearWeather.palatable(withColor=true)}",
+            "${D_GRAY}> ${GRAY}Weather Remaining: ${YELLOW}$wTicks ticks ${GRAY}or ${YELLOW}${wSecs.roundToDigits(1)} seconds",
+            "${D_GRAY}> ${GRAY}Clear Remaining: ${YELLOW}$cTicks ticks ${GRAY}or ${YELLOW}${cSecs.roundToDigits(1)} seconds"
+        )
     }
 
     private fun delegateSubcRain(context: CommandContext) {
@@ -122,15 +127,15 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendColored("&4Unknown world &c\"${arg1}\"")
+                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
         }
 
         w.makeRain()
-        sender.sendColored("&6Rain turned on for world &c${w.name}")
+        sender.sendMessage("${GOLD}Rain turned on for world ${RED}${w.name}")
     }
 
     private fun delegateSubcThunder(context: CommandContext) {
         // TODO Implement thunder
-        context.sender.sendColored("&6Feature is in progress")
+        context.sender.sendMessage("${GOLD}Feature is in progress")
     }
 }

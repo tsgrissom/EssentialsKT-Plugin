@@ -31,7 +31,7 @@ class DamageCommand : CommandBase() {
             ">"
         }
 
-        sender.sendColored(usage)
+        sender.sendMessage(usage)
     }
 
     override fun execute(context: CommandContext) {
@@ -46,13 +46,13 @@ class DamageCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("${D_RED}Could not find player ${RED}\"$sub\"")
+            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
 
         if (args.size == 1) {
             if (sub.equalsIc("help", "h", "?", "usage"))
                 return sendUsage(context)
 
-            return sender.sendColored("${D_RED}You must specify an amount of damage")
+            return sender.sendMessage("${D_RED}You must specify an amount of damage")
         }
 
         val arg1 = args[1]
@@ -67,13 +67,13 @@ class DamageCommand : CommandBase() {
             amount = arg1.toDouble()
 
             if (amount <= 0)
-                return sender.sendColored("${D_RED}Your damage amount must be a positive nonzero number")
+                return sender.sendMessage("${D_RED}Your damage amount must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
-            return sender.sendColored("${D_RED}Your damage amount must be a decimal or integer value")
+            return sender.sendMessage("${D_RED}Your damage amount must be a decimal or integer value")
         }
 
         t.damage(amount)
-        sender.sendColored("${GOLD}Damaged ${RED}${t.name} ${GOLD}for ${RED}${amount} hearts")
+        sender.sendMessage("${GOLD}Damaged ${RED}${t.name} ${GOLD}for ${RED}${amount} hearts")
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
@@ -89,10 +89,10 @@ class DamageCommand : CommandBase() {
             percent = sansPercent.toDouble()
 
             if (percent <= 0)
-                return sender.sendColored("${D_RED}A percent of max health to damage must be a positive nonzero number")
+                return sender.sendMessage("${D_RED}A percent of max health to damage must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
             val text = "${D_RED}Your damage percentage must be a decimal or integer value followed by a percent symbol"
-            return sender.sendColored(text)
+            return sender.sendMessage(text)
         }
 
         val chunk = percent / 100
@@ -101,7 +101,7 @@ class DamageCommand : CommandBase() {
         val amount = chunk * maxHealth
 
         target.damage(amount)
-        sender.sendColored("${GOLD}You damaged ${RED}${target.name} ${GOLD}for ${RED}${percent}% ${GOLD}of their max health ${D_GRAY}(${RED}${amount.roundToDigits(2)}${D_GRAY})")
+        sender.sendMessage("${GOLD}You damaged ${RED}${target.name} ${GOLD}for ${RED}${percent}% ${GOLD}of their max health ${D_GRAY}(${RED}${amount.roundToDigits(2)}${D_GRAY})")
     }
 
     override fun onTabComplete(

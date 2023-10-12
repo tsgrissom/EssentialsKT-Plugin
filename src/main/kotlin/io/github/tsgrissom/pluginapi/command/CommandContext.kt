@@ -2,6 +2,8 @@ package io.github.tsgrissom.pluginapi.command
 
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.RED
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -16,14 +18,10 @@ class CommandContext(
     val args: Array<out String>
     ) {
 
-    companion object {
-        const val TEXT_PERMISSION = "&4You do not have access to that command."
-    }
-
     fun sendNoPermission(sender: CommandSender, permission: String) {
-        var resp = TEXT_PERMISSION
+        var resp = "${D_RED}You do not have access to that command."
         if (sender.hasPermission("essentialskt.disclosepermission")) {
-            resp += " (&c$permission&4)"
+            resp += " ${D_RED}(${RED}$permission${D_RED})"
         }
         sender.sendColored(resp)
     }

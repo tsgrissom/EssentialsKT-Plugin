@@ -6,7 +6,8 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.RED
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -30,7 +31,7 @@ class WhoIsCommand : CommandBase() {
             "whoami", "ewhoami" -> handleWhoAmI(context)
             "whois", "ewhois" -> handleWhoIs(context)
             else -> {
-                sender.sendColored("&4Unknown &c/whois &4command label (this should not happen)")
+                sender.sendMessage("${D_RED}Unknown ${RED}/whois ${D_RED}command label (this should not happen)")
                 error("Unhandled command label \"$label\" was passed to /whois handler")
             }
         }
@@ -67,7 +68,7 @@ class WhoIsCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
-            return sender.sendColored("&4Console Usage: &c/whois <Target>")
+            return sender.sendMessage("${D_RED}Console Usage: ${RED}/whois <Target>")
 
         if (sender !is Player)
             return
@@ -78,7 +79,7 @@ class WhoIsCommand : CommandBase() {
             val sub = args[0]
 
             if (sub.equalsIc(KEYS_SUBC_HELP))
-                return sender.sendColored("&4Usage: &c/$label [temporary,permanent]")
+                return sender.sendMessage("${D_RED}Usage: ${RED}/$label [temporary,permanent]")
 
             when (sub.lowercase()) {
                 "temporary", "temp" -> displayTemporaryWhoIs(sender, sender)
@@ -95,14 +96,14 @@ class WhoIsCommand : CommandBase() {
         val sender = context.sender
 
         if (args.isEmpty())
-            return sender.sendColored("&4Usage: &c/whois <Target>")
+            return sender.sendMessage("${D_RED}Usage: ${RED}/whois <Target>")
 
         if (sender.lacksPermission(PERM_OTHERS))
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         val sub = args[0]
         val t = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
 
         if (len == 1) {
             displayWhoIs(sender, t)
@@ -110,7 +111,7 @@ class WhoIsCommand : CommandBase() {
             val arg1 = args[1]
 
             if (arg1.equalsIc(KEYS_SUBC_HELP_OR_USAGE))
-                return sender.sendColored("&4Usage: &c/$label <Target> [temporary,permanent]")
+                return sender.sendMessage("${D_RED}Usage: ${RED}/$label <Target> [temporary,permanent]")
 
             when (arg1.lowercase()) {
                 "temporary", "temp" -> displayTemporaryWhoIs(sender, t)

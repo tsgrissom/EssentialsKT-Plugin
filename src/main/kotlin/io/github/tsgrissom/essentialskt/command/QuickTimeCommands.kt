@@ -3,7 +3,8 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -24,7 +25,7 @@ class SunriseCommand
     : QuickTimeCommand(TimeCommand.TIME_SUNRISE, "Dawn")
 
 private fun getTimeSetMessage(w: World, tn: String) =
-    "&6You set world &c${w.name}'s &6time to &c$tn"
+    "${GOLD}You set world ${RED}${w.name}'s ${GOLD}time to ${RED}$tn"
 
 open class QuickTimeCommand(
     private val time: Long,
@@ -43,7 +44,7 @@ open class QuickTimeCommand(
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendColored("&4Could not find world &c\"$sub\"")
+                ?: return sender.sendMessage("${D_RED}Could not find world ${RED}\"$sub\"")
         }
 
         if (TimeCommand.lacksPermissionToSetWorldTime(sender, world))
@@ -52,7 +53,7 @@ open class QuickTimeCommand(
         val setMessage = getTimeSetMessage(world, timeName)
 
         world.time = time
-        sender.sendColored(setMessage)
+        sender.sendMessage(setMessage)
     }
 
     override fun onTabComplete(

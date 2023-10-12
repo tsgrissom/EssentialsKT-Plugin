@@ -5,6 +5,8 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -31,10 +33,10 @@ class UniqueIdCommand : CommandBase() {
         val t: Player = if (args.size == 1) {
             val sub = args[0]
             Bukkit.getPlayer(sub)
-                ?: return sender.sendColored("&4Could not find player &c\"${sub}\"")
+                ?: return sender.sendColored("${D_RED}Could not find player ${RED}\"${sub}\"")
         } else {
             if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console Usage: &c/uuid <Player>")
+                return sender.sendColored("${D_RED}Console Usage: ${RED}/uuid <Player>")
             if (sender !is Player)
                 return
 
@@ -49,7 +51,7 @@ class UniqueIdCommand : CommandBase() {
         command: Command,
         label: String,
         args: Array<out String>
-    ): MutableList<String> {
+    ) : MutableList<String> {
         val tab = mutableListOf<String>()
 
         if (sender.lacksPermission(PERM))
@@ -73,10 +75,10 @@ class UniqueIdCommand : CommandBase() {
             .value(uuid)
             .toComponent()
         val builder = ComponentBuilder()
-            .appendc(" ---------------------------------------\n", DARK_GRAY)
-            .appendc(" | ", DARK_GRAY).appendc("UUID of ", GRAY).appendc(t.name, YELLOW).append("\n")
-            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
-            .appendc(" ---------------------------------------", DARK_GRAY)
+            .appendc(" ---------------------------------------\n", D_GRAY)
+            .appendc(" | ", D_GRAY).appendc("UUID of ", GRAY).appendc(t.name, YELLOW).append("\n")
+            .appendc(" | ", D_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
+            .appendc(" ---------------------------------------", D_GRAY)
 
         return builder.create()
     }

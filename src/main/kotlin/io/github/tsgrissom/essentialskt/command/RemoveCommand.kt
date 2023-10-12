@@ -8,6 +8,8 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -44,9 +46,9 @@ class RemoveCommand : CommandBase() {
                             .compose("Type")
                             .required(true)
                             .hoverText(
-                                "&7Type&8: &cRequired",
-                                "&7Type provided can either be a valid entity type",
-                                " &7or a preset entity group"
+                                "${GRAY}Type${D_GRAY}: ${RED}Required",
+                                "${GRAY}Type provided can either be a valid entity type",
+                                " ${GRAY}or a preset entity group"
                             )
                     )
                     .withArgument(
@@ -54,11 +56,11 @@ class RemoveCommand : CommandBase() {
                             .compose("Radius OR World")
                             .required(false)
                             .hoverText(
-                                "&7Type&8: &aOptional",
-                                "&7One of either&8:",
-                                "&8 - &7An integer or decimal radius within which",
-                                "   &7to clear entities",
-                                "&8 - &7A world name to clear the entities in"
+                                "${GRAY}Type${D_GRAY}: ${GREEN}Optional",
+                                "${GRAY}One of either${D_GRAY}:",
+                                " ${D_GRAY}- ${GRAY}An integer or decimal radius within which",
+                                "   ${GRAY}to clear entities",
+                                " ${D_GRAY}- ${GRAY}A world name to clear the entities in"
                             )
                     )
                     .withDescription(
@@ -87,7 +89,7 @@ class RemoveCommand : CommandBase() {
         val label = context.label
         val builder = ComponentBuilder()
             .appendc("Types", GOLD)
-            .appendc(": ", DARK_GRAY)
+            .appendc(": ", D_GRAY)
 
         for ((i, type) in getValidGroupedTypes().withIndex()) {
             val clickText = ClickableText
@@ -130,8 +132,10 @@ class RemoveCommand : CommandBase() {
             .toSet()
 
         if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
-            sender.sendColored("&4Unknown entity type &c\"$targetedType\"")
-            sender.sendColored("&4Do &c/remove types &4to view valid groups, or &c/list mobs &4to view valid mobs.")
+            sender.sendMessage(
+                "${D_RED}Unknown entity type ${RED}\"$targetedType\"",
+                "${D_RED}Do ${RED}/remove types ${D_RED}to view valid groups, or ${RED}/list mobs ${D_RED}to view valid mobs."
+            )
             return
         }
 
@@ -172,7 +176,7 @@ class RemoveCommand : CommandBase() {
         }
 
         if (sender is ConsoleCommandSender)
-            return sender.sendColored("&4Console Usage: &c/${label} <Type> <World>")
+            return sender.sendMessage("${D_RED}Console Usage: ${RED}/${label} <Type> <World>")
         if (sender !is Player)
             return
 
@@ -195,7 +199,7 @@ class RemoveCommand : CommandBase() {
             arg1d = arg1.toDoubleOrNull()
 
             if (arg1d != null && arg1d <= 0.0)
-                return sender.sendColored("&4Removal range should be greater than zero. Do &c/${label} ? &4for help.")
+                return sender.sendMessage("${D_RED}Removal range should be greater than zero. Do ${RED}/${label} ? ${D_RED}for help.")
         } catch (ignored: NumberFormatException) {}
 
         val radius = arg1d ?: -1.0
@@ -203,7 +207,7 @@ class RemoveCommand : CommandBase() {
 
         if (radius < 0) {
             world = Bukkit.getWorld(arg1)
-                ?: return sender.sendColored("&4Could not find world &c\"$arg1\"")
+                ?: return sender.sendMessage("${D_RED}Could not find world ${RED}\"$arg1\"")
         }
 
         removeEntities(sender, world, sub, radius)

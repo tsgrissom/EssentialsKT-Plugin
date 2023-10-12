@@ -5,8 +5,9 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.isPercentage
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import io.github.tsgrissom.pluginapi.extension.sendColored
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
@@ -22,12 +23,12 @@ import kotlin.math.roundToInt
 class SetFoodLevelCommand : CommandBase() {
 
     companion object {
-        const val PERM = "essentialskt.setfoodlevel"
+        const val PERM         = "essentialskt.setfoodlevel"
         const val PERM_PERCENT = "essentialskt.setfoodlevel.percent"
     }
 
     private fun generateUsageAsComponent(context: CommandContext) : Array<BaseComponent> {
-        val comp = TextComponent("${DARK_RED}Usage: ")
+        val comp = TextComponent("${D_RED}Usage: ")
         comp.color = RED
 
         val arg0Comp = TextComponent("<")
@@ -47,8 +48,8 @@ class SetFoodLevelCommand : CommandBase() {
         arg1Inner.hoverEvent = HoverEvent(
             HoverEvent.Action.SHOW_TEXT,
             Text("${GRAY}Required: ${GREEN}Yes\n"),
-            Text("${DARK_GRAY}- ${GRAY}The amount to set the player's food level to\n"),
-            Text("${DARK_GRAY}- ${GRAY}Must be an integer less than 20 or a percentage")
+            Text("${D_GRAY}- ${GRAY}The amount to set the player's food level to\n"),
+            Text("${D_GRAY}- ${GRAY}Must be an integer less than 20 or a percentage")
         )
         arg1Comp.addExtra(arg1Inner)
         arg1Comp.addExtra("> ")
@@ -73,10 +74,10 @@ class SetFoodLevelCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
 
         if (len == 1)
-            return sender.sendColored("&4Please provide an amount to set food level to")
+            return sender.sendMessage("${D_RED}Please provide an amount to set food level to")
 
         val arg1 = args[1]
 
@@ -85,16 +86,16 @@ class SetFoodLevelCommand : CommandBase() {
         }
 
         var arg1d = arg1.toIntOrNull()
-            ?: return sender.sendColored("&4Invalid integer value for &c\"$arg1\"")
+            ?: return sender.sendMessage("${D_RED}Invalid integer value for ${RED}\"$arg1\"")
 
         if (arg1d < 0)
-            return sender.sendColored("&4New food level must be a positive number less than 20")
+            return sender.sendMessage("${D_RED}New food level must be a positive number less than 20")
 
         if (arg1d > 20)
             arg1d = 20
 
         t.foodLevel = arg1d
-        sender.sendColored("&6You set &c${t.name}'s &6food level to &c$arg1")
+        sender.sendMessage("${GOLD}You set ${RED}${t.name}'s ${GOLD}food level to ${RED}$arg1")
     }
 
     private fun handlePercentageInput(context: CommandContext, t: Player, input: String) {
@@ -105,16 +106,16 @@ class SetFoodLevelCommand : CommandBase() {
 
         val sansPercent = input.removeSuffix("%")
         val value = sansPercent.toIntOrNull()
-            ?: return sender.sendColored("&c\"$input\" is not a valid percentage value")
+            ?: return sender.sendMessage("${RED}\"$input\" ${D_RED}is not a valid percentage value")
 
         if (value <= 0)
-            return sender.sendColored("&4A percentage of max food level must be a positive nonzero integer")
+            return sender.sendMessage("${D_RED}A percentage of max food level must be a positive nonzero integer")
 
         val chunk = value / 100.0
         val amount = chunk * 20
 
         t.foodLevel = amount.roundToInt()
-        sender.sendColored("&6You set &c${t.name}'s &6food level to &c${input}")
+        sender.sendMessage("${GOLD}You set ${RED}${t.name}'s ${GOLD}food level to ${RED}${input}")
     }
 
     override fun onTabComplete(

@@ -188,7 +188,7 @@ class GameModeCommand : CommandBase() {
             Bukkit.getLogger().info(
                 "$s attempted to set ${t}'s gamemode but the target had \"$PERM_DEFENSIVE\""
             )
-            sender.sendColored("${D_RED}You are not able to set ${RED}${t}'s ${D_RED}gamemode")
+            sender.sendMessage("${D_RED}You are not able to set ${RED}${t}'s ${D_RED}gamemode")
             return
         }
 
@@ -222,12 +222,12 @@ class GameModeCommand : CommandBase() {
 
     private fun cycleGameMode(sender: CommandSender, target: Player) {
         val gm = getNextGameMode(sender, target)
-            ?: return sender.sendColored("${RED}${target.name} ${D_RED}is in a gamemode which cannot be cycled")
+            ?: return sender.sendMessage("${RED}${target.name} ${D_RED}is in a gamemode which cannot be cycled")
         val mn = gm.name.capitalizeAllCaps()
         val tn = target.name
 
         if (gm == target.gameMode)
-            return sender.sendColored("${D_RED}You do not have permission to cycle to another gamemode")
+            return sender.sendMessage("${D_RED}You do not have permission to cycle to another gamemode")
 
         Bukkit.dispatchCommand(sender, "gm $mn $tn")
     }
@@ -245,7 +245,7 @@ class GameModeCommand : CommandBase() {
                 handleExtendedLabel(context)
             }
             else -> {
-                sender.sendColored("${D_RED}Alternate gamemode command form detected")
+                sender.sendMessage("${D_RED}Alternate gamemode command form detected")
             }
         }
     }
@@ -258,7 +258,7 @@ class GameModeCommand : CommandBase() {
 
         val target: Player = if (args.isEmpty()) {
             if (sender !is Player)
-                return sender.sendColored(
+                return sender.sendMessage(
                     "${D_RED}Console Usage: ${RED}/$label <adventure|creative|survival|spectator>"
                 )
 
@@ -266,7 +266,7 @@ class GameModeCommand : CommandBase() {
         } else {
             val targetName = args[0]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendColored("${D_RED}Could not find player ${RED}$targetName")
+                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$targetName")
 
             p
         }
@@ -278,7 +278,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendColored("${D_RED}Console does not have a gamemode to alter")
+            return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
 
         if (label.equalsIc("gmt", "gmtoggle")) {
             cycleGameMode(sender, target)
@@ -317,9 +317,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendColored("${GOLD}Your gamemode is set to ${RED}$mn")
+        target.sendMessage("${GOLD}Your gamemode is set to ${RED}$mn")
         if (sender != target)
-            sender.sendColored("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
+            sender.sendMessage("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
     }
 
     private fun handleExtendedLabel(context: CommandContext) {
@@ -333,7 +333,7 @@ class GameModeCommand : CommandBase() {
 
         if (args.size == 1 && context.hasFlag(FLAG_GRAPHICAL)) {
             if (sender is ConsoleCommandSender)
-                return sender.sendColored("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${D_RED}Console cannot open GUIs")
             if (sender !is Player)
                 return
 
@@ -343,7 +343,7 @@ class GameModeCommand : CommandBase() {
 
         val target: Player = if (args.size == 1) {
             if (sender !is Player)
-                return sender.sendColored(
+                return sender.sendMessage(
                     "${D_RED}Console Usage: ${RED}/gm <adventure|creative|survival|spectator> <Target>"
                 )
 
@@ -351,7 +351,7 @@ class GameModeCommand : CommandBase() {
         } else {
             val targetName = args[1]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendColored("${D_RED}Could not find player ${RED}$targetName")
+                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$targetName")
 
             p
         }
@@ -362,7 +362,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendColored("${D_RED}Console does not have a gamemode to alter")
+            return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
 
         if (sub.equalsIc("toggle", "t", "cycle" ))
             return cycleGameMode(sender, target)
@@ -395,7 +395,7 @@ class GameModeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                sender.sendColored("${D_RED}Unknown gamemode ${RED}\"$sub\"")
+                sender.sendMessage("${D_RED}Unknown gamemode ${RED}\"$sub\"")
                 return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }
@@ -405,9 +405,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendColored("${GOLD}Your gamemode has been set to ${RED}$mn")
+        target.sendMessage("${GOLD}Your gamemode has been set to ${RED}$mn")
         if (sender != target)
-            sender.sendColored("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
+            sender.sendMessage("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
     }
 
     // MARK: Tab Completion Handler

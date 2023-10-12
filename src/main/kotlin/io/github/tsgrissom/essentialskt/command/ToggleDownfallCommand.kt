@@ -6,6 +6,8 @@ import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import io.github.tsgrissom.pluginapi.extension.toggleRain
+import net.md_5.bungee.api.ChatColor.GOLD
+import net.md_5.bungee.api.ChatColor.RED
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -27,7 +29,7 @@ class ToggleDownfallCommand : CommandBase() {
         val targetCondition = if (w.isClearWeather) "Rain" else "Clear"
 
         w.toggleRain()
-        sender.sendColored("&6Weather of world &c${wn} &6set to &c${targetCondition}")
+        sender.sendMessage("${GOLD}Weather of world ${RED}${wn} ${GOLD}set to ${RED}${targetCondition}")
     }
 
     override fun onTabComplete(

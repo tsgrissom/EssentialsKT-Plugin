@@ -5,7 +5,8 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -57,7 +58,7 @@ class ClearChatCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
-            return sender.sendColored("&4Console Usage: &c/cls <Target OR all>")
+            return sender.sendMessage("${D_RED}Console Usage: ${RED}/cls <Target OR all>")
         if (sender !is Player)
             return
 
@@ -73,7 +74,7 @@ class ClearChatCommand : CommandBase() {
         Bukkit.getOnlinePlayers()
             .filter { it.lacksPermission(PERM_EXEMPT) }
             .forEach { performClearChatOperation(it, getConfiguredRepeatCount()) }
-        sender.sendColored("&6You cleared the chat messages of all players on the server")
+        sender.sendMessage("${GOLD}You cleared the chat messages of all players on the server")
     }
 
     private fun handleOneOrMoreArgs(context: CommandContext) {
@@ -85,10 +86,10 @@ class ClearChatCommand : CommandBase() {
         for (i in 0..args.size) {
             val arg = args[i]
             val t: Player = Bukkit.getPlayer(arg)
-                ?: return sender.sendColored("&4Could not find player &c\"$arg\"")
+                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$arg\"")
             val tn = t.name
             if (clearedPlayers.contains(tn)) {
-                sender.sendColored("&4You already cleared &c${tn}'s &4chat")
+                sender.sendMessage("${D_RED}You already cleared ${RED}${tn}'s ${D_RED}chat")
                 continue
             }
             if (t == sender && sender.lacksPermission(PERM_SELF)) {
@@ -120,7 +121,7 @@ class ClearChatCommand : CommandBase() {
         }
 
         if (!self)
-            sender.sendColored("&6You cleared &c${who} &6chat messages")
+            sender.sendMessage("${GOLD}You cleared ${RED}${who} ${GOLD}chat messages")
     }
 
     override fun onTabComplete(

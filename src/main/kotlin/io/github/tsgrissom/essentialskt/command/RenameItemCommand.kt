@@ -6,6 +6,8 @@ import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.name
 import io.github.tsgrissom.pluginapi.extension.sendColored
 import io.github.tsgrissom.pluginapi.extension.translateAndStripColorCodes
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -25,7 +27,7 @@ class RenameItemCommand : CommandBase() {
         val sender = context.sender
 
         if (sender is ConsoleCommandSender)
-            return sender.sendColored("&4Console cannot rename items")
+            return sender.sendMessage("${D_RED}Console cannot rename items")
         if (sender !is Player)
             return
 
@@ -35,25 +37,25 @@ class RenameItemCommand : CommandBase() {
         val arguments = context.getExecutedString(withLabel=false).trim()
 
         if (arguments.isEmpty())
-            return sender.sendColored("&4Usage: &c/${label} <NewName>")
+            return sender.sendMessage("${D_RED}Usage: ${RED}/${label} <NewName>")
 
         val stripped = arguments.translateAndStripColorCodes()
 
         if (stripped.length > 32 && sender.lacksPermission(PERM_BYPASS_LENGTH_LIMIT))
-            return sender.sendColored("&4Item display names must be less than or equal to &c32 characters&4, excluding color codes")
+            return sender.sendMessage("${D_RED}Item display names must be less than or equal to ${RED}32 characters${D_RED}, excluding color codes")
 
         val p: Player = sender
         val pi = p.inventory
         val inHand = pi.itemInMainHand
 
         if (inHand.type == Material.AIR)
-            return sender.sendColored("&4There is nothing in your hand to rename")
+            return sender.sendMessage("${D_RED}There is nothing in your hand to rename")
 
         val iS = ItemStack(inHand)
             .name(arguments)
         pi.setItemInMainHand(iS)
 
-        sender.sendColored("&6Item name updated to &r${arguments}")
+        sender.sendColored("${GOLD}Item name updated to ${RESET}${arguments}")
     }
 
     override fun onTabComplete(
