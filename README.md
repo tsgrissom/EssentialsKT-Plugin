@@ -19,24 +19,27 @@ Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 * Permission structure mirrors that of EssentialsX, allowing it to serve as a drop-in replacement with minimal breakage of permission structure
 #### General-Purpose (A to Z)
 * `/clearchat`
-* `/feed`
+* `/damage`
+* `/esskt`
 * `/gamemode`, `/gmc`, `/gms`, etc.
-* `/heal`
+* `/ipaddress`
 * `/list`
-* `/nickname`
-* `/ping`
 * `/remove`
 * `/renameitem`
-* `/suicide`
+* `/setfoodlevel`
+* `/sethealth`
+* `/time`
 * `/toggledownfall`
+* `/uniqueid`
+* `/weather`
 * `/whois` & `/whoami`
+* `/worlds`
 #### Time Setting
 * Quick-time commands: `/day`, `/midnight`, `/night`, `/noon`, `/sunset`, & `/sunrise`
 * In development: `/ntime`
 #### Weather Setting
 * Quick-weather commands: `/rain`, `/clear`
 * In development: `/weather`
-
 
 ## Upcoming Commands
 * repair

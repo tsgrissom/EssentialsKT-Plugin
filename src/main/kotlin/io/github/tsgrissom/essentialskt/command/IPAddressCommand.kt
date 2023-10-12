@@ -66,7 +66,7 @@ class IPAddressCommand : CommandBase() {
             .appendc(" ---------------------------------------\n", DARK_GRAY)
             .appendc(" | ", DARK_GRAY).appendc("IP Address of ", GRAY).appendc(t.name, YELLOW).append("\n")
             .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
-            .appendc(" ---------------------------------------", DARK_GRAY)
+            .appendc(" ---------------------------------------", DARK_GRAY) // TODO Write a TextBoxGenerator to create these displays
 
         return builder.create()
     }
