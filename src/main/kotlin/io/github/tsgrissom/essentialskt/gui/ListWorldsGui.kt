@@ -5,6 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.pluginapi.extension.lore
 import io.github.tsgrissom.pluginapi.extension.name
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.World
@@ -46,8 +48,8 @@ class ListWorldsGui : ChestGui(1, "Worlds") {
 
         return GuiItem(
             ItemStack(material)
-                .name("&e\"${w.name}\"")
-                .lore("&7Type&8: &b$type")
+                .name("${GOLD}\"${w.name}\"")
+                .lore("${GRAY}Type${D_GRAY}: ${AQUA}$type")
         ) {
             val who = it.whoClicked
 

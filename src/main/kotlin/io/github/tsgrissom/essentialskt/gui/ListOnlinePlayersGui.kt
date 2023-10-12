@@ -4,6 +4,8 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -22,19 +24,25 @@ class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
     }
 
     private fun createPlayerHead(p: Player) : GuiItem {
+        val wn = p.world.name
         val x = p.location.x.roundToDigits(1)
         val y = p.location.y.roundToDigits(1)
         val z = p.location.z.roundToDigits(1)
+
+        val n = p.name
+        val dn = p.displayName
+        val uuid = p.getUniqueString()
+
         return GuiItem(
             ItemStack(Material.PLAYER_HEAD)
                 .playerHeadOf(p)
-                .name("&6${p.name}")
+                .name("${GOLD}$n")
                 .lore(
-                    "&7Click to view their &e/whois &7profile",
-                    "&8> &7Nickname: &e${p.displayName}",
-                    "&8> &7UUID: &e${p.getUniqueString()}",
-                    "&8> &7World&8: &e${p.world.name}",
-                    "&8> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
+                    "${GRAY}Click to view their ${YELLOW}/whois ${GRAY}profile",
+                    "${D_GRAY}> ${GRAY}Nickname${D_GRAY}: ${YELLOW}$dn",
+                    "${D_GRAY}> ${GRAY}UUID${D_GRAY}: ${YELLOW}$uuid",
+                    "${D_GRAY}> ${GRAY}World${D_GRAY}: ${YELLOW}$wn",
+                    "${D_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${D_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
                 )
                 .flag(ItemFlag.HIDE_ATTRIBUTES)
         ) { e ->

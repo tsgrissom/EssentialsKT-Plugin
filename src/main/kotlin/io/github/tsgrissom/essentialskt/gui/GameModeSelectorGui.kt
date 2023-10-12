@@ -5,6 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -17,8 +19,8 @@ import java.util.function.Consumer
 class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Gamemode") {
 
     companion object {
-        private const val STR_CURRENT = "&eYour current gamemode"
-        private const val STR_CLICK = "&aClick to use"
+        private const val STR_CURRENT      = "&eYour current gamemode"
+        private const val STR_CLICK        = "&aClick to use"
         private const val STR_NOPERMISSION = "&cYou do not have permission to use this"
     }
 
@@ -31,8 +33,8 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
         val currentItem = GuiItem(
             ItemStack(Material.PLAYER_HEAD)
                 .playerHeadOf(t)
-                .name("&e$tn")
-                .lore("&7In &b$gm")
+                .name("${YELLOW}$tn")
+                .lore("${GRAY}In ${AQUA}$gm")
         )
 
         val pane = OutlinePane(2, 0, 5, 1)
@@ -68,7 +70,7 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
 
         return GuiItem(
             ItemStack(Material.MAP)
-                .name("&6Adventure Mode")
+                .name("${GOLD}Adventure Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked
@@ -90,7 +92,7 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
 
         return GuiItem(
             ItemStack(Material.BEDROCK)
-                .name("&6Creative Mode")
+                .name("${GOLD}Creative Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked
@@ -112,7 +114,7 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
 
         return GuiItem(
             ItemStack(Material.STONE_SWORD)
-                .name("&6Survival Mode")
+                .name("${GOLD}Survival Mode")
                 .lore(lore)
                 .flag(ItemFlag.HIDE_ATTRIBUTES)
         ) { e ->
@@ -135,7 +137,7 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
 
         return GuiItem(
             ItemStack(Material.COMPASS)
-                .name("&6Spectator Mode")
+                .name("${GOLD}Spectator Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked
