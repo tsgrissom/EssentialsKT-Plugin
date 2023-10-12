@@ -4,10 +4,12 @@ import com.uchuhimo.collections.mutableBiMapOf
 import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.*
 
 class EntityUtility {
 
+    private val entityTypeToMaterial = mutableMapOf<EntityType, Material>()
     private val mobTypeToNames = mutableBiMapOf<EntityType, Set<String>>()
 
     private fun getProtectedEntityTypes() : Set<EntityType> =
@@ -29,11 +31,61 @@ class EntityUtility {
         return set
     }
 
+    private fun generateEntityTypeRepresentedAsMaterial(type: EntityType) : Material {
+        val specialCases = mapOf(
+            Pair(EntityType.ARMOR_STAND, Material.ARMOR_STAND),
+            Pair(EntityType.ARROW, Material.ARROW),
+            Pair(EntityType.BOAT, Material.OAK_BOAT),
+            Pair(EntityType.CHEST_BOAT, Material.OAK_CHEST_BOAT),
+            Pair(EntityType.EGG, Material.EGG),
+            Pair(EntityType.ENDER_CRYSTAL, Material.END_CRYSTAL),
+            Pair(EntityType.ENDER_PEARL, Material.ENDER_PEARL),
+            Pair(EntityType.FIREWORK, Material.FIREWORK_ROCKET),
+            Pair(EntityType.FISHING_HOOK, Material.FISHING_ROD),
+            Pair(EntityType.ITEM_FRAME, Material.ITEM_FRAME),
+            Pair(EntityType.GLOW_ITEM_FRAME, Material.GLOW_ITEM_FRAME),
+            Pair(EntityType.MINECART, Material.MINECART),
+            Pair(EntityType.MINECART_CHEST, Material.CHEST_MINECART),
+            Pair(EntityType.MINECART_COMMAND, Material.COMMAND_BLOCK_MINECART),
+            Pair(EntityType.MINECART_FURNACE, Material.FURNACE_MINECART),
+            Pair(EntityType.MINECART_HOPPER, Material.HOPPER_MINECART),
+            Pair(EntityType.MINECART_TNT, Material.TNT_MINECART),
+            Pair(EntityType.PAINTING, Material.PAINTING),
+            Pair(EntityType.PRIMED_TNT, Material.TNT),
+            Pair(EntityType.GIANT, Material.ZOMBIE_HEAD),
+            Pair(EntityType.MUSHROOM_COW, Material.MOOSHROOM_SPAWN_EGG)
+        )
+
+        if (specialCases.containsKey(type))
+            return specialCases[type] ?: Material.BARRIER
+
+        val asHead: Material? = Material.entries.firstOrNull() { it.name == "${type.name}_HEAD" }
+        val asSkull: Material? = Material.entries.firstOrNull() { it.name == "${type.name}_SKULL" }
+        val asSpawnEgg: Material? = Material.entries.firstOrNull { it.name == "${type.name}_SPAWN_EGG"}
+
+        if (asSpawnEgg != null)
+            return asSpawnEgg
+
+        if (asHead != null)
+            return asHead
+
+        if (asSkull != null)
+            return asSkull
+
+        return Material.BARRIER
+    }
+
     init {
         getMobTypes().forEach {
             mobTypeToNames[it] = generateMobKeys(it)
         }
+        EntityType.entries.forEach {
+            entityTypeToMaterial[it] = generateEntityTypeRepresentedAsMaterial(it)
+        }
     }
+
+    fun getMaterialRepresentationForType(type: EntityType) : Material =
+        entityTypeToMaterial[type] ?: Material.BARRIER
 
     fun getMobKeys(type: EntityType) : Set<String> =
         mobTypeToNames[type] ?: error("The given type is not a mob")

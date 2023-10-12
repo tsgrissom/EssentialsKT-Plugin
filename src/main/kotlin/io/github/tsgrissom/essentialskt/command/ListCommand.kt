@@ -2,10 +2,10 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.gui.ListEntitiesGui
 import io.github.tsgrissom.essentialskt.gui.ListOnlinePlayersGui
+import io.github.tsgrissom.pluginapi.chat.HoverableText
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
-import io.github.tsgrissom.pluginapi.chat.HoverableText
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
@@ -14,7 +14,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
@@ -35,14 +34,14 @@ class ListCommand : CommandBase() {
     }
 
     // MARK: Text Helper Functions
-    private fun getAvailableLists() : Array<String> =
+    private fun getAvailableLists() =
         arrayOf(
-            "&6Available Lists",
-            "&bOptional flag available to players",
-            "&8&l> &eentities",
-            "&8&l> &emobs",
-            "&8&l> &eplayers &b--gui",
-            "&8&l> &eworlds &b--gui"
+            "${GOLD}Available Lists",
+            "${AQUA}Optional flag available to players",
+            "${DARK_GRAY}> ${YELLOW}entities ${AQUA}--gui",
+            "${DARK_GRAY}> ${YELLOW}mobs ${AQUA}--gui",
+            "${DARK_GRAY}> ${YELLOW}players ${AQUA}--gui",
+            "${DARK_GRAY}> ${YELLOW}worlds ${AQUA}--gui"
         )
 
     private fun generatePlayerListAsTextComponents() : Array<BaseComponent> {
@@ -73,15 +72,18 @@ class ListCommand : CommandBase() {
             val x = loc.x.roundToDigits(1)
             val y = loc.y.roundToDigits(1)
             val z = loc.z.roundToDigits(1)
+            val dn = p.displayName
+            val uuid = p.getUniqueString()
+            val wn = p.world.name
             builder.append(
                 HoverableText
                     .compose(p.name)
                     .color(YELLOW)
                     .hoverText(
-                        "&8&l> &7Nickname&8: &r${p.displayName}",
-                        "&8&l> &7UUID&8: &e${p.getUniqueString()}",
-                        "&8&l> &7Current World&8: &e${p.world.name}",
-                        "&8&l> &7Location &cX&aY&bZ&8: &c$x &a$y &b$z"
+                        "${DARK_GRAY}> ${GRAY}Nickname${DARK_GRAY}: ${RESET}$dn",
+                        "${DARK_GRAY}> ${GRAY}UUID${DARK_GRAY}: ${YELLOW}$uuid",
+                        "${DARK_GRAY}> ${GRAY}Current World${DARK_GRAY}: ${YELLOW}$wn",
+                        "${DARK_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${DARK_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
                     )
                     .toComponent()
             )
@@ -146,7 +148,7 @@ class ListCommand : CommandBase() {
 
         if (context.hasFlag(FLAG_GRAPHICAL))
             if (sender is Player)
-                return ListEntitiesGui(EntityType.entries).show(sender)
+                return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
                 return sender.sendColored("&4Console cannot open GUIs")
 
@@ -172,7 +174,7 @@ class ListCommand : CommandBase() {
 
         if (context.hasFlag(FLAG_GRAPHICAL))
             if (sender is Player)
-                return ListEntitiesGui(EntityUtility().getMobTypes()).show(sender)
+                return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
                 return sender.sendColored("&4Console cannot open GUIs")
 
