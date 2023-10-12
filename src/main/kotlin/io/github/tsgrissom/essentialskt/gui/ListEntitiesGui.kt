@@ -6,6 +6,8 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
@@ -26,6 +28,10 @@ class ListEntitiesGui(
     constructor(types: Collection<EntityType>, title: String):
             this(types, title, 5)
 
+    init {
+        populateContents()
+    }
+
     private fun getPageIndexString(pagination: PaginatedPane) : String =
         "${pagination.page + 1}/${pagination.pages}"
     private fun getPreviousIndex(pagination: PaginatedPane) =
@@ -40,7 +46,8 @@ class ListEntitiesGui(
             0
 
     private fun createEntityTypeGuiItem(type: EntityType) : GuiItem {
-        val name = type.name.capitalizeEachWordAllCaps()
+        val typeName = type.name
+        val name = typeName.capitalizeEachWordAllCaps()
         val isAlive = type.isAlive.palatable(withColor=true)
         val isSpawnable = type.isSpawnable.palatable(withColor=true)
 
@@ -49,14 +56,13 @@ class ListEntitiesGui(
 
         return GuiItem(
             ItemStack(material)
-                .name("&e${name}")
+                .name("${YELLOW}$name")
                 .lore(
-                    "&8> &7Type: &b${type.name}",
-                    "&8> &7Alive: &r$isAlive",
-                    "&8> &7Spawnable: &r$isSpawnable"
+                    "${D_GRAY}> ${GRAY}Type${D_GRAY}: ${AQUA}$typeName",
+                    "${D_GRAY}> ${GRAY}Alive${D_GRAY}: ${RESET}$isAlive",
+                    "${D_GRAY}> ${GRAY}Spawnable${D_GRAY}: ${RESET}$isSpawnable"
                 )
         ) {
-            it.isCancelled = true
             // TODO Do something on entity gui click
         }
     }
@@ -67,46 +73,33 @@ class ListEntitiesGui(
             this.title = titleNoun
             return
         }
-        this.title = "$titleNoun (${getPageIndexString(pagination)})"
+        this.title = "$titleNoun ($indexStr)"
     }
 
     private fun createToolbar(pagination: PaginatedPane) : OutlinePane {
         val toolbar = OutlinePane(0, paginatedPaneHeight, 9, 1)
-        val btnPrevious = GuiItem(
-            ItemStack(Material.ARROW)
-                .name("&6Previous Page")
-        ) {
-            it.isCancelled = true
-
+        val itemPrevious = ItemStack(Material.ARROW).name("${GOLD}Previous Page")
+        val itemCenter = ItemStack(Material.COMPASS).name("${GRAY}Navigation")
+        val itemNext = ItemStack(Material.ARROW).name("${GOLD}Next Page")
+        val btnPrevious = GuiItem(itemPrevious) {
             pagination.setPage(getPreviousIndex(pagination))
             updateTitle(pagination)
             update()
         }
-        val btnCurrent = GuiItem(
-            ItemStack(Material.COMPASS)
-                .name("&eCurrent: &7${getPageIndexString(pagination)}")
-        ) {
-            it.isCancelled = true
-        }
-        val btnNext = GuiItem(
-            ItemStack(Material.ARROW)
-                .name("&6Next Page")
-        ) {
-            it.isCancelled = true
-
+        val btnCenter = GuiItem(itemCenter)
+        val btnNext = GuiItem(itemNext) {
             pagination.setPage(getNextIndex(pagination))
             updateTitle(pagination)
             update()
         }
 
         toolbar.align(OutlinePane.Alignment.CENTER)
-        toolbar.addItems(btnPrevious, btnCurrent, btnNext)
+        toolbar.addItems(btnPrevious, btnCenter, btnNext)
 
         return toolbar
     }
 
     private fun populateContents() {
-        this.panes.clear()
         val pagination = PaginatedPane(0, 0, 9, paginatedPaneHeight)
 
         val maxSlot = paginatedPaneHeight * 9
@@ -130,12 +123,11 @@ class ListEntitiesGui(
             currentIndex++
         }
 
-        this.addPane(createToolbar(pagination))
-        this.addPane(pagination)
+        addPane(createToolbar(pagination))
+        addPane(pagination)
+        setOnGlobalClick {
+            it.isCancelled = true
+        }
         updateTitle(pagination)
-    }
-
-    init {
-        populateContents()
     }
 }
