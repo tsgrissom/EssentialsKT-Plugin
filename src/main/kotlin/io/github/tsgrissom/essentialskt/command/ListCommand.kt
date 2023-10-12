@@ -8,6 +8,8 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
@@ -38,10 +40,10 @@ class ListCommand : CommandBase() {
         arrayOf(
             "${GOLD}Available Lists",
             "${AQUA}Optional flag available to players",
-            "${DARK_GRAY}> ${YELLOW}entities ${AQUA}--gui",
-            "${DARK_GRAY}> ${YELLOW}mobs ${AQUA}--gui",
-            "${DARK_GRAY}> ${YELLOW}players ${AQUA}--gui",
-            "${DARK_GRAY}> ${YELLOW}worlds ${AQUA}--gui"
+            "${D_GRAY}> ${YELLOW}entities ${AQUA}--gui",
+            "${D_GRAY}> ${YELLOW}mobs ${AQUA}--gui",
+            "${D_GRAY}> ${YELLOW}players ${AQUA}--gui",
+            "${D_GRAY}> ${YELLOW}worlds ${AQUA}--gui"
         )
 
     private fun generatePlayerListAsTextComponents() : Array<BaseComponent> {
@@ -53,19 +55,19 @@ class ListCommand : CommandBase() {
 
         if (onlinePlayers.isEmpty()) {
             builder
-                .appendc("(", DARK_GRAY)
+                .appendc("(", D_GRAY)
                 .appendc("None", RED)
-                .appendc(")", DARK_GRAY)
+                .appendc(")", D_GRAY)
 
             return builder.create()
         }
 
         builder
-            .appendc("(", DARK_GRAY)
+            .appendc("(", D_GRAY)
             .appendc("$count", GOLD)
-            .appendc("/", DARK_GRAY)
+            .appendc("/", D_GRAY)
             .appendc("$max", GOLD)
-            .appendc(") ", DARK_GRAY)
+            .appendc(") ", D_GRAY)
 
         for ((index, p) in onlinePlayers.withIndex()) {
             val loc = p.location
@@ -80,10 +82,10 @@ class ListCommand : CommandBase() {
                     .compose(p.name)
                     .color(YELLOW)
                     .hoverText(
-                        "${DARK_GRAY}> ${GRAY}Nickname${DARK_GRAY}: ${RESET}$dn",
-                        "${DARK_GRAY}> ${GRAY}UUID${DARK_GRAY}: ${YELLOW}$uuid",
-                        "${DARK_GRAY}> ${GRAY}Current World${DARK_GRAY}: ${YELLOW}$wn",
-                        "${DARK_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${DARK_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
+                        "${D_GRAY}> ${GRAY}Nickname${D_GRAY}: ${RESET}$dn",
+                        "${D_GRAY}> ${GRAY}UUID${D_GRAY}: ${YELLOW}$uuid",
+                        "${D_GRAY}> ${GRAY}Current World${D_GRAY}: ${YELLOW}$wn",
+                        "${D_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${D_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
                     )
                     .toComponent()
             )
@@ -112,7 +114,7 @@ class ListCommand : CommandBase() {
             "mobs", "mob" -> handleSubcMobs(context)
             "players", "pl", "online" -> handleSubcPlayers(context)
             "worlds", "world" -> handleSubcWorlds(context)
-            else -> sender.sendColored("&4Unknown list type &c\"$sub\"&4. Do &c/ls &4to view valid types.")
+            else -> sender.sendColored("${D_RED}Unknown list type ${RED}\"$sub\"${D_RED}. Do ${RED}/ls ${D_RED}to view valid types.")
         }
     }
 
@@ -129,7 +131,7 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
 
             if (hasGraphicalFlag)
-                sender.sendColored("&4Console cannot view GUIs")
+                sender.sendColored("${D_RED}Console cannot view GUIs")
 
             return
         }
@@ -150,7 +152,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console cannot open GUIs")
+                return sender.sendColored("${D_RED}Console cannot open GUIs")
 
         // TODO Send text list of entities
     }
@@ -176,7 +178,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console cannot open GUIs")
+                return sender.sendColored("${D_RED}Console cannot open GUIs")
 
         sender.sendMessage("TODO Display mobs as text")
         // TODO Display mobs as text components

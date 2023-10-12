@@ -3,6 +3,9 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
+import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
@@ -20,7 +23,7 @@ class DamageCommand : CommandBase() {
     private fun sendUsage(context: CommandContext) {
         val label = context.label
         val sender = context.sender
-        var usage = "&4Usage: &c/$label <Target> <AmountAsDecimal"
+        var usage = "${D_RED}Usage: ${RED}/$label <Target> <AmountAsDecimal"
 
         usage += if (sender.hasPermission(PERM_PERCENT)) {
             "OrPercentage>"
@@ -43,13 +46,13 @@ class DamageCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendColored("&4Could not find player &c\"$sub\"")
+            ?: return sender.sendColored("${D_RED}Could not find player ${RED}\"$sub\"")
 
         if (args.size == 1) {
             if (sub.equalsIc("help", "h", "?", "usage"))
                 return sendUsage(context)
 
-            return sender.sendColored("&4You must specify an amount of damage")
+            return sender.sendColored("${D_RED}You must specify an amount of damage")
         }
 
         val arg1 = args[1]
@@ -64,13 +67,13 @@ class DamageCommand : CommandBase() {
             amount = arg1.toDouble()
 
             if (amount <= 0)
-                return sender.sendColored("&4Your damage amount must be a positive nonzero number")
+                return sender.sendColored("${D_RED}Your damage amount must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
-            return sender.sendColored("&4Your damage amount must be a decimal or integer value")
+            return sender.sendColored("${D_RED}Your damage amount must be a decimal or integer value")
         }
 
         t.damage(amount)
-        sender.sendColored("&6Damaged &c${t.name} &6for &c${amount} hearts")
+        sender.sendColored("${GOLD}Damaged ${RED}${t.name} ${GOLD}for ${RED}${amount} hearts")
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
@@ -86,9 +89,9 @@ class DamageCommand : CommandBase() {
             percent = sansPercent.toDouble()
 
             if (percent <= 0)
-                return sender.sendColored("&4A percent of max health to damage must be a positive nonzero number")
+                return sender.sendColored("${D_RED}A percent of max health to damage must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
-            val text = "&4Your damage percentage must be a decimal or integer value followed by a percent symbol"
+            val text = "${D_RED}Your damage percentage must be a decimal or integer value followed by a percent symbol"
             return sender.sendColored(text)
         }
 
@@ -98,7 +101,7 @@ class DamageCommand : CommandBase() {
         val amount = chunk * maxHealth
 
         target.damage(amount)
-        sender.sendColored("&6You damaged &c${target.name} &6for &c${percent}% &6of their max health &8(&c${amount.roundToDigits(2)}&8)")
+        sender.sendColored("${GOLD}You damaged ${RED}${target.name} ${GOLD}for ${RED}${percent}% ${GOLD}of their max health ${D_GRAY}(${RED}${amount.roundToDigits(2)}${D_GRAY})")
     }
 
     override fun onTabComplete(

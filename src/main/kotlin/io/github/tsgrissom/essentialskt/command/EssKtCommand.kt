@@ -10,7 +10,8 @@ import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import io.github.tsgrissom.pluginapi.extension.sendColored
-import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.RED
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -71,7 +72,7 @@ class EssKtCommand : CommandBase() {
                 .buildConversation(sender as Conversable)
             sender.beginConversation(conv)
         } else {
-            return sender.sendColored("&4Unknown subcommand: &c\"$sub\" &4Do &c/esskt &4for help.")
+            return sender.sendColored("${D_RED}Unknown subcommand: ${RED}\"$sub\" ${D_RED}Do ${RED}/esskt ${D_RED}for help.")
         }
     }
 
