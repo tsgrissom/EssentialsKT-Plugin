@@ -10,6 +10,8 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
 import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -44,12 +46,12 @@ class GameModeCommand : CommandBase() {
             EssPlayer(sender).getAvailableGameModes()
         else
             GameMode.entries.toSet()
-        val mainColor = if (negative) DARK_RED else GRAY
+        val mainColor = if (negative) D_RED else GRAY
         val detailColor = if (negative) RED else YELLOW
 
         val builder = ComponentBuilder()
             .appendc("Available gamemodes", mainColor)
-            .appendc(":", DARK_GRAY)
+            .appendc(":", D_GRAY)
 
         if (available.isEmpty()) {
             builder.appendc(" None", RED)
@@ -74,7 +76,7 @@ class GameModeCommand : CommandBase() {
                 .append(clickText.toComponent())
 
             if (i != (available.size - 1))
-                builder.appendc(",", DARK_GRAY)
+                builder.appendc(",", D_GRAY)
         }
 
         return builder.create()
@@ -88,7 +90,7 @@ class GameModeCommand : CommandBase() {
             GameMode.entries.toSet()
         val availableNames = available.map { it.name.lowercase() }.toSet()
         val builder = ComponentBuilder()
-            .appendc(if (isConsole) "Console Usage: " else "Usage: ", DARK_RED)
+            .appendc(if (isConsole) "Console Usage: " else "Usage: ", D_RED)
             .appendc("/gm <", RED)
 
         if (available.isNotEmpty()) {
@@ -103,7 +105,7 @@ class GameModeCommand : CommandBase() {
                     .append(clickText.toComponent())
 
                 if (i != (available.size - 1))
-                    builder.appendc("/", DARK_GRAY)
+                    builder.appendc("/", D_GRAY)
             }
         } else {
             builder.append("No Available Gamemodes")
@@ -124,7 +126,7 @@ class GameModeCommand : CommandBase() {
             .compose("survival")
             .withAliases("0", "surv", "sur", "s")
             .withDescription(
-                "&7Set $descVerbiage gamemode to &bSurvival"
+                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Survival"
             )
             .withPermission(PERM_SURVIVAL)
             .withSuggestion("/gm survival${suggestionPostfix}")
@@ -132,7 +134,7 @@ class GameModeCommand : CommandBase() {
             .compose("creative")
             .withAliases("1", "create", "creat", "crtv", "crt", "c")
             .withDescription(
-                "&7Set $descVerbiage gamemode to &bCreative"
+                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Creative"
             )
             .withPermission(PERM_CREATIVE)
             .withSuggestion("/gm creative${suggestionPostfix}")
@@ -140,7 +142,7 @@ class GameModeCommand : CommandBase() {
             .compose("adventure")
             .withAliases("2", "adv", "a")
             .withDescription(
-                "&7Set $descVerbiage gamemode to &bAdventure"
+                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Adventure"
             )
             .withPermission(PERM_ADVENTURE)
             .withSuggestion("/gm adventure${suggestionPostfix}")
@@ -148,7 +150,7 @@ class GameModeCommand : CommandBase() {
             .compose("spectator")
             .withAliases("spect", "spec", "sp")
             .withDescription(
-                "&7Set $descVerbiage gamemode to &bSpectator"
+                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Spectator"
             )
             .withPermission(PERM_SPECTATOR)
             .withSuggestion("/gm spectator${suggestionPostfix}")
@@ -159,8 +161,8 @@ class GameModeCommand : CommandBase() {
                 .compose("Target")
                 .required(targetingRequired)
                 .hoverText(
-                    "&7If provided, will apply the specified",
-                    " &7gamemode to the targeted player"
+                    "${GRAY}If provided, will apply the specified",
+                    " ${GRAY}gamemode to the targeted player"
                 )
             subcSurvival.withArgument(targetingArgument)
             subcCreative.withArgument(targetingArgument)
@@ -186,7 +188,7 @@ class GameModeCommand : CommandBase() {
             Bukkit.getLogger().info(
                 "$s attempted to set ${t}'s gamemode but the target had \"$PERM_DEFENSIVE\""
             )
-            sender.sendColored("&4You are not able to set &c${t}'s &4gamemode")
+            sender.sendColored("${D_RED}You are not able to set ${RED}${t}'s ${D_RED}gamemode")
             return
         }
 
@@ -220,12 +222,12 @@ class GameModeCommand : CommandBase() {
 
     private fun cycleGameMode(sender: CommandSender, target: Player) {
         val gm = getNextGameMode(sender, target)
-            ?: return sender.sendColored("&c${target.name} &4is in a gamemode which cannot be cycled")
+            ?: return sender.sendColored("${RED}${target.name} ${D_RED}is in a gamemode which cannot be cycled")
         val mn = gm.name.capitalizeAllCaps()
         val tn = target.name
 
         if (gm == target.gameMode)
-            return sender.sendColored("&4You do not have permission to cycle to another gamemode")
+            return sender.sendColored("${D_RED}You do not have permission to cycle to another gamemode")
 
         Bukkit.dispatchCommand(sender, "gm $mn $tn")
     }
@@ -243,7 +245,7 @@ class GameModeCommand : CommandBase() {
                 handleExtendedLabel(context)
             }
             else -> {
-                sender.sendColored("&4Alternate gamemode command form detected")
+                sender.sendColored("${D_RED}Alternate gamemode command form detected")
             }
         }
     }
@@ -257,14 +259,14 @@ class GameModeCommand : CommandBase() {
         val target: Player = if (args.isEmpty()) {
             if (sender !is Player)
                 return sender.sendColored(
-                    "&4Console Usage: &c/$label <adventure|creative|survival|spectator>"
+                    "${D_RED}Console Usage: ${RED}/$label <adventure|creative|survival|spectator>"
                 )
 
             sender
         } else {
             val targetName = args[0]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendColored("&4Could not find player &c$targetName")
+                ?: return sender.sendColored("${D_RED}Could not find player ${RED}$targetName")
 
             p
         }
@@ -276,7 +278,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendColored("&4Console does not have a gamemode to alter")
+            return sender.sendColored("${D_RED}Console does not have a gamemode to alter")
 
         if (label.equalsIc("gmt", "gmtoggle")) {
             cycleGameMode(sender, target)
@@ -315,9 +317,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendColored("&6Your gamemode is set to &c$mn")
+        target.sendColored("${GOLD}Your gamemode is set to ${RED}$mn")
         if (sender != target)
-            sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
+            sender.sendColored("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
     }
 
     private fun handleExtendedLabel(context: CommandContext) {
@@ -331,7 +333,7 @@ class GameModeCommand : CommandBase() {
 
         if (args.size == 1 && context.hasFlag(FLAG_GRAPHICAL)) {
             if (sender is ConsoleCommandSender)
-                return sender.sendColored("&4Console cannot open GUIs")
+                return sender.sendColored("${D_RED}Console cannot open GUIs")
             if (sender !is Player)
                 return
 
@@ -342,14 +344,14 @@ class GameModeCommand : CommandBase() {
         val target: Player = if (args.size == 1) {
             if (sender !is Player)
                 return sender.sendColored(
-                    "&4Console Usage: &c/gm <adventure|creative|survival|spectator> <Target>"
+                    "${D_RED}Console Usage: ${RED}/gm <adventure|creative|survival|spectator> <Target>"
                 )
 
             sender
         } else {
             val targetName = args[1]
             val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendColored("&4Could not find player &c$targetName")
+                ?: return sender.sendColored("${D_RED}Could not find player ${RED}$targetName")
 
             p
         }
@@ -360,7 +362,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendColored("&4Console does not have a gamemode to alter")
+            return sender.sendColored("${D_RED}Console does not have a gamemode to alter")
 
         if (sub.equalsIc("toggle", "t", "cycle" ))
             return cycleGameMode(sender, target)
@@ -393,7 +395,7 @@ class GameModeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                sender.sendColored("&4Unknown gamemode &c\"$sub\"")
+                sender.sendColored("${D_RED}Unknown gamemode ${RED}\"$sub\"")
                 return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }
@@ -403,9 +405,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendColored("&6Your gamemode has been set to &c$mn")
+        target.sendColored("${GOLD}Your gamemode has been set to ${RED}$mn")
         if (sender != target)
-            sender.sendColored("&6You set &c$tn's &6gamemode to &c$mn")
+            sender.sendColored("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
     }
 
     // MARK: Tab Completion Handler
