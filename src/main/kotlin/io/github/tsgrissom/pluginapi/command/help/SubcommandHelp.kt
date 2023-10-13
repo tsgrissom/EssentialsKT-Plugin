@@ -1,10 +1,8 @@
 package io.github.tsgrissom.pluginapi.command.help
 
 import io.github.tsgrissom.pluginapi.extension.appendc
-import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatColor.GRAY
 import net.md_5.bungee.api.ChatColor.YELLOW
-import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
@@ -59,7 +57,7 @@ class SubcommandHelp(val name: String) {
         return this
     }
 
-    fun getNameAsComponent() : TextComponent {
+    fun toComponent() : TextComponent {
         val text = TextComponent(name)
 
         if (suggestionOnClick != null) {

@@ -2,7 +2,6 @@ package io.github.tsgrissom.pluginapi.command.help
 
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.appendc
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
@@ -77,7 +76,7 @@ class CommandHelpGenerator(val context: CommandContext) {
     }
 
     private fun getSubcommandAsComponent(sub: SubcommandHelp) : TextComponent {
-        val nameAsComponent = sub.getNameAsComponent()
+        val nameAsComponent = sub.toComponent()
         val text = TextComponent()
         val prefix = TextComponent("> ")
 
@@ -92,7 +91,7 @@ class CommandHelpGenerator(val context: CommandContext) {
         text.addExtra(if (sub.name.isNotEmpty()) " " else "")
 
         for (arg in sub.arguments) {
-            text.addExtra(TextComponent(*arg.toComponent()))
+            text.addExtra(TextComponent(*arg.toComponents()))
             text.addExtra(" ")
         }
 

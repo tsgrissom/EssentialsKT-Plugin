@@ -16,7 +16,7 @@ Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 
 ## Commands
 * EssentialsKT imitates the command structure of EssentialsX, including supporting aliases prefixed with `e`
-* Permission structure mirrors that of EssentialsX, allowing it to serve as a drop-in replacement with minimal breakage of permission structure
+* Permission structure mirrors that of EssentialsX, allowing it to serve as a drop-in addon with minimal breakage of permission structure
 #### General-Purpose (A to Z)
 * `/clearchat`
 * `/damage`
@@ -61,7 +61,6 @@ Tested on PaperMC (Java 20) for Minecraft version 1.20.1
 * broadcast
 * burn
 * exp
-* 
 
 ## Permissions
 * Permissions are structured identically between EssentialsX and EssentialsKT to ensure minimal breakage

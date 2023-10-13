@@ -17,12 +17,14 @@ import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
 
+    // MARK: Static Declarations
     companion object {
         const val PERM_SELF = "essentialskt.whoami"
         const val PERM_OTHERS = "essentialskt.whois"
         const val PERM_IP = "essentialskt.whois.ip"
     }
 
+    // MARK: Command Body
     override fun execute(context: CommandContext) {
         val label = context.label
         val sender = context.sender
@@ -37,28 +39,56 @@ class WhoIsCommand : CommandBase() {
         }
     }
 
-    override fun onTabComplete(
-        sender: CommandSender,
-        command: Command,
-        label: String,
-        args: Array<out String>
-    ) : MutableList<String> {
-        val len = args.size
-        val tab = mutableListOf<String>()
-        val options = listOf("temporary", "permanent", "help")
-
-        if (label.equalsIc("whoami", "ewhoami") && len == 1)
-            StringUtil.copyPartialMatches(args[0], options, tab)
-        else {
-            if (len == 1 && sender.hasPermission(PERM_OTHERS))
-                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
-            if (len == 2)
-                StringUtil.copyPartialMatches(args[1], options, tab)
-        }
-
-        return tab.sorted().toMutableList()
+    // MARK: Operational Helper Functions
+    private fun displayTemporaryWhoIs(sender: CommandSender, target: Player) {
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generateTemporaryAttributesList(
+                withHeader=true
+            )
+        )
     }
 
+    private fun displaySemipermanentWhoIs(sender: CommandSender, target: Player) {
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generateSemipermanentAttributesList(
+                withHeader=true,
+                excludeIp=sender.lacksPermission(PERM_IP)
+            )
+        )
+    }
+
+    private fun displayPermanentWhoIs(sender: CommandSender, target: Player) {
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generatePermanentAttributesList(
+                withHeader=true
+            )
+        )
+    }
+
+    private fun displayWhoIs(sender: CommandSender, target: Player) {
+        val essTarget = EssPlayer(target)
+        sender.sendChatComponents(
+            essTarget.generatePermanentAttributesList(
+                withHeader=true
+            )
+        )
+        sender.sendChatComponents(
+            essTarget.generateSemipermanentAttributesList(
+                withHeader=false,
+                excludeIp=sender.lacksPermission(PERM_IP)
+            )
+        )
+        sender.sendChatComponents(
+            essTarget.generateTemporaryAttributesList(
+                withHeader=false
+            )
+        )
+    }
+
+    // MARK: Handlers
     private fun handleWhoAmI(context: CommandContext) {
         val args = context.args
         val label = args.size
@@ -82,8 +112,9 @@ class WhoIsCommand : CommandBase() {
                 return sender.sendMessage("${D_RED}Usage: ${RED}/$label [temporary,permanent]")
 
             when (sub.lowercase()) {
-                "temporary", "temp" -> displayTemporaryWhoIs(sender, sender)
-                "permanent", "perm" -> displayPermanentWhoIs(sender, sender)
+                "temporary", "temp", "t" -> displayTemporaryWhoIs(sender, sender)
+                "semipermanent", "semi", "s" -> displaySemipermanentWhoIs(sender, sender)
+                "permanent", "perm", "p" -> displayPermanentWhoIs(sender, sender)
                 else -> displayWhoIs(sender, sender)
             }
         }
@@ -114,44 +145,34 @@ class WhoIsCommand : CommandBase() {
                 return sender.sendMessage("${D_RED}Usage: ${RED}/$label <Target> [temporary,permanent]")
 
             when (arg1.lowercase()) {
-                "temporary", "temp" -> displayTemporaryWhoIs(sender, t)
-                "permanent", "perm" -> displayPermanentWhoIs(sender, t)
+                "temporary", "temp", "t" -> displayTemporaryWhoIs(sender, t)
+                "semipermanent", "semi", "s" -> displaySemipermanentWhoIs(sender, t)
+                "permanent", "perm", "p" -> displayPermanentWhoIs(sender, t)
                 else -> displayWhoIs(sender, t)
             }
         }
     }
 
-    private fun displayTemporaryWhoIs(sender: CommandSender, target: Player) {
-        val essTarget = EssPlayer(target)
-        sender.sendChatComponents(
-            essTarget.generateTemporaryAttributesList(
-                withHeader=true
-            )
-        )
-    }
+    // MARK: Tab Completion Handler
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>
+    ) : MutableList<String> {
+        val len = args.size
+        val tab = mutableListOf<String>()
+        val options = listOf("temporary", "semipermanent", "permanent", "help")
 
-    private fun displayPermanentWhoIs(sender: CommandSender, target: Player) {
-        val essTarget = EssPlayer(target)
-        sender.sendChatComponents(
-            essTarget.generatePermanentAttributesList(
-                withHeader=true,
-                excludeIp=sender.lacksPermission(PERM_IP)
-            )
-        )
-    }
+        if (label.equalsIc("whoami", "ewhoami") && len == 1)
+            StringUtil.copyPartialMatches(args[0], options, tab)
+        else {
+            if (len == 1 && sender.hasPermission(PERM_OTHERS))
+                StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
+            if (len == 2)
+                StringUtil.copyPartialMatches(args[1], options, tab)
+        }
 
-    private fun displayWhoIs(sender: CommandSender, target: Player) {
-        val essTarget = EssPlayer(target)
-        sender.sendChatComponents(
-            essTarget.generatePermanentAttributesList(
-                withHeader=true,
-                excludeIp=sender.lacksPermission(PERM_IP)
-            )
-        )
-        sender.sendChatComponents(
-            essTarget.generateTemporaryAttributesList(
-                withHeader=false
-            )
-        )
+        return tab.sorted().toMutableList()
     }
 }

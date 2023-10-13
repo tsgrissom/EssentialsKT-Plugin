@@ -1,7 +1,6 @@
 package io.github.tsgrissom.pluginapi.command.help
 
 import io.github.tsgrissom.pluginapi.extension.appendc
-import io.github.tsgrissom.pluginapi.extension.format
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
@@ -31,7 +30,7 @@ class SubcommandArgumentHelp(
         return this
     }
 
-    fun toComponent() : Array<BaseComponent> {
+    fun toComponents() : Array<BaseComponent> {
         val onHover: MutableList<Text> = mutableListOf()
         val requiredLine = ComponentBuilder()
             .appendc("Required: ", ChatColor.GRAY)
