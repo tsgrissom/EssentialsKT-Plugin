@@ -20,6 +20,7 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.permissions.Permission
 import org.bukkit.util.StringUtil
 
 class TimeCommand : CommandBase() {
@@ -266,7 +267,7 @@ class TimeCommand : CommandBase() {
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
-            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+            return context.sendNoPermission(sender, TimeCommand.getTimeSetPerWorldPermission(world))
 
         val oldTime = world.time
 
@@ -300,7 +301,7 @@ class TimeCommand : CommandBase() {
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
-            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+            return context.sendNoPermission(sender, getTimeSetPerWorldPermission(world))
 
         val addend = value * 20
         val oldTime = world.time
@@ -337,7 +338,7 @@ class TimeCommand : CommandBase() {
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
-            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+            return context.sendNoPermission(sender, getTimeSetPerWorldPermission(world))
 
         val addend = value * 60 * 20
         val oldTime = world.time
@@ -423,6 +424,10 @@ class TimeCommand : CommandBase() {
 
         val arg1 = args[1]
 
+        if (arg1.isPercentage()) {
+            return handleSetToPercentage(context)
+        }
+
         if (arg1.equalsIc("day", "noon", "sunset", "dusk", "night", "midnight", "sunrise", "dawn")) {
             return handleSetToPresetSubcommand(context)
         }
@@ -445,7 +450,7 @@ class TimeCommand : CommandBase() {
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
-            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+            return context.sendNoPermission(sender, getTimeSetPerWorldPermission(world))
 
         val oldTime = world.time
         world.time = newTicks
@@ -477,9 +482,40 @@ class TimeCommand : CommandBase() {
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
-            return context.sendNoPermission(sender, "essentials.time.world.${world.name}")
+            return context.sendNoPermission(sender, getTimeSetPerWorldPermission(world))
 
         val oldTime = world.time
+        world.time = newTicks
+
+        sender.sendMessage("${GOLD}World ${RED}${world.name}'s ${GOLD}time went from ${RED}$oldTime${D_GRAY}->${RED}$newTicks")
+    }
+
+    private fun handleSetToPercentage(context: CommandContext) {
+        val args = context.args
+        val sender = context.sender
+        val input = args[1]
+
+        val sansPercent = input.removeSuffix("%")
+        val value = sansPercent.toLongOrNull()
+            ?: return sender.sendMessage("${RED}\"$input\" ${D_RED}is not a valid percentage value (decimal percentages are invalid)")
+        if (value <= 0)
+            return sender.sendMessage("${D_RED}Percentage input must be a nonzero positive integer")
+        if (value > 100)
+            return sender.sendMessage("${D_RED}Percentage input must be between 0 -> 100")
+
+        val quotient = value / 100.0
+        val amount = quotient * 24000
+
+        var world = sender.getCurrentWorldOrDefault()
+
+        if (args.size > 2) {
+            val arg2 = args[2]
+            world = Bukkit.getWorld(arg2)
+                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"$arg2\"")
+        }
+
+        val oldTime = world.time
+        val newTicks = amount.toLong()
         world.time = newTicks
 
         sender.sendMessage("${GOLD}World ${RED}${world.name}'s ${GOLD}time went from ${RED}$oldTime${D_GRAY}->${RED}$newTicks")

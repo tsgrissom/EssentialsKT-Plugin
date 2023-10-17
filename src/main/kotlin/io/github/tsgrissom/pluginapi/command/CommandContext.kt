@@ -23,6 +23,8 @@ class CommandContext(
             resp += " ${D_RED}(${RED}$permission${D_RED})"
         sender.sendMessage(resp)
     }
+    fun sendNoPermission(sender: CommandSender, permission: Permission) =
+        sendNoPermission(sender, permission.name)
 
     fun hasPermission(permission: String) =
         sender.hasPermission(permission)
