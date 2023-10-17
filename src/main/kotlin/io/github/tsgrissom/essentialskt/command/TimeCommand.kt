@@ -45,7 +45,7 @@ class TimeCommand : CommandBase() {
         const val TIME_SUNRISE    = 23000L
 
         fun getTimeSetPerWorldPermission(world: World) =
-            "essentials.time.world.${world.name}"
+            Permission("essentials.time.world.${world.name}")
 
         fun hasPermissionToSetWorldTime(who: CommandSender, world: World) =
             who.hasPermission(PERM_ALL_WORLDS) || who.hasPermission(getTimeSetPerWorldPermission(world))

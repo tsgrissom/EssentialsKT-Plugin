@@ -25,7 +25,10 @@ commands:
     aliases: ["essentialskt"]
   gamemode:
     description: "Alter a player's gamemode"
-    aliases: ["egamemode", "gm", "egm", "gma", "gmc", "gms", "gmsp", "gmt", "gmtoggle", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2"]
+    aliases: ["egamemode", "gm", "egm"]
+  gms:
+    description: "Alter a player's gamemode"
+    aliases: [ "gm0", "gms", "egms", "gm1", "gmc", "egmc", "gm2", "gma", "egma", "gmsp", "egmsp", "gmt", "gmtoggle" ]
   ipaddress:
     description: "View a player's IP address"
     aliases: ["ip", "address", "eipaddress", "eip", "eaddress"]

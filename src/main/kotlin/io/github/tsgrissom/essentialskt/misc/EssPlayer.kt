@@ -13,6 +13,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.attribute.Attribute
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -54,6 +55,59 @@ class EssPlayer(private val uuid: UUID) {
             set.add(GameMode.SURVIVAL)
 
         return set
+    }
+
+    fun getNextGameMode(sender: CommandSender, target: Player) : GameMode? {
+        fun checkPermission(mode: GameMode) : Boolean {
+            return sender.hasPermission("essentials.gamemode.${mode.name.lowercase()}")
+        }
+
+        return when (target.gameMode) {
+            GameMode.ADVENTURE -> {
+                if (checkPermission(GameMode.CREATIVE)) GameMode.CREATIVE
+                else if (checkPermission(GameMode.SURVIVAL)) GameMode.SURVIVAL
+                else GameMode.ADVENTURE
+            }
+            GameMode.CREATIVE -> {
+                if (checkPermission(GameMode.SURVIVAL)) GameMode.SURVIVAL
+                else if (checkPermission(GameMode.ADVENTURE)) GameMode.ADVENTURE
+                else GameMode.CREATIVE
+            }
+            GameMode.SURVIVAL -> {
+                if (checkPermission(GameMode.ADVENTURE)) GameMode.ADVENTURE
+                else if (checkPermission(GameMode.CREATIVE)) GameMode.CREATIVE
+                else GameMode.SURVIVAL
+            }
+            else -> null
+        }
+    }
+
+    fun cycleGameMode(sender: CommandSender) {
+        val target = this.player
+        val gm = getNextGameMode(sender, target)
+            ?: return sender.sendMessage("${RED}${target.name} ${DARK_RED}is in a gamemode which cannot be cycled")
+        val mn = gm.name.capitalizeAllCaps()
+        val tn = target.name
+
+        if (gm == target.gameMode)
+            return sender.sendMessage("${DARK_RED}You do not have permission to cycle to another gamemode")
+
+        Bukkit.dispatchCommand(sender, "gm $mn $tn")
+    }
+
+    fun setGameMode(sender: CommandSender, mode: GameMode) {
+        val target = this.player
+        if (sender != target && target.hasPermission(GameModeCommand.PERM_DEFENSIVE)) {
+            val s = sender.name
+            val t = target.name
+            Bukkit.getLogger().info(
+                "$s attempted to set ${t}'s gamemode but the target had \"${GameModeCommand.PERM_DEFENSIVE}\""
+            )
+            sender.sendMessage("${DARK_RED}You are not able to set ${RED}${t}'s ${DARK_RED}gamemode")
+            return
+        }
+
+        target.gameMode = mode
     }
 
     fun generateTemporaryAttributesList(

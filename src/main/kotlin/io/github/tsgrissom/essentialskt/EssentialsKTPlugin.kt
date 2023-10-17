@@ -60,6 +60,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("damage", DamageCommand())
         registerCommand("esskt", EssKtCommand())
         registerCommand("gamemode", GameModeCommand())
+        registerCommand("gms", GmxCommand())
         registerCommand("ipaddress", IPAddressCommand())
         registerCommand("list", ListCommand())
         registerCommand("remove", RemoveCommand())

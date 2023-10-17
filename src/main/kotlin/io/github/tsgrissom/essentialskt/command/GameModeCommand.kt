@@ -35,53 +35,53 @@ class GameModeCommand : CommandBase() {
         const val PERM_CREATIVE  = "essentials.gamemode.creative"
         const val PERM_SURVIVAL  = "essentials.gamemode.survival"
         const val PERM_SPECTATOR = "essentials.gamemode.spectator"
+
+        fun getAvailableGameModesAsComponent(
+            sender: CommandSender,
+            negative: Boolean = true
+        ) : Array<BaseComponent> {
+            val available: Set<GameMode> = if (sender is Player)
+                EssPlayer(sender).getAvailableGameModes()
+            else
+                GameMode.entries.toSet()
+            val mainColor = if (negative) D_RED else GRAY
+            val detailColor = if (negative) RED else YELLOW
+
+            val builder = ComponentBuilder()
+                .appendc("Available gamemodes", mainColor)
+                .appendc(":", D_GRAY)
+
+            if (available.isEmpty()) {
+                builder.appendc(" None", RED)
+                return builder.create()
+            }
+
+            for ((i, mode) in available.withIndex()) {
+                val mn = mode.name.capitalizeAllCaps()
+                val ml = mode.name.lowercase()
+                var value = "/gm $ml"
+
+                if (sender.hasPermission(PERM_OTHERS))
+                    value += " "
+
+                val clickText = ClickableText
+                    .compose("$detailColor$mn")
+                    .action(ClickEvent.Action.SUGGEST_COMMAND)
+                    .value(value)
+
+                builder
+                    .append(" ")
+                    .append(clickText.toComponent())
+
+                if (i != (available.size - 1))
+                    builder.appendc(",", D_GRAY)
+            }
+
+            return builder.create()
+        }
     }
 
     // MARK: Text Helper Functions
-    private fun getAvailableGameModesAsComponent(
-        sender: CommandSender,
-        negative: Boolean = true
-    ) : Array<BaseComponent> {
-        val available: Set<GameMode> = if (sender is Player)
-            EssPlayer(sender).getAvailableGameModes()
-        else
-            GameMode.entries.toSet()
-        val mainColor = if (negative) D_RED else GRAY
-        val detailColor = if (negative) RED else YELLOW
-
-        val builder = ComponentBuilder()
-            .appendc("Available gamemodes", mainColor)
-            .appendc(":", D_GRAY)
-
-        if (available.isEmpty()) {
-            builder.appendc(" None", RED)
-            return builder.create()
-        }
-
-        for ((i, mode) in available.withIndex()) {
-            val mn = mode.name.capitalizeAllCaps()
-            val ml = mode.name.lowercase()
-            var value = "/gm $ml"
-
-            if (sender.hasPermission(PERM_OTHERS))
-                value += " "
-
-            val clickText = ClickableText
-                .compose("$detailColor$mn")
-                .action(ClickEvent.Action.SUGGEST_COMMAND)
-                .value(value)
-
-            builder
-                .append(" ")
-                .append(clickText.toComponent())
-
-            if (i != (available.size - 1))
-                builder.appendc(",", D_GRAY)
-        }
-
-        return builder.create()
-    }
-
     private fun getCommandUsageAsComponent(sender: CommandSender) : Array<BaseComponent> {
         val isConsole = sender is ConsoleCommandSender
         val available: Set<GameMode> = if (sender is Player)
@@ -180,149 +180,8 @@ class GameModeCommand : CommandBase() {
         return help.toComponents()
     }
 
-    // MARK: Operational Helper Functions
-    private fun setGameMode(sender: CommandSender, target: Player, mode: GameMode) {
-        if (sender != target && target.hasPermission(PERM_DEFENSIVE)) {
-            val s = sender.name
-            val t = target.name
-            Bukkit.getLogger().info(
-                "$s attempted to set ${t}'s gamemode but the target had \"$PERM_DEFENSIVE\""
-            )
-            sender.sendMessage("${D_RED}You are not able to set ${RED}${t}'s ${D_RED}gamemode")
-            return
-        }
-
-        target.gameMode = mode
-    }
-
-    private fun getNextGameMode(sender: CommandSender, target: Player) : GameMode? {
-        fun checkPermission(mode: GameMode) : Boolean {
-            return sender.hasPermission("essentials.gamemode.${mode.name.lowercase()}")
-        }
-
-        return when (target.gameMode) {
-            ADVENTURE -> {
-                if (checkPermission(CREATIVE)) CREATIVE
-                else if (checkPermission(SURVIVAL)) SURVIVAL
-                else ADVENTURE
-            }
-            CREATIVE -> {
-                if (checkPermission(SURVIVAL)) SURVIVAL
-                else if (checkPermission(ADVENTURE)) ADVENTURE
-                else CREATIVE
-            }
-            SURVIVAL -> {
-                if (checkPermission(ADVENTURE)) ADVENTURE
-                else if (checkPermission(CREATIVE)) CREATIVE
-                else SURVIVAL
-            }
-            else -> null
-        }
-    }
-
-    private fun cycleGameMode(sender: CommandSender, target: Player) {
-        val gm = getNextGameMode(sender, target)
-            ?: return sender.sendMessage("${RED}${target.name} ${D_RED}is in a gamemode which cannot be cycled")
-        val mn = gm.name.capitalizeAllCaps()
-        val tn = target.name
-
-        if (gm == target.gameMode)
-            return sender.sendMessage("${D_RED}You do not have permission to cycle to another gamemode")
-
-        Bukkit.dispatchCommand(sender, "gm $mn $tn")
-    }
-
     // MARK: Command Body
     override fun execute(context: CommandContext) {
-        val sender = context.sender
-        val label = context.label
-
-        when (label.lowercase()) {
-            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms", "egmsp", "gm0", "gm1", "gm2", "gmt", "gmtoggle" -> {
-                handleShorthandLabel(context)
-            }
-            "gamemode", "gm", "egamemode", "egm" -> {
-                handleExtendedLabel(context)
-            }
-            else -> {
-                sender.sendMessage("${D_RED}Alternate gamemode command form detected")
-            }
-        }
-    }
-
-    // Mark: Handlers
-    private fun handleShorthandLabel(context: CommandContext) {
-        val label = context.label
-        val sender = context.sender
-        val args = context.args
-
-        val target: Player = if (args.isEmpty()) {
-            if (sender !is Player)
-                return sender.sendMessage(
-                    "${D_RED}Console Usage: ${RED}/$label <adventure|creative|survival|spectator>"
-                )
-
-            sender
-        } else {
-            val targetName = args[0]
-            val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$targetName")
-
-            p
-        }
-
-        if (target == sender && sender.lacksPermission(PERM_BASE))
-            return context.sendNoPermission(sender, PERM_BASE)
-
-        if (target != sender && sender.lacksPermission(PERM_OTHERS))
-            return context.sendNoPermission(sender, PERM_OTHERS)
-
-        if (target is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
-
-        if (label.equalsIc("gmt", "gmtoggle")) {
-            cycleGameMode(sender, target)
-            return
-        }
-
-        val mode = when (label.lowercase()) {
-            "gm0", "gms" -> {
-                if (sender.lacksPermission(PERM_SURVIVAL))
-                    return context.sendNoPermission(sender, PERM_SURVIVAL)
-                SURVIVAL
-            }
-            "gm1", "gmc" -> {
-                if (sender.lacksPermission(PERM_CREATIVE))
-                    return context.sendNoPermission(sender, PERM_CREATIVE)
-                CREATIVE
-            }
-            "gm2", "gma" -> {
-                if (sender.lacksPermission(PERM_ADVENTURE))
-                    return context.sendNoPermission(sender, PERM_ADVENTURE)
-                ADVENTURE
-            }
-            "gmsp" -> {
-                if (sender.lacksPermission(PERM_SPECTATOR))
-                    return context.sendNoPermission(sender, PERM_SPECTATOR)
-                SPECTATOR
-            }
-            else -> {
-                val available = getAvailableGameModesAsComponent(sender, true)
-                return sender.sendChatComponents(available)
-            }
-        }
-
-        setGameMode(sender, target, mode)
-
-        val mn = mode.name.capitalizeAllCaps()
-        val tn = target.name
-
-        target.sendMessage("${GOLD}Your gamemode is set to ${RED}$mn")
-        if (sender != target)
-            sender.sendMessage("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
-    }
-
-    private fun handleExtendedLabel(context: CommandContext) {
         val sender = context.sender
         val args = context.args
 
@@ -342,18 +201,18 @@ class GameModeCommand : CommandBase() {
         }
 
         val target: Player = if (args.size == 1) {
-            if (sender !is Player)
+            if (sender is ConsoleCommandSender)
                 return sender.sendMessage(
                     "${D_RED}Console Usage: ${RED}/gm <adventure|creative|survival|spectator> <Target>"
                 )
+            if (sender !is Player)
+                return
 
             sender
         } else {
-            val targetName = args[1]
-            val p = Bukkit.getPlayer(targetName)
-                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$targetName")
-
-            p
+            val tn = args[1]
+            Bukkit.getPlayer(tn)
+                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$tn")
         }
 
         if (target == sender && sender.lacksPermission(PERM_BASE))
@@ -364,8 +223,10 @@ class GameModeCommand : CommandBase() {
         if (target is ConsoleCommandSender)
             return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
 
+        val eTarget = EssPlayer(target)
+
         if (sub.equalsIc("toggle", "t", "cycle" ))
-            return cycleGameMode(sender, target)
+            return eTarget.cycleGameMode(sender)
         else if (sub.equalsIc("available", "list", "ls"))
             return sender.sendChatComponents(getAvailableGameModesAsComponent(sender, false))
         else if (sub.equalsIc("usage"))
@@ -400,7 +261,7 @@ class GameModeCommand : CommandBase() {
             }
         }
 
-        setGameMode(sender, target, mode)
+        eTarget.setGameMode(sender, mode)
 
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
@@ -429,10 +290,6 @@ class GameModeCommand : CommandBase() {
             "2", "adventure", "adv", "a",
             "spectator", "spect", "spec", "sp"
         )
-        val validShorthandLabels = listOf(
-            "gma", "gmc", "gms", "gmsp", "egma", "egmc", "egms",
-            "egmsp", "gm0", "gm1", "gm2", "gmt", "gmtoggle"
-        )
         val validExtendedLabels = listOf(
             "gamemode", "gm", "egamemode", "egm"
         )
@@ -448,9 +305,7 @@ class GameModeCommand : CommandBase() {
         val arg0 = args[0]
 
         if (len == 1) {
-            if (label.equalsIc(validShorthandLabels) && sender.hasPermission(PERM_OTHERS)) {
-                StringUtil.copyPartialMatches(arg0, getOnlinePlayerNamesToMutableList(), tab)
-            } else if (label.equalsIc(validExtendedLabels)) {
+            if (label.equalsIc(validExtendedLabels)) {
                 StringUtil.copyPartialMatches(arg0, suggestFlags, tab)
                 StringUtil.copyPartialMatches(arg0, suggestModes, tab)
             }
