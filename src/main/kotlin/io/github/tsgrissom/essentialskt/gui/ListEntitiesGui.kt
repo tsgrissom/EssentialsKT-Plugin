@@ -19,7 +19,7 @@ class ListEntitiesGui(
 ) : ChestGui(6, "Entities") {
 
     private fun getPlugin() =
-        EssentialsKTPlugin.instance ?: error("Plugin is not instantiated!")
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getEntityUtility() =
         getPlugin().getEntityUtility()
 
