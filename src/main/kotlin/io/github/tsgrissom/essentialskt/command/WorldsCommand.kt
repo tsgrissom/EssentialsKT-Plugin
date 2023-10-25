@@ -3,6 +3,8 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.essentialskt.gui.ListWorldsGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
+import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import net.md_5.bungee.api.ChatColor.*
@@ -66,7 +68,10 @@ class WorldsCommand : CommandBase() {
     }
 
     override fun execute(context: CommandContext) {
+        val args = context.args
         val sender = context.sender
+        val flagGui = ValidCommandFlag.FLAG_GRAPHICAL
+        val parser = CommandFlagParser(args, flagGui)
 
         if (sender.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
@@ -76,7 +81,7 @@ class WorldsCommand : CommandBase() {
         }
 
         if (sender is Player) {
-            if (context.hasFlag(FLAG_GRAPHICAL))
+            if (parser.wasPassed(flagGui))
                 return ListWorldsGui().show(sender)
 
             return sender.sendChatComponents(getWorldsAsComponents())

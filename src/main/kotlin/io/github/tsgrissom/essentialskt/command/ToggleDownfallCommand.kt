@@ -4,7 +4,6 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendColored
 import io.github.tsgrissom.pluginapi.extension.toggleRain
 import net.md_5.bungee.api.ChatColor.GOLD
 import net.md_5.bungee.api.ChatColor.RED

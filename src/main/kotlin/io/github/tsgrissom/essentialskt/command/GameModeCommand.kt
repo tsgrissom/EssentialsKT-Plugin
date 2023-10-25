@@ -9,6 +9,8 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
+import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
+import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
@@ -184,13 +186,14 @@ class GameModeCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val args = context.args
+        val flagParser = CommandFlagParser(args, ValidCommandFlag.FLAG_GRAPHICAL)
 
         if (args.isEmpty())
             return sender.spigot().sendMessage(*getCommandUsageAsComponent(sender))
 
         val sub = args[0]
 
-        if (args.size == 1 && context.hasFlag(FLAG_GRAPHICAL)) {
+        if (args.size == 1 && flagParser.wasPassed("gui")) {
             if (sender is ConsoleCommandSender)
                 return sender.sendMessage("${D_RED}Console cannot open GUIs")
             if (sender !is Player)
