@@ -54,7 +54,7 @@ class TimeUtility {
                     String.format("%02d:%02d", hour, minute)
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             // Handle any exceptions that may occur during parsing or conversion
             e.printStackTrace()
         }

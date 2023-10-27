@@ -25,9 +25,10 @@ class ListCommand : CommandBase() {
 
     // MARK: Static Declarations
     companion object {
-        const val PERM = "essentialskt.list"
-        const val PERM_PLAYERS = "essentialskt.list.players"
-        const val PERM_MOBS = "essentialskt.list.mobs"
+        const val PERM          = "essentialskt.list"
+        const val PERM_ENTITIES = "essentialskt.list.entities"
+        const val PERM_MOBS     = "essentialskt.list.mobs"
+        const val PERM_PLAYERS  = "essentialskt.list.players"
 
         private val VALID_SUBC = listOf(
             "entities", "entity", "entitytype",
@@ -151,6 +152,9 @@ class ListCommand : CommandBase() {
 
     private fun handleSubcEntities(context: CommandContext, parser: CommandFlagParser) {
         val sender = context.sender
+
+        if  (sender.lacksPermission(PERM_ENTITIES))
+            return context.sendNoPermission(sender, PERM_ENTITIES)
 
         if (parser.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
             if (sender is Player)

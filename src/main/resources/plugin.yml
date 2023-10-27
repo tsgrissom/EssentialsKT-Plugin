@@ -122,8 +122,9 @@ permissions:
     description: "Grants all /list related permissions"
     children:
       essentialskt.list: true
-      essentialskt.list.players: true
+      essentialskt.list.entities: true
       essentialskt.list.mobs: true
+      essentialskt.list.players: true
   essentialskt.renameitem.*:
     description: "Grants access to all /renameitem permissions"
     children:
@@ -171,6 +172,8 @@ permissions:
     description: "Allows you view a player's IP address"
   essentialskt.list:
     description: "Allows you to access /ls"
+  essentialskt.list.entities:
+    description: "Allows you to access /ls entities"
   essentialskt.list.mobs:
     description: "Allows you to access /ls mobs"
   essentialskt.list.players:
