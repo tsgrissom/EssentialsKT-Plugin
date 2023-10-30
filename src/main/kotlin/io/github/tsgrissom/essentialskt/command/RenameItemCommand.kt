@@ -55,7 +55,8 @@ class RenameItemCommand : CommandBase() {
             .name(arguments)
         pi.setItemInMainHand(iS)
 
-        sender.sendColored("${GOLD}Item name updated to ${RESET}${arguments}")
+        sender.sendColored("${GOLD}Item name updated to ${RESET}${arguments}") // sendColored is used to translate arguments
+        // TODO Use sendMessage and translate input's color codes only if they are actually getting a colored name
     }
 
     override fun onTabComplete(
