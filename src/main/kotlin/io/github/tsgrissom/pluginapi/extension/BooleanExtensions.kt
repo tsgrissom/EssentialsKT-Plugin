@@ -26,12 +26,12 @@ fun Boolean.fmt(
 
 fun Boolean.fmtYesNo(
     capitalize: Boolean = false,
-    withColor: Boolean = false
+    withColor: Boolean = true
 ) : String =
     this.fmt(BooleanFormat.YES_NO, capitalize=capitalize, withColor=withColor)
 
 fun Boolean.fmtEnabledDisabled(
     capitalize: Boolean = false,
-    withColor: Boolean = false
+    withColor: Boolean = true
 ) : String =
     this.fmt(BooleanFormat.ENABLED_DISABLED, capitalize=capitalize, withColor=withColor)
