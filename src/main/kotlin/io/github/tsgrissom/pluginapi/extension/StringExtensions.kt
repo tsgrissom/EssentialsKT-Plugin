@@ -63,6 +63,22 @@ fun String.isDoubleQuoted() : Boolean =
 fun String.isQuoted() : Boolean =
     (this.isSingleQuoted() || this.isDoubleQuoted())
 
+fun String.dequoted() : String {
+    if (!this.isQuoted())
+        error("Cannot remove quotes from non-quoted String=${this}. Check with String#isQuoted")
+    var s = this
+
+    if (s.isSingleQuoted()) {
+        s = s.removePrefix("'")
+        s = s.removeSuffix("'")
+    } else if (s.isDoubleQuoted()) {
+        s = s.removePrefix("\"")
+        s = s.removeSuffix("\"")
+    }
+
+    return s
+}
+
 fun String.isPercentage() : Boolean {
     val percentagePattern = """^\d+(\.\d+)?%$""".toRegex()
     return percentagePattern.matches(this)
