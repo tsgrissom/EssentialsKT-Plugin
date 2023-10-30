@@ -99,7 +99,7 @@ class EssKtCommand : CommandBase() {
                 "${GREEN}Quoted String found",
                 "Quoted: $quotedString",
                 "Range: $startIndex..$endIndex",
-                "Dequoted: ${result.getContents()}",
+                "Dequoted: $result",
                 "Quotation Mark: ${result.getQuotationMark()}",
                 "Contains Floating Quote Marks: ${result.containsFloatingQuotationMarks()}"
             )

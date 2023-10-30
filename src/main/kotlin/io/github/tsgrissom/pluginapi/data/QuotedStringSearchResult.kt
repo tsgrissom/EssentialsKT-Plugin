@@ -1,7 +1,11 @@
 package io.github.tsgrissom.pluginapi.data
 
 import io.github.tsgrissom.pluginapi.extension.dequoted
+import io.github.tsgrissom.pluginapi.extension.isQuoted
 
+/**
+ * Represents the results of a quoted String parsing operations within CommandContext.
+ */
 data class QuotedStringSearchResult(
     val quotedString: String,
     val startIndex: Int,
@@ -9,21 +13,30 @@ data class QuotedStringSearchResult(
 ) {
 
     init {
-        if (!(quotedString.startsWith("'") && quotedString.endsWith("'")) && !(quotedString.startsWith("\"") && quotedString.endsWith("\"")))
+        if (!quotedString.isQuoted())
             error("Cannot initialize QuotedStringSearchResults for non-quoted String(=${quotedString})")
     }
 
-    override fun toString(): String = getContents()
+    /**
+     * Fetches the contents inside the quotation marks via the String#dequoted method.
+     * @return The String inside the quotation marks.
+     */
+    override fun toString(): String = this.quotedString.dequoted()
 
-    fun getContents() : String {
-        return quotedString.dequoted()
-    }
+    /**
+     * Fetches the character at the first index of the quoted String. This character is guaranteed to be either an
+     * apostrophe or a quotation mark by the initializer of the type.
+     * @return Either an apostrophe or a quotation mark character.
+     */
+    fun getQuotationMark() : Char = quotedString[0]
 
-    fun getQuotationMark() : Char =
-        quotedString[0]
-
+    /**
+     * Checks if the unquoted String contains any floating quotation marks. This could be either an apostrophe or a
+     * quotation mark, but is guaranteed to not be a pair of them.
+     * @return Whether the contents of the quoted String contain a floating quotation mark.
+     */
     fun containsFloatingQuotationMarks() : Boolean {
-        val contents = getContents()
-        return contents.contains("'") || contents.contains("\"")
+        val toStr = toString()
+        return toStr.contains("'") || toStr.contains("\"")
     }
 }
