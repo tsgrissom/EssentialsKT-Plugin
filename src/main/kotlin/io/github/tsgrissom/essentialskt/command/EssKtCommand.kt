@@ -1,7 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.essentialskt.conversation.prompt.WorldNamePrompt
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
@@ -9,15 +8,12 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import io.github.tsgrissom.pluginapi.extension.sendColored
 import net.md_5.bungee.api.ChatColor.GREEN
 import net.md_5.bungee.api.ChatColor.RED
 import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.bukkit.conversations.Conversable
-import org.bukkit.conversations.ConversationFactory
 
 class EssKtCommand : CommandBase() {
 
@@ -96,7 +92,7 @@ class EssKtCommand : CommandBase() {
             val rangeStr = "args[${first}..${second}]"
             val executedStr = context.getExecutedString(withLabel=false, first, second)
             sender.sendMessage("Selected $rangeStr ranged String=${executedStr}")
-            val result = context.getQuotedStringForRange(first, second)
+            val result = context.getQuotedStringFromArgsRange(first, second)
                 ?: return sender.sendMessage("${RED}Selected is not a quoted String")
             val (quotedString, startIndex, endIndex) = result
             sender.sendMessage(

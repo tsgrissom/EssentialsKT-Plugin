@@ -1,8 +1,10 @@
 package io.github.tsgrissom.pluginapi.command
 
-import io.github.tsgrissom.pluginapi.data.QuotedStringSearchResults
+import io.github.tsgrissom.essentialskt.misc.PluginLogger
+import io.github.tsgrissom.pluginapi.data.QuotedStringSearchResult
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.RED
+import net.md_5.bungee.api.ChatColor.YELLOW
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -79,11 +81,11 @@ class CommandContext(
         return getExecutedString(withLabel=withLabel, startIndex, endIndex)
     }
 
-    fun getQuotedStringForRange(startIndex: Int, endIndex: Int) : QuotedStringSearchResults? {
+    fun getQuotedStringFromArgsRange(startIndex: Int, endIndex: Int) : QuotedStringSearchResult? {
         val l = Bukkit.getLogger()
-        fun warnWithRange(str: String) : QuotedStringSearchResults? {
-            // TODO Warn on debug
-            l.warning("Cannot retrieve String from range of args for Range[${startIndex}->${endIndex}]: $str")
+        val range = "Range[${startIndex}->${endIndex}]"
+        fun warnWithRange(str: String) : QuotedStringSearchResult? {
+            PluginLogger.warn("Cannot retrieve String from range of args of $range: $str")
             return null
         }
 
@@ -99,25 +101,26 @@ class CommandContext(
             return warnWithRange("startIndex is out of bounds (> args size)")
         if (endIndex > args.size)
             return warnWithRange("endIndex is out of bounds (> args size)")
-        if (!isQuotedStringForRange(startIndex, endIndex))
+        if (!isRangedArgsToStringInQuotes(startIndex, endIndex))
             return warnWithRange("Not a quoted string! Check with CommandContext#isQuotedStringForRange or use CommandContext#getAnyQuotedString")
 
         val executed = getExecutedString(withLabel=false, startIndex, endIndex)
 
-//        l.info("Debug Print: getQuotedStringForRange(${startIndex}, ${endIndex})")
-//        l.info("Executed String for range=${executed}")
-//        l.info("Is Quoted=$quoted")
-//        l.info("Is Single Quoted=$singleQuoted")
-//        l.info("Is Double Quoted=$doubleQuoted")
+        PluginLogger.info(
+            "Debug Print for getQuotedStringFromArgsRange(${startIndex}, ${endIndex})",
+            "Executed String for $range=${executed}",
+            "Is Quoted=${executed.isQuoted()}",
+            "Is Single Quoted=${executed.isSingleQuoted()}",
+            "Is Double Quoted=${executed.isDoubleQuoted()}"
+        )
 
-        return QuotedStringSearchResults(executed, 0, args.size)
-    }
-    fun isQuotedStringForRange(startIndex: Int, endIndex: Int) : Boolean {
-        val s = getExecutedString(withLabel=false, startIndex, endIndex)
-        return s.isQuoted()
+        return QuotedStringSearchResult(executed, 0, args.size)
     }
 
-    fun getAnyQuotedString() : QuotedStringSearchResults? {
+    fun isRangedArgsToStringInQuotes(startIndex: Int, endIndex: Int) =
+        getExecutedString(withLabel=false, startIndex, endIndex).isQuoted()
+
+    fun getAnyQuotedString() : QuotedStringSearchResult? {
         fun String.startsWithQuote() : String? {
             if (this.startsWith("'"))
                 return "'"
@@ -141,7 +144,7 @@ class CommandContext(
             if (!arg.isQuoted())
                 return null
 
-            return QuotedStringSearchResults(arg, 0, 0)
+            return QuotedStringSearchResult(arg, 0, 0)
         }
 
         // args.size > 1
@@ -153,21 +156,24 @@ class CommandContext(
         val l = Bukkit.getLogger()
 
         for (i in 1..args.size) {
-            val n = i - 1
+            val n = i - 1 // The index of the current element
             val arg = args[n]
 
             if (searchingFor == null) { // We have not found a leading quote to match to a trailing one
-                val leadingMark = arg.startsWithQuote() ?: continue
+                val leadingMark = arg.startsWithQuote()
+                    ?: continue
 
-                l.info("Found leading quotation mark (${leadingMark}) in args[${n}](=${arg}) of potential quoted String(=${fullString})")
+                PluginLogger.info(
+                    "Found leading quotation mark (${leadingMark}) in args[${n}](=${arg}) of potential quoted String(=${fullString})"
+                )
+
                 searchingFor = leadingMark
                 startIndex = n
-                val trailingMark = arg.endsWithQuote() ?: continue // It is not a one arg quoted String if continue
-                // FIXME Trailing char check for single arg false positives
-                if (trailingMark == leadingMark) { // A quoted String consisting of one argument
-                    l.info("(T=${trailingMark}) == (L=${leadingMark})")
-                    return QuotedStringSearchResults(arg, n, n)
-                }
+                val trailingMark = arg.endsWithQuote()
+                    ?: continue // It is not a one arg quoted String if continue
+
+                if (trailingMark == leadingMark)// A quoted String consisting of one argument
+                    return QuotedStringSearchResult(arg, n, n)
             } else { // We have a leading character to match
                 val trailingMark = arg.endsWithQuote()
 
@@ -183,27 +189,28 @@ class CommandContext(
         }
 
         if (startIndex == null) {
-            l.warning("Search loop terminated without finding a startIndex")
+            PluginLogger.warn("Search loop terminated without finding a startIndex")
             return null
         } else if (endIndex == null) {
-            l.warning("Search loop terminated without finding an endIndex")
+            PluginLogger.warn("Search loop terminated without finding an endIndex")
             return null
         }
 
         val range = "Range[$startIndex, $endIndex]"
 
-        l.info("getAnyQuotedString has found potential quoted String for $range. Passing to getQuotedStringForRange method.")
-
-        return getQuotedStringForRange(startIndex, endIndex)
+        PluginLogger.info("getAnyQuotedString has found potential quoted String for $range. Passing to getQuotedStringForRange method.")
+        return getQuotedStringFromArgsRange(startIndex, endIndex)
     }
-    fun hasAnyQuotedString() : Boolean = getAnyQuotedString() != null
+
+    fun containsAnyQuotedString() : Boolean =
+        getAnyQuotedString() != null
 
     fun performCommand(command: String) {
         when (sender) {
             is ConsoleCommandSender -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)
             is Player -> sender.performCommand(command)
             else -> {
-                throw IllegalStateException("Cannot performCommand for a CommandSender who is neither Player nor Console")
+                sender.sendMessage("${RED}Cannot performCommand for a CommandSender who is neither Player nor Console")
             }
         }
     }

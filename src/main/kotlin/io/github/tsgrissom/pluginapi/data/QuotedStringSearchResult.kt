@@ -2,7 +2,7 @@ package io.github.tsgrissom.pluginapi.data
 
 import io.github.tsgrissom.pluginapi.extension.dequoted
 
-data class QuotedStringSearchResults(
+data class QuotedStringSearchResult(
     val quotedString: String,
     val startIndex: Int,
     val endIndex: Int

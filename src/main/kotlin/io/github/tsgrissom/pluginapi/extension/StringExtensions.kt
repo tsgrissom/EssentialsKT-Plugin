@@ -79,10 +79,8 @@ fun String.dequoted() : String {
     return s
 }
 
-fun String.isPercentage() : Boolean {
-    val percentagePattern = """^\d+(\.\d+)?%$""".toRegex()
-    return percentagePattern.matches(this)
-}
+fun String.isPercentage() : Boolean =
+    """^\d+(\.\d+)?%$""".toRegex().matches(this)
 
 /* String Mutations */
 

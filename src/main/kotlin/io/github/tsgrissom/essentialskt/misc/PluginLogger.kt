@@ -14,7 +14,11 @@ class PluginLogger {
         private fun getPrefix(debug: Boolean) = if (debug && isDebugging) "DEBUG: " else String()
 
         fun info(s: String, debug: Boolean = false) = Bukkit.getLogger().info("${getPrefix(debug)}$s")
-        fun warning(s: String, debug: Boolean = false) = Bukkit.getLogger().warning("${getPrefix(debug)}$s")
+        fun warn(s: String, debug: Boolean = false) = Bukkit.getLogger().warning("${getPrefix(debug)}$s")
         fun severe(s: String, debug: Boolean = false) = Bukkit.getLogger().severe("${getPrefix(debug)}$s")
+
+        fun info(vararg s: String)   = s.forEach { info(it, isDebugging) }
+        fun warn(vararg s: String)   = s.forEach { warn(it, isDebugging) }
+        fun severe(vararg s: String) = s.forEach { severe(it, isDebugging) }
     }
 }
