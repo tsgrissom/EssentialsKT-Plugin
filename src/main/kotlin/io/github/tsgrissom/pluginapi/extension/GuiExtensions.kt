@@ -7,14 +7,18 @@ import org.bukkit.Sound
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 
-fun OutlinePane.addItems(vararg item: GuiItem) {
-    for (i in item) {
-        this.addItem(i)
-    }
-}
+/**
+ * Add variable number of GuiItems to the current OutlinePane.
+ * @param items A variable number of GuiItems to add to the OutlinePane.
+ */
+fun OutlinePane.addItems(vararg items: GuiItem) =
+    items.forEach { this.addItem(it) }
 
+/**
+ * Plays a UI click sound for the requisite HumanEntity. Reduces mental overhead of usual playSound method.
+ * @param who The HumanEntity (who will only hear the sound if they are a Player) to play the UI button click sound for.
+ */
 fun Gui.click(who: HumanEntity) {
-    if (who is Player) {
-        who.playSound(who.location, Sound.UI_BUTTON_CLICK, 1F, 1F)
-    }
+    if (who is Player)
+        who.playSound(Sound.UI_BUTTON_CLICK)
 }
