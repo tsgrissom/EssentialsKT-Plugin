@@ -2,70 +2,87 @@ package io.github.tsgrissom.pluginapi.extension
 
 import org.bukkit.ChatColor
 
-/* Equality Checks */
+/* MARK: Equality Checks */
 
 /**
- * Checks for equality between two Strings with case-insensitivity
- * @param s The String to compare against
- * @return Whether the Strings are equal regardless of character case
+ * Checks for equality between two Strings with case-insensitivity.
+ * @param other The String to compare against.
+ * @return Whether the Strings are equal regardless of character case.
  */
-fun String.equalsIc(s: String) : Boolean =
-    this.equals(s, ignoreCase=true)
+fun String.equalsIc(other: String) : Boolean =
+    this.equals(other, ignoreCase=true)
 
 /**
- * Checks for case-insensitive equality between the String and any number of other Strings
- * @param matches Any number of Strings to compare against
- * @return Whether a match was made regardless of character case
+ * Checks for case-insensitive equality between the String and any number of other Strings.
+ * @param others Any number of Strings to compare against.
+ * @return Whether a match was made regardless of character case.
  */
-fun String.equalsIc(vararg matches: String) : Boolean =
-    matches.firstOrNull { this.equalsIc(it) } != null
+fun String.equalsIc(vararg others: String) : Boolean =
+    others.firstOrNull { this.equalsIc(it) } != null
 
 /**
- * Checks for case-insensitive equality between the String and any number of other Strings encapsulated in a List
- * @param matches The encapsulation of Strings within a List
- * @return Whether a match was made regardless of character case
+ * Checks for case-insensitive equality between the String and any number of other Strings encapsulated in a List.
+ * @param others The encapsulation of Strings within a List.
+ * @return Whether a match was made regardless of character case.
  */
-fun String.equalsIc(matches: List<String>) : Boolean =
-    matches.firstOrNull { this.equalsIc(it) } != null
+fun String.equalsIc(others: List<String>) : Boolean =
+    others.firstOrNull { this.equalsIc(it) } != null
 
 /**
- * Checks for exact equality between one String and any number of other Strings with case-sensitivity
- * @param matches Any number of Strings to compare against
- * @return Whether exact equality was found
+ * Checks for exact equality between one String and any number of other Strings with case-sensitivity.
+ * @param others Any number of Strings to compare against.
+ * @return Whether exact equality was found.
  */
-fun String.equalsAny(vararg matches: String) : Boolean =
-    matches.firstOrNull { this == it } != null
+fun String.equalsAny(vararg others: String) : Boolean =
+    others.firstOrNull { this == it } != null
 
-/* Miscellaneous Checks */
+/* MARK: Miscellaneous Checks */
+
+/**
+ * Checks if the String is surrounded by the requisite String, optionally ignoring case-sensitivity.
+ * @param str The String to check if it is surrounding the String being operated on.
+ * @return Whether the String is surrounded by the requisite String.
+ */
+fun String.startsAndEndsWith(
+    str: String,
+    ignoreCase: Boolean = false
+) : Boolean =
+    this.startsWith(str, ignoreCase=ignoreCase) && this.endsWith(str, ignoreCase=ignoreCase)
 
 /**
  * Checks if the String is surrounded by single quotes. Determined by checking if
  * the String starts with a single quote and ends with a single quote.
- * @return Whether the String is surrounded by single quotes
+ * @return Whether the String is surrounded by single quotes.
  */
 fun String.isSingleQuoted() : Boolean =
-    this.startsWith("'") && this.endsWith("'")
+    this.startsAndEndsWith("'")
 
 /**
  * Checks if the String is surrounded by double quotes. Determined by checking if
  * the String starts with a double quote and ends with a double quote.
- * @return Whether the String is surrounded by double quotes
+ * @return Whether the String is surrounded by double quotes.
  */
 fun String.isDoubleQuoted() : Boolean =
-    this.startsWith("\"") && this.endsWith("\"")
+    this.startsAndEndsWith("\"")
 
 /**
  * Checks if the String is surrounded by either kind of quote (single or double.)
  * To return `true`, either `String#isSingleQuoted` or `String#isDoubleQuoted` must
- * be true. Mixed-quote types will return `false`.
- * @return Whether the String is quoted
+ * be true. Mixed leading/trailing quote types will return `false`.
+ * @return Whether the String is quoted.
  */
 fun String.isQuoted() : Boolean =
     (this.isSingleQuoted() || this.isDoubleQuoted())
 
+/**
+ * Removes surrounding pairs of matching quote characters from the String. If the String is not quoted, returns the
+ * String as-is.
+ * @return The String without surrounding quotations.
+ */
 fun String.dequoted() : String {
     if (!this.isQuoted())
-        error("Cannot remove quotes from non-quoted String=${this}. Check with String#isQuoted")
+        return this
+
     var s = this
 
     if (s.isSingleQuoted()) {
@@ -79,15 +96,20 @@ fun String.dequoted() : String {
     return s
 }
 
+// TODO Whole number percentages, decimal percentages
+/**
+ * Checks if the String is in the format of a percentage input.
+ * @return Whether the String is in percentage form.
+ */
 fun String.isPercentage() : Boolean =
     """^\d+(\.\d+)?%$""".toRegex().matches(this)
 
-/* String Mutations */
+/* MARK: String Mutations */
 
 /**
  * Capitalizes a String by only altering the first letter. Alternate method offered
  * by `String#capitalizeAllCaps()`.
- * @return The String capitalized
+ * @return The String capitalized.
  */
 fun String.capitalize() : String {
     if (this.isEmpty())
@@ -105,15 +127,24 @@ fun String.capitalize() : String {
 /**
  * Capitalizes the String where it is expected to already be in all capital letters.
  * Lowercases the entire String and then capitalizes it.
- * @return The all caps String lowercased with only the first letter capitalized
+ * @return The all caps String lowercased with only the first letter capitalized.
  */
-fun String.capitalizeAllCaps() : String = this.lowercase().capitalize()
+fun String.capitalizeAllCaps() : String =
+    this.lowercase().capitalize()
 
-fun String.capitalizeEachWordAllCaps() : String {
-    if (!this.contains("_"))
+/**
+ * Capitalizes each word of the String where it is expected to be in all capital letters with each word delimited by a
+ * specific String called the delimiter.
+ * For example: Words of enum names are typically delimited by an underscore, so you can use this method to capitalize
+ * each word of enum names by using the default delimiter "_".
+ * @param delimiter The String to make each cleave at in the process of turning the String into words.
+ * @return The processed String with each word capitalized.
+ */
+fun String.capitalizeEachWordAllCaps(delimiter: String = "_") : String {
+    if (!this.contains(delimiter))
         return this.capitalizeAllCaps()
 
-    val split = this.split("_")
+    val split = this.split(delimiter)
     var build = String()
 
     for ((i, s) in split.withIndex()) {
@@ -129,8 +160,8 @@ fun String.capitalizeEachWordAllCaps() : String {
 /**
  * Replaces placeholders (map keys surrounded by percent signs) with their corresponding
  * map value to allow the user to access a variety of info at configuration time.
- * @param replacements The Map of replacements to substitute into the String
- * @return The String with substitutions made
+ * @param replacements The Map of replacements to substitute into the String.
+ * @return The String with substitutions made.
  */
 fun String.replaceMap(replacements: Map<String, String>) : String {
     var str = this
@@ -143,8 +174,8 @@ fun String.replaceMap(replacements: Map<String, String>) : String {
 /**
  * Replaces placeholders (map keys surrounded by percent signs) with their corresponding
  * map value to allow the user to access a variety of info at configuration time.
- * @param replacements The Map of replacements to substitute into the String
- * @return The List of Strings with substitutions made
+ * @param replacements The Map of replacements to substitute into the String.
+ * @return The List of Strings with substitutions made.
  */
 fun MutableList<String>.replaceMap(replacements: Map<String, String>) : MutableList<String> {
     for ((i, line) in this.withIndex()) {
@@ -154,25 +185,26 @@ fun MutableList<String>.replaceMap(replacements: Map<String, String>) : MutableL
     return this
 }
 
-/* ChatColor Related */
+/* MARK: ChatColor Related */
 
 /**
- * Translates the standard alternate ChatColor code (&) into valid color codes
- * @return The String with properly translated color codes
+ * Translates the standard alternate ChatColor code (&) into valid color codes.
+ * @return The String with properly translated color codes.
  */
 fun String.translateColor() : String =
     ChatColor.translateAlternateColorCodes('&', this)
 
 /**
- * Removes ChatColor codes from the String
- * @return The String sans ChatColor color codes
+ * Removes ChatColor codes from the String.
+ * @return The String sans ChatColor color codes.
  */
 fun String.stripColor() : String =
     ChatColor.stripColor(this)!!
 
 /**
- * Sequentially translates and strips ChatColor codes from the String
- * @return The String sans both valid color codes in addition to untranslated color codes
+ * Sequentially translates and strips ChatColor codes from the String. Effectively sanitizes the String of possible
+ * color codes to avoid exploitation.
+ * @return The String sans both valid color codes in addition to untranslated color codes.
  */
 fun String.translateAndStripColorCodes() : String =
     this.translateColor().stripColor()
@@ -180,7 +212,7 @@ fun String.translateAndStripColorCodes() : String =
 /**
  * Whether the String contains either valid ChatColor color codes or untranslated color codes.
  * This is determined by translating and stripping color codes and comparing the given String to the new String.
- * @return Whether the String contains color codes
+ * @return Whether the String contains color codes.
  */
 fun String.containsChatColor() : Boolean {
     val tas = this.translateAndStripColorCodes()
@@ -188,8 +220,8 @@ fun String.containsChatColor() : Boolean {
 }
 
 /**
- * Translates the standard alternate ChatColor code (&) into valid color codes
- * @return The `List<String>`, each line with properly translated color codes
+ * Translates the standard alternate ChatColor code (&) into valid color codes.
+ * @return The `List<String>`, each line with properly translated color codes.
  */
 fun List<String>.translateColor() : List<String> {
     val ls = mutableListOf<String>()
@@ -201,7 +233,7 @@ fun List<String>.translateColor() : List<String> {
  * Checks if the String consists of only ChatColors and no other text.
  * Determined by translating alternate codes, stripping the colors, and
  * comparing the resulting String to an empty String.
- * @return Whether the String consists of only ChatColors
+ * @return Whether the String consists of only ChatColors.
  */
 fun String.isOnlyColorCodes() : Boolean {
     val stripped = this.translateAndStripColorCodes().trim()
