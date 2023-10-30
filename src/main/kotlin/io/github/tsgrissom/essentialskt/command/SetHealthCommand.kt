@@ -3,6 +3,8 @@ package io.github.tsgrissom.essentialskt.command
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
+import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.isPercentage
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import net.md_5.bungee.api.ChatColor.*
@@ -22,12 +24,13 @@ class SetHealthCommand : CommandBase() {
         const val PERM_PERCENT = "essentialskt.sethealth.percent"
     }
 
-    private val flagMax = Pair("max", "m")
+    private val flagMax = ValidCommandFlag("max")
 
     override fun execute(context: CommandContext) {
         val args = context.args
         val len = args.size
         val sender = context.sender
+        val flags = CommandFlagParser(args, flagMax)
 
         if (sender.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
@@ -54,7 +57,7 @@ class SetHealthCommand : CommandBase() {
         if (arg1d <= 0)
             return sender.sendMessage("${D_RED}New health value must be a nonzero positive number")
 
-        if (context.hasFlag(flagMax)) {
+        if (flags.wasPassed(flagMax)) {
             return handleChangeMaxHealth(context, t, arg1d)
         }
 

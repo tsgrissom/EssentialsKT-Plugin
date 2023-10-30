@@ -4,7 +4,6 @@ import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.data.QuotedStringSearchResult
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.RED
-import net.md_5.bungee.api.ChatColor.YELLOW
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -20,15 +19,6 @@ class CommandContext(
     val args: Array<out String>
 ) {
 
-    fun sendNoPermission(sender: CommandSender, permission: String) {
-        var resp = "${D_RED}You do not have access to that command."
-        if (sender.hasPermission("essentialskt.disclosepermission"))
-            resp += " ${D_RED}(${RED}$permission${D_RED})"
-        sender.sendMessage(resp)
-    }
-    fun sendNoPermission(sender: CommandSender, permission: Permission) =
-        sendNoPermission(sender, permission.name)
-
     fun hasPermission(permission: String) =
         sender.hasPermission(permission)
     fun hasPermission(permission: Permission) =
@@ -38,27 +28,24 @@ class CommandContext(
     fun lacksPermission(permission: Permission) =
         !sender.hasPermission(permission)
 
-    fun hasFlag(pair: Pair<String, String>) : Boolean =
-        hasFlag(pair.first, pair.second)
-    fun hasFlag(long: String, short: String) : Boolean {
-        if (args.isEmpty())
-            return false
-
-        val longFlag = "--$long"
-        val shortFlag = "-$short"
-
-        for (a in args)
-            if (a.equalsIc(longFlag, shortFlag))
-                return true
-
-        return false
+    fun sendNoPermission(target: CommandSender, permission: String) {
+        var resp = "${D_RED}You do not have access to that command."
+        if (sender.hasPermission("essentialskt.disclosepermission"))
+            resp += " ${D_RED}(${RED}$permission${D_RED})"
+        target.sendMessage(resp)
     }
 
-    fun getExecutedString(withLabel: Boolean = true, startIndex: Int, endIndex: Int) : String {
-        var builder = String()
+    fun sendNoPermission(target: CommandSender, permission: Permission) =
+        sendNoPermission(target, permission.name)
+    fun sendNoPermission(permission: String) =
+        sendNoPermission(this.sender, permission)
+    fun sendNoPermission(permission: Permission) =
+        sendNoPermission(this.sender, permission)
 
-        if (withLabel)
-            builder += label
+    fun getExecutedString(withLabel: Boolean = true, startIndex: Int, endIndex: Int) : String {
+        var builder =
+            if (withLabel) this.label
+            else ""
 
         if (args.isEmpty())
             return builder
@@ -76,13 +63,11 @@ class CommandContext(
 
     fun getExecutedString(withLabel: Boolean = true) : String {
         val len = args.size
-        val startIndex = 0
         val endIndex = if (len > 0) args.size - 1 else 0
-        return getExecutedString(withLabel=withLabel, startIndex, endIndex)
+        return getExecutedString(withLabel=withLabel, 0, endIndex)
     }
 
     fun getQuotedStringFromArgsRange(startIndex: Int, endIndex: Int) : QuotedStringSearchResult? {
-        val l = Bukkit.getLogger()
         val range = "Range[${startIndex}->${endIndex}]"
         fun warnWithRange(str: String) : QuotedStringSearchResult? {
             PluginLogger.warn("Cannot retrieve String from range of args of $range: $str")
@@ -97,9 +82,12 @@ class CommandContext(
             return warnWithRange("startIndex is less than 0")
         if (endIndex < startIndex)
             return warnWithRange("endIndex is less than startIndex")
-        if (startIndex > args.size)
+
+        val len = args.size
+
+        if (startIndex > len)
             return warnWithRange("startIndex is out of bounds (> args size)")
-        if (endIndex > args.size)
+        if (endIndex > len)
             return warnWithRange("endIndex is out of bounds (> args size)")
         if (!isRangedArgsToStringInQuotes(startIndex, endIndex))
             return warnWithRange("Not a quoted string! Check with CommandContext#isQuotedStringForRange or use CommandContext#getAnyQuotedString")
@@ -114,7 +102,7 @@ class CommandContext(
             "Is Double Quoted=${executed.isDoubleQuoted()}"
         )
 
-        return QuotedStringSearchResult(executed, 0, args.size)
+        return QuotedStringSearchResult(executed, 0, len)
     }
 
     fun isRangedArgsToStringInQuotes(startIndex: Int, endIndex: Int) =
@@ -153,7 +141,6 @@ class CommandContext(
         var startIndex: Int? = null
         var endIndex: Int? = null
         var searchingFor: String? = null
-        val l = Bukkit.getLogger()
 
         for (i in 1..args.size) {
             val n = i - 1 // The index of the current element
@@ -178,7 +165,9 @@ class CommandContext(
                 val trailingMark = arg.endsWithQuote()
 
                 if (trailingMark == null) {
-                    l.info("Any trailing quote mark not found at args[${n}](=$arg), continuing")
+                    PluginLogger.info(
+                        "Any trailing quote mark not found at args[$n](=$arg), continuing"
+                    )
                     continue
                 }
 
@@ -198,10 +187,23 @@ class CommandContext(
 
         val range = "Range[$startIndex, $endIndex]"
 
-        PluginLogger.info("getAnyQuotedString has found potential quoted String for $range. Passing to getQuotedStringForRange method.")
+        PluginLogger.info(
+            "getAnyQuotedString has found potential quoted String for $range. Passing to getQuotedStringForRange method."
+        )
         return getQuotedStringFromArgsRange(startIndex, endIndex)
     }
 
+    /**
+     * Checks if there is any quoted String to be parsed from the full executed String. To be valid, there needs to be
+     * a leading quotation mark, either an apostrophe or a double-quote which is the first character of an argument, and
+     * a trailing quotation mark which is the ending character of an argument.
+     *
+     * Might not be performant enough unless you ONLY need to check for the presence of a quoted String because it
+     * inverse null-checks result of <code>#getAnyQuotedString</code>. Use that method and manually check
+     * <code>!= null</code> if you need to check AND use the result of the parsed quoted String.
+     *
+     * @return Whether the full executed String of the CommandContext contains any quoted Strings.
+     */
     fun containsAnyQuotedString() : Boolean =
         getAnyQuotedString() != null
 
