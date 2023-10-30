@@ -13,10 +13,173 @@ import org.bukkit.profile.PlayerProfile
 import java.util.*
 import java.util.function.Consumer
 
-// TODO Write docs
+/**
+ * Alters the ItemStack amount to the requisite integer.
+ * @param amount The new amount of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.amount(amount: Int): ItemStack {
+    setAmount(amount)
+    return this
+}
 
+/**
+ * Clears the Enchantments of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.clearEnchantments(): ItemStack {
+    enchantments.keys.forEach(Consumer { this.removeEnchantment(it) })
+    return this
+}
+
+/**
+ * Clears the List of lore of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.clearLore(): ItemStack {
+    val meta = itemMeta
+    meta?.lore = ArrayList()
+    itemMeta = meta
+    return this
+}
+
+/**
+ * Sets the leather armor meta color of the ItemStack. Only works on items with leather armor Materials.
+ * @param color The Color to set the LeatherArmorMeta to.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.color(color: Color): ItemStack {
+    when (type) {
+        Material.LEATHER_BOOTS, Material.LEATHER_LEGGINGS, Material.LEATHER_CHESTPLATE, Material.LEATHER_HELMET -> {
+            val meta = itemMeta as LeatherArmorMeta
+            meta.setColor(color)
+            itemMeta = meta
+            return this
+        }
+        else -> throw IllegalArgumentException("Colors only applicable for leather armor!")
+    }
+}
+
+/**
+ * Alters the data of the ItemStack to the requisite integer.
+ * @param data The new data of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.data(data: Int): ItemStack {
+    setData(MaterialData(type, data.toByte()))
+    return this
+}
+
+/**
+ * Alters the durability of the ItemStack to the requisite integer.
+ * @param durability The new durability of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.durability(durability: Int): ItemStack {
+    setDurability(durability.toShort())
+    return this
+}
+
+/**
+ * Adds an unsafe enchantment to the ItemStack.
+ * @param enchantment The Enchantment to add.
+ * @param level The new enchantment's level.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.enchantment(enchantment: Enchantment, level: Int): ItemStack {
+    addUnsafeEnchantment(enchantment, level)
+    return this
+}
+
+/**
+ * Adds the requisite Enchantment to the ItemStack at level 1.
+ * @param enchantment The Enchantment to add.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.enchantment(enchantment: Enchantment): ItemStack {
+    addUnsafeEnchantment(enchantment, 1)
+    return this
+}
+
+/**
+ * Adds the requisite variable number of ItemFlags to the ItemStack.
+ * @param flag The ItemFlags to add to the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.flag(vararg flag: ItemFlag): ItemStack {
+    val meta = itemMeta
+    meta?.addItemFlags(*flag)
+    itemMeta = meta
+    return this
+}
+
+/**
+ * Adds the requisite String to the lore of the ItemStack.
+ * @param text The new line for the lore of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.lore(text: String): ItemStack {
+    val meta = itemMeta
+    var lore: MutableList<String>? = meta?.lore
+    if (lore == null) {
+        lore = ArrayList()
+    }
+    lore.add(text)
+    meta?.lore = lore.translateColor()
+    itemMeta = meta
+    return this
+}
+
+/**
+ * Adds the variable number of Strings to the lore of the ItemStack.
+ * @param text The new lines for the lore of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.lore(vararg text: String): ItemStack {
+    Arrays.stream(text).forEach { this.lore(it) }
+    return this
+}
+
+/**
+ * Adds the List of Strings to the lore of the ItemStack.
+ * @param text The new lines for the lore of the ItemStack.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.lore(text: List<String>): ItemStack {
+    text.forEach { this.lore(it) }
+    return this
+}
+
+/**
+ * Alters the display name of the ItemStack to the requisite String.
+ * @param name The new display name of the ItemStack.
+ * @param withColor Whether the display name's alternate color codes should be translated. Default=true.
+ * @return The instance of ItemStack.
+ */
+fun ItemStack.name(
+    name: String,
+    withColor: Boolean = true
+) : ItemStack {
+    val meta = itemMeta
+    val new = if (withColor) name.translateColor() else name
+    meta?.setDisplayName(new)
+    this.itemMeta = meta
+    return this
+}
+
+/**
+ * Sets the owner profile of the ItemStack to the profile of the requisite Player. Only works for player head Materials.
+ * @param player The Player whose head you wish to use with the ItemStack.
+ * @return The instance of ItemStack.
+ */
 fun ItemStack.playerHeadOf(player: OfflinePlayer) : ItemStack =
     this.playerHeadOf(player.playerProfile)
+
+/**
+ * Sets the owner profile of the ItemStack to the requisite PlayerProfile. Only works for player head Materials.
+ * @param profile The PlayerProfile of the Player whose head you wish to use with the ItemStack.
+ * @return The instance of ItemStack.
+ */
 fun ItemStack.playerHeadOf(profile: PlayerProfile) : ItemStack {
     if (this.type != Material.PLAYER_HEAD && this.type != Material.PLAYER_WALL_HEAD)
         error("Cannot set skullOwner for non player head material \"${this.type}\"")
@@ -27,103 +190,12 @@ fun ItemStack.playerHeadOf(profile: PlayerProfile) : ItemStack {
     return this
 }
 
-fun ItemStack.amount(amount: Int): ItemStack {
-    setAmount(amount)
-    return this
-}
-
-fun ItemStack.name(name: String): ItemStack {
-    val meta = itemMeta
-    meta?.setDisplayName(name.translateColor())
-    itemMeta = meta
-    return this
-}
-
-fun ItemStack.lore(text: String): ItemStack {
-    val meta = itemMeta
-    var lore: MutableList<String>? = meta?.lore
-    if (lore == null) {
-        lore = ArrayList()
-    }
-    lore.add(text)
-    meta?.lore = lore.c()
-    itemMeta = meta
-    return this
-}
-
-fun ItemStack.lore(vararg text: String): ItemStack {
-    Arrays.stream(text).forEach { this.lore(it) }
-    return this
-}
-
-fun ItemStack.lore(text: List<String>): ItemStack {
-    text.forEach { this.lore(it) }
-    return this
-}
-
-fun ItemStack.durability(durability: Int): ItemStack {
-    setDurability(durability.toShort())
-    return this
-}
-
-fun ItemStack.data(data: Int): ItemStack {
-    setData(MaterialData(type, data.toByte()))
-    return this
-}
-
-fun ItemStack.enchantment(enchantment: Enchantment, level: Int): ItemStack {
-    addUnsafeEnchantment(enchantment, level)
-    return this
-}
-
-fun ItemStack.enchantment(enchantment: Enchantment): ItemStack {
-    addUnsafeEnchantment(enchantment, 1)
-    return this
-}
-
+/**
+ * Alters the Material type of the ItemStack.
+ * @param material The Material to set the ItemStack to.
+ * @return The instance of ItemStack.
+ */
 fun ItemStack.type(material: Material): ItemStack {
     type = material
     return this
-}
-
-fun ItemStack.clearLore(): ItemStack {
-    val meta = itemMeta
-    meta?.lore = ArrayList()
-    itemMeta = meta
-    return this
-}
-
-fun ItemStack.clearEnchantments(): ItemStack {
-    enchantments.keys.forEach(Consumer { this.removeEnchantment(it) })
-    return this
-}
-
-fun ItemStack.color(color: Color): ItemStack {
-    if (type == Material.LEATHER_BOOTS
-        || type == Material.LEATHER_CHESTPLATE
-        || type == Material.LEATHER_HELMET
-        || type == Material.LEATHER_LEGGINGS) {
-
-        val meta = itemMeta as LeatherArmorMeta
-        meta.setColor(color)
-        itemMeta = meta
-        return this
-    } else {
-        throw IllegalArgumentException("Colors only applicable for leather armor!")
-    }
-}
-
-fun ItemStack.flag(vararg flag: ItemFlag): ItemStack {
-    val meta = itemMeta
-    meta?.addItemFlags(*flag)
-    itemMeta = meta
-    return this
-}
-
-private fun List<String>.c(): List<String> {
-    val tempStringList = ArrayList<String>()
-    for (text in this) {
-        tempStringList.add(text.translateColor())
-    }
-    return tempStringList
 }
