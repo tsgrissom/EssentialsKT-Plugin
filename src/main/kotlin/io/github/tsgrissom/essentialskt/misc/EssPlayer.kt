@@ -177,7 +177,7 @@ class EssPlayer(private val uuid: UUID) {
         if (!excludeAfk) {
             appendPrefix()
             comp.appendc("Is AFK: ", GRAY)
-                .append(isAfk().palatable(withColor=true))
+                .append(isAfk().fmtYesNo(withColor=true))
         }
 
         if (!excludeHealth) {
@@ -249,8 +249,8 @@ class EssPlayer(private val uuid: UUID) {
         }
 
         if (!excludeFlight) {
-            val canFly = player.allowFlight.palatable(withColor=true)
-            val isFlying = player.isFlying.palatable(withColor=true)
+            val canFly = player.allowFlight.fmtYesNo(withColor=true)
+            val isFlying = player.isFlying.fmtYesNo(withColor=true)
 
             appendPrefix()
             comp.appendc("Can Fly: ", GRAY)
@@ -262,8 +262,8 @@ class EssPlayer(private val uuid: UUID) {
         }
 
         if (!excludeSneaking || !excludeSprinting) {
-            val isSneaking = player.isSneaking.palatable(withColor=true)
-            val isSprinting = player.isSprinting.palatable(withColor=true)
+            val isSneaking = player.isSneaking.fmtYesNo(withColor=true)
+            val isSprinting = player.isSprinting.fmtYesNo(withColor=true)
 
             appendPrefix()
 
@@ -356,7 +356,7 @@ class EssPlayer(private val uuid: UUID) {
         }
 
         if (!excludeOperator) {
-            val isOp = player.isOp.palatable(withColor=true)
+            val isOp = player.isOp.fmtYesNo(withColor=true)
             appendPrefix()
             comp.appendc("Is Op: ", GRAY)
                 .appendc(isOp, YELLOW)

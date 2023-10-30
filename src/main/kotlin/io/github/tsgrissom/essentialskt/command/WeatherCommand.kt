@@ -113,7 +113,7 @@ class WeatherCommand : CommandBase() {
         val cSecs = cTicks / 20.0
 
         sender.sendMessage(
-            "${D_GRAY}> ${GRAY}Is Clear: ${RESET}${w.isClearWeather.palatable(withColor=true)}",
+            "${D_GRAY}> ${GRAY}Is Clear: ${RESET}${w.isClearWeather.fmtYesNo(withColor=true)}",
             "${D_GRAY}> ${GRAY}Weather Remaining: ${YELLOW}$wTicks ticks ${GRAY}or ${YELLOW}${wSecs.roundToDigits(1)} seconds",
             "${D_GRAY}> ${GRAY}Clear Remaining: ${YELLOW}$cTicks ticks ${GRAY}or ${YELLOW}${cSecs.roundToDigits(1)} seconds"
         )

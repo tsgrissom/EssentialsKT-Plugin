@@ -48,8 +48,8 @@ class ListEntitiesGui(
     private fun createEntityTypeGuiItem(type: EntityType) : GuiItem {
         val typeName = type.name
         val name = typeName.capitalizeEachWordAllCaps()
-        val isAlive = type.isAlive.palatable(withColor=true)
-        val isSpawnable = type.isSpawnable.palatable(withColor=true)
+        val isAlive = type.isAlive.fmtYesNo(withColor=true)
+        val isSpawnable = type.isSpawnable.fmtYesNo(withColor=true)
 
         val material = getEntityUtility()
             .getMaterialRepresentationForType(type)
