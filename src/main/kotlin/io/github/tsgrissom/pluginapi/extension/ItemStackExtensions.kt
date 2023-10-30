@@ -13,6 +13,8 @@ import org.bukkit.profile.PlayerProfile
 import java.util.*
 import java.util.function.Consumer
 
+// TODO Write docs
+
 fun ItemStack.playerHeadOf(player: OfflinePlayer) : ItemStack =
     this.playerHeadOf(player.playerProfile)
 fun ItemStack.playerHeadOf(profile: PlayerProfile) : ItemStack {
