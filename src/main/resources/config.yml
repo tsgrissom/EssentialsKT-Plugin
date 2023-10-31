@@ -3,6 +3,16 @@ IsDebuggingActive: false
 Commands:
   ClearChatRepeatBlankLine: 500
 
+Colors:
+  Primary: GOLD
+  Secondary: GRAY
+  Detail: RED
+  Username: YELLOW
+  Type: AQUA
+  Success: GREEN
+  Error: DARK_RED
+  ErrorDetail: RED
+
 Messages:
   JoinEvent: "&a&l+ &e%pd% &6has joined the server"
   QuitEvent: "&c&l- &e%pd% &6has left the server"

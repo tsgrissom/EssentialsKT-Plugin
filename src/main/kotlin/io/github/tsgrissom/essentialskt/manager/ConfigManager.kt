@@ -1,7 +1,11 @@
 package io.github.tsgrissom.essentialskt.manager
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
+import io.github.tsgrissom.pluginapi.extension.equalsIc
 import net.md_5.bungee.api.ChatColor.*
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.FileConfiguration
 
@@ -12,6 +16,66 @@ class ConfigManager {
     private fun getFileConfiguration() : FileConfiguration = getPlugin().config
     private fun getSection(key: String) : ConfigurationSection? =
         getFileConfiguration().getConfigurationSection(key)
+
+    init {
+        processConfiguration()
+    }
+
+    // TODO Reload command + logic here
+
+    private fun getDefaultColorMap() =
+        ChatColorKey.entries.associate {
+            it.name to it.defaultValue.name
+        }
+
+    private fun processConfiguration() {
+        val bLog = Bukkit.getLogger()
+        val conf = getFileConfiguration()
+        val defColors = getDefaultColorMap()
+        fun save() = getPlugin().saveConfig()
+        fun createColorsSection() : ConfigurationSection {
+            bLog.warning("Colors section is missing from the config.yml. Creating new one from defaults...")
+            val new = conf.createSection("Colors", getDefaultColorMap())
+            save()
+            return new
+        }
+        fun validateColorString(str: String) =
+            ChatColor.entries.firstOrNull { it.name == str } != null
+
+        var colors = conf.getConfigurationSection("Colors")!!
+        var keys = colors.getKeys(false)
+
+        if (keys.isEmpty()) {
+            colors = createColorsSection()
+            keys = colors.getKeys(false)
+        }
+
+        for (key in keys) {
+            if (!defColors.contains(key)) {
+                bLog.warning("Unknown key in Colors section \"$key\", skipping...")
+                continue
+            }
+            val value = colors.getString(key) ?: "NOT_A_STR"
+            if (!validateColorString(value)) {
+                bLog.warning("In config.yml: \"Colors.$key\": Color value \"$value\" is not a valid color reference")
+                continue
+            }
+            // Key is valid, ChatColor value is valid
+            if (isDebuggingActive()) {
+                bLog.info("Validated configured color \"$value\" at key \"Colors.$key\" in config.yml")
+            }
+        }
+    }
+
+    // TODO Write in docs about unexpected colors white or magic text and their meaning
+    fun getChatColor(key: ChatColorKey) : ChatColor {
+        val def = ChatColor.MAGIC
+        val conf = getFileConfiguration().getConfigurationSection("Colors")
+            ?: return def // This does not happen
+        val colorValue = conf.getString(key.name, getDefaultColorMap()[key.name])!! // Non-null asserted because default provided
+        return ChatColor.entries.firstOrNull { it.name.equalsIc(colorValue) }
+            ?: ChatColor.WHITE // Might happen, therefore default to
+    }
 
     /* Base Options */
     fun isDebuggingActive() : Boolean =
