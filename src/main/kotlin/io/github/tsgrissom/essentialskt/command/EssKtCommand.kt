@@ -5,7 +5,9 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.enum.BooleanFormat
 import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.fmt
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
 import net.md_5.bungee.api.ChatColor.GREEN
@@ -56,55 +58,11 @@ class EssKtCommand : CommandBase() {
 
         val sub = args[0]
 
-        if (sub.equalsIc("version", "v")) {
-            return printVersion(context)
-        } else if (sub.equalsIc("testany")) { // TODO Remove
-            val hasAnyQuotedString = context.getAnyQuotedString()
-            if (hasAnyQuotedString == null) {
-                sender.sendMessage("${RED}No quoted String found (console)")
-            } else {
-                sender.sendMessage("Quoted string found=${hasAnyQuotedString}")
+        when (sub.lowercase()) {
+            "version", "v" -> printVersion(context)
+            else -> {
+                sender.sendMessage("${D_RED}Unknown subcommand: ${RED}\"$sub\" ${D_RED}Do ${RED}/esskt ${D_RED}for help.")
             }
-        } else if (sub.equalsIc("testrange")) { // TODO Remove
-            if (len == 1)
-                return sender.sendMessage("${RED}Not enough args")
-
-            val args1 = args[1]
-            if (!args1.contains(":"))
-                return sender.sendMessage("${RED}Not a range!")
-
-            val split = args1.split(":")
-            if (split.size != 2)
-                return sender.sendMessage("${RED}Should split into 2!")
-
-            val first = split[0].toIntOrNull()
-                ?: return sender.sendMessage("${RED}${split[0]} is not an int")
-            val second = split[1].toIntOrNull()
-                ?: return sender.sendMessage("${RED}${split[1]} is not an int")
-
-            if (first > args.size)
-                return sender.sendMessage("${RED}startIndex is greater than args size")
-            if (second > args.size)
-                return sender.sendMessage("${RED}endIndex is greater than args size")
-            if (second < first)
-                return sender.sendMessage("{${RED}endIndex is less than startIndex")
-
-            val rangeStr = "args[${first}..${second}]"
-            val executedStr = context.getExecutedString(withLabel=false, first, second)
-            sender.sendMessage("Selected $rangeStr ranged String=${executedStr}")
-            val result = context.getQuotedStringFromArgsRange(first, second)
-                ?: return sender.sendMessage("${RED}Selected is not a quoted String")
-            val (quotedString, startIndex, endIndex) = result
-            sender.sendMessage(
-                "${GREEN}Quoted String found",
-                "Quoted: $quotedString",
-                "Range: $startIndex..$endIndex",
-                "Dequoted: $result",
-                "Quotation Mark: ${result.getQuotationMark()}",
-                "Contains Floating Quote Marks: ${result.containsFloatingQuotationMarks()}"
-            )
-        } else {
-            return sender.sendMessage("${D_RED}Unknown subcommand: ${RED}\"$sub\" ${D_RED}Do ${RED}/esskt ${D_RED}for help.")
         }
     }
 
@@ -119,7 +77,7 @@ class EssKtCommand : CommandBase() {
         if (sender.lacksPermission(PERM))
             return tab
 
-        tab.addAll(listOf("test", "version"))
+        tab.addAll(listOf("version"))
 
         return tab.sorted().toMutableList()
     }

@@ -6,6 +6,26 @@ package io.github.tsgrissom.pluginapi.enum
 enum class BooleanFormat(val trueStr: String, val falseStr: String) {
 
     /**
+     * true->"agree" or false->"disagree"
+     */
+    AGREE_DISAGREE("agree", "disagree"),
+
+    /**
+     * true->"approved" or false->"denied"
+     */
+    APPROVED_DENIED("approved", "denied"),
+
+    /**
+     * true->"authorized" or false->"unauthorized"
+     */
+    AUTHORIZED_UNAUTHORIZED("authorized", "unauthorized"),
+
+    /**
+     * true->"correct" or false->"incorrect"
+     */
+    CORRECT_INCORRECT("correct", "incorrect"),
+
+    /**
      * true->"enable" or false->"disable"
      */
     ENABLE_DISABLE("enable", "disable"),
@@ -16,14 +36,39 @@ enum class BooleanFormat(val trueStr: String, val falseStr: String) {
     ENABLED_DISABLED("enabled", "disabled"),
 
     /**
-     * true->"true" or false->"false"
+     * true->"is" or false->"isn't"
      */
-    TRUE_FALSE("true", "false"),
+    IS_ISNT("is", "isn't"),
 
     /**
      * true->"on" or false->"off"
      */
     ON_OFF("on", "off"),
+
+    /**
+     * true->"permitted" or false->"forbidden"
+     */
+    PERMITTED_FORBIDDEN("permitted", "forbidden"),
+
+    /**
+     * true->"+" or false->"-"
+     */
+    PLUS_MINUS_SYMBOLS("+", "-"),
+
+    /**
+     * true->"prepared" or false->"unprepared"
+     */
+    PREPARED_UNPREPARED("prepared", "unprepared"),
+
+    /**
+     * true->"present" or false->"absent"
+     */
+    PRESENT_ABSENT("present", "absent"),
+
+    /**
+     * true->"true" or false->"false"
+     */
+    TRUE_FALSE("true", "false"),
 
     /**
      * true->"yes" or false->"no"

@@ -12,6 +12,8 @@ import org.bukkit.ChatColor
  * @param falseColor The ChatColor to prepend if <code>withColor</code> is true and the Boolean is false. Default is RED.
  * @param capitalize Whether to capitalize the String before prepending the ChatColor. Default is false.
  * @param withColor Whether to prepend a Boolean-corresponding ChatColor to the formatted String. Default is true.
+ * @param invertedColor Whether to invert the true/false ChatColors where false->GREEN + true->RED.
+ * @param invertedText Whether to invert the true/false Strings where false->trueStr + true->falseStr.
  * @return The resulting formatted String of the operation.
  */
 fun Boolean.fmt(
@@ -21,36 +23,55 @@ fun Boolean.fmt(
     falseColor: ChatColor = ChatColor.RED,
     capitalize: Boolean = false,
     withColor: Boolean = true,
+    invertedColor: Boolean = false,
+    invertedText: Boolean = false
 ) : String {
-    val pre = if (withColor)
-        if (this) trueColor.toString() else falseColor.toString()
-    else
-        String()
-    var str = if (this) trueStr else falseStr
+    val notWithColor = withColor.not()
+    val notInvertedColor = invertedColor.not()
+    val notInvertedText = invertedText.not() // Not variables for expressive, readable logic below
+    val trueColorStr = trueColor.toString()
+    val falseColorStr = falseColor.toString()
+
+    val color = if (notWithColor) "" else
+        if (this) // if Boolean "this" is true
+            if (notInvertedColor) trueColorStr else falseColorStr
+        else
+            if (notInvertedColor) falseColorStr else trueColorStr
+    var text =
+        if (this)
+            if (notInvertedText) trueStr else falseStr
+        else
+            if (notInvertedText) falseStr else trueStr
+    val reset = if (notWithColor) "" else ChatColor.RESET.toString()
 
     if (capitalize)
-        str = str.capitalize()
+        text = text.capitalize()
 
-    return pre + str
+    return color + text + reset
 }
 
 /**
  * Formats a Boolean to a more pleasant user-facing output format. Formats are enumerated in the BooleanFormat enum.
  * Uses default ChatColors of (true->GREEN, false->RED) more customizable <code>Boolean#fmt</code> method.
  *
- * @param format Which BooleanFormat to use in the place of specifying a trueStr and falseStr.
+ * @param fmt Which BooleanFormat to use in the place of specifying a trueStr and falseStr.
  * @param capitalize Whether to capitalize the String before prepending the ChatColor. Default is false.
  * @param withColor Whether to prepend a Boolean-corresponding ChatColor to the formatted String. Default is true.
+ * @param invertedColor Whether to invert the true/false ChatColors where false->GREEN + true->RED.
+ * @param invertedText Whether to invert the true/false Strings where false->trueStr + true->falseStr.
  * @return The resulting formatted String of the operation.
  */
 fun Boolean.fmt(
-    format: BooleanFormat,
+    fmt: BooleanFormat,
     capitalize: Boolean = false,
-    withColor: Boolean = true
+    withColor: Boolean = true,
+    invertedColor: Boolean = false,
+    invertedText: Boolean = false
 ) : String =
     this.fmt(
-        format.trueStr, format.falseStr,
-        capitalize=capitalize, withColor=withColor
+        fmt.trueStr, fmt.falseStr,
+        capitalize=capitalize, withColor=withColor,
+        invertedColor=invertedColor, invertedText=invertedText
     )
 
 /**
