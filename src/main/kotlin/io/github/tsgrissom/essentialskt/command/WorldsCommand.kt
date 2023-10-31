@@ -71,7 +71,7 @@ class WorldsCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
         val flagGui = ValidCommandFlag.FLAG_GRAPHICAL
-        val parser = CommandFlagParser(args, flagGui)
+        val flags = CommandFlagParser(args, flagGui)
 
         if (sender.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
@@ -81,7 +81,7 @@ class WorldsCommand : CommandBase() {
         }
 
         if (sender is Player) {
-            if (parser.wasPassed(flagGui))
+            if (flags.wasPassed(flagGui))
                 return ListWorldsGui().show(sender)
 
             return sender.sendChatComponents(getWorldsAsComponents())

@@ -58,14 +58,14 @@ class EssKtCommand : CommandBase() {
 
         if (sub.equalsIc("version", "v")) {
             return printVersion(context)
-        } else if (sub.equalsIc("testany")) {
+        } else if (sub.equalsIc("testany")) { // TODO Remove
             val hasAnyQuotedString = context.getAnyQuotedString()
             if (hasAnyQuotedString == null) {
                 sender.sendMessage("${RED}No quoted String found (console)")
             } else {
                 sender.sendMessage("Quoted string found=${hasAnyQuotedString}")
             }
-        } else if (sub.equalsIc("testrange")) {
+        } else if (sub.equalsIc("testrange")) { // TODO Remove
             if (len == 1)
                 return sender.sendMessage("${RED}Not enough args")
 

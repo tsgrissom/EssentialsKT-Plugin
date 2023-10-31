@@ -186,14 +186,14 @@ class GameModeCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val args = context.args
-        val flagParser = CommandFlagParser(args, ValidCommandFlag.FLAG_GRAPHICAL)
+        val flags = CommandFlagParser(args, ValidCommandFlag.FLAG_GRAPHICAL)
 
         if (args.isEmpty())
             return sender.spigot().sendMessage(*getCommandUsageAsComponent(sender))
 
         val sub = args[0]
 
-        if (args.size == 1 && flagParser.wasPassed("gui")) {
+        if (args.size == 1 && flags.wasPassed("gui")) {
             if (sender is ConsoleCommandSender)
                 return sender.sendMessage("${D_RED}Console cannot open GUIs")
             if (sender !is Player)

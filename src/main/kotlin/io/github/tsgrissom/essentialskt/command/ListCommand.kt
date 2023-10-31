@@ -104,7 +104,7 @@ class ListCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
         val flagGui = ValidCommandFlag.FLAG_GRAPHICAL
-        val parser = CommandFlagParser(args, flagGui)
+        val flags = CommandFlagParser(args, flagGui)
 
         if (sender.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
@@ -115,22 +115,22 @@ class ListCommand : CommandBase() {
         val sub = args[0]
 
         when (sub.lowercase()) {
-            "entities", "entity", "entitytype" -> handleSubcEntities(context, parser)
-            "mobs", "mob" -> handleSubcMobs(context, parser)
-            "players", "pl", "online" -> handleSubcPlayers(context, parser)
-            "worlds", "world" -> handleSubcWorlds(context, parser)
+            "entities", "entity", "entitytype" -> handleSubcEntities(context, flags)
+            "mobs", "mob" -> handleSubcMobs(context, flags)
+            "players", "pl", "online" -> handleSubcPlayers(context, flags)
+            "worlds", "world" -> handleSubcWorlds(context, flags)
             else -> sender.sendMessage("${D_RED}Unknown list type ${RED}\"$sub\"${D_RED}. Do ${RED}/ls ${D_RED}to view valid types.")
         }
     }
 
     // MARK: Handlers
-    private fun handleSubcPlayers(context: CommandContext, parser: CommandFlagParser) {
+    private fun handleSubcPlayers(context: CommandContext, flags: CommandFlagParser) {
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_PLAYERS))
             return context.sendNoPermission(sender, PERM_PLAYERS)
 
-        val hasGraphicalFlag = parser.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL)
+        val hasGraphicalFlag = flags.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL)
 
         if (sender is ConsoleCommandSender) {
             handleSubcPlayersText(context)
@@ -150,13 +150,13 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
     }
 
-    private fun handleSubcEntities(context: CommandContext, parser: CommandFlagParser) {
+    private fun handleSubcEntities(context: CommandContext, flags: CommandFlagParser) {
         val sender = context.sender
 
         if  (sender.lacksPermission(PERM_ENTITIES))
             return context.sendNoPermission(sender, PERM_ENTITIES)
 
-        if (parser.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
+        if (flags.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
             if (sender is Player)
                 return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
@@ -176,13 +176,13 @@ class ListCommand : CommandBase() {
         return ComponentBuilder().create()
     }
 
-    private fun handleSubcMobs(context: CommandContext, parser: CommandFlagParser) {
+    private fun handleSubcMobs(context: CommandContext, flags: CommandFlagParser) {
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_MOBS))
             return context.sendNoPermission(sender, PERM_MOBS)
 
-        if (parser.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
+        if (flags.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
             if (sender is Player)
                 return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
@@ -192,10 +192,10 @@ class ListCommand : CommandBase() {
         // TODO Display mobs as text components
     }
 
-    private fun handleSubcWorlds(context: CommandContext, parser: CommandFlagParser) {
+    private fun handleSubcWorlds(context: CommandContext, flags: CommandFlagParser) {
         var command = "worlds"
 
-        if (parser.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
+        if (flags.wasPassed(ValidCommandFlag.FLAG_GRAPHICAL))
             command += " --gui"
 
         context.performCommand(command)
