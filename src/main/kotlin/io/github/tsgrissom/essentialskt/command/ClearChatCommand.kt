@@ -1,12 +1,11 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -53,12 +52,15 @@ class ClearChatCommand : CommandBase() {
 
     private fun handleEmptyArgs(context: CommandContext) {
         val sender = context.sender
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         if (sender.lacksPermission(PERM_SELF))
             return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console Usage: ${RED}/cls <Target OR all>")
+            return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetail}/cls <Target OR all>")
         if (sender !is Player)
             return
 
@@ -67,6 +69,7 @@ class ClearChatCommand : CommandBase() {
 
     private fun handleSubcAll(context: CommandContext) {
         val sender = context.sender
+        val ccPrimary = getConfig().getChatColor(ChatColorKey.Primary)
 
         if (sender.lacksPermission(PERM_ALL))
             return context.sendNoPermission(sender, PERM_ALL)
@@ -74,22 +77,25 @@ class ClearChatCommand : CommandBase() {
         Bukkit.getOnlinePlayers()
             .filter { it.lacksPermission(PERM_EXEMPT) }
             .forEach { performClearChatOperation(it, getConfiguredRepeatCount()) }
-        sender.sendMessage("${GOLD}You cleared the chat messages of all players on the server")
+        sender.sendMessage("${ccPrimary}You cleared the chat messages of all players on the server")
     }
 
     private fun handleOneOrMoreArgs(context: CommandContext) {
         val args = context.args
         val sender = context.sender
+        val ccErr = getConfig().getChatColor(ChatColorKey.Error)
+        val ccErrDetail = getConfig().getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrimary = getConfig().getChatColor(ChatColorKey.Primary)
 
         val clearedPlayers = mutableListOf<String>()
 
         for (i in 0..args.size) {
             val arg = args[i]
             val t: Player = Bukkit.getPlayer(arg)
-                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$arg\"")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$arg\"")
             val tn = t.name
             if (clearedPlayers.contains(tn)) {
-                sender.sendMessage("${D_RED}You already cleared ${RED}${tn}'s ${D_RED}chat")
+                sender.sendMessage("${ccErr}You already cleared ${ccErrDetail}${tn}'s ${ccErr}chat")
                 continue
             }
             if (t == sender && sender.lacksPermission(PERM_SELF)) {
@@ -121,7 +127,7 @@ class ClearChatCommand : CommandBase() {
         }
 
         if (!self)
-            sender.sendMessage("${GOLD}You cleared ${RED}${who} ${GOLD}chat messages")
+            sender.sendMessage("${ccPrimary}You cleared ${ccErrDetail}${who} ${ccPrimary}chat messages")
     }
 
     override fun onTabComplete(

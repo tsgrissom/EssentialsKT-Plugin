@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ListWorldsGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
@@ -7,7 +9,6 @@ import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.TextComponent
@@ -20,23 +21,33 @@ import org.bukkit.entity.Player
 
 class WorldsCommand : CommandBase() {
 
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
     companion object {
         const val PERM = "essentials.world"
     }
 
     private fun generateWorldTextComponent(w: World) : TextComponent {
+        val ccVal = getConfig().getBungeeChatColor(ChatColorKey.Value)
+
         val comp = TextComponent(w.name)
-        comp.color = YELLOW
+        comp.color = ccVal
 
         return comp
     }
 
     private fun getWorldsAsComponents() : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Primary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+
         val text = TextComponent("Worlds")
-        text.color = GRAY;
+        text.color = ccSec;
 
         val delimiter = TextComponent(": ")
-        delimiter.color = DARK_GRAY;
+        delimiter.color = ccTert;
 
         text.addExtra(delimiter)
 
@@ -46,7 +57,7 @@ class WorldsCommand : CommandBase() {
             text.addExtra(generateWorldTextComponent(world))
             if (i != (worlds.size - 1)) {
                 val entryDelimiter = TextComponent(", ")
-                entryDelimiter.color = GRAY
+                entryDelimiter.color = ccSec
                 text.addExtra(entryDelimiter)
             }
         }

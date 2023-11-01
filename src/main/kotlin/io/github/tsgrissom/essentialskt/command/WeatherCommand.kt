@@ -1,11 +1,11 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -13,6 +13,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.util.StringUtil
 
 class WeatherCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     companion object {
         const val PERM = "essentials.weather"
@@ -38,6 +42,10 @@ class WeatherCommand : CommandBase() {
         getHelpText(context).forEach { context.sender.sendMessage(it) }
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val sender = context.sender
 
@@ -55,7 +63,7 @@ class WeatherCommand : CommandBase() {
             "display", "d", "info", "i" -> delegateSubcDisplay(context)
             "rain" -> delegateSubcRain(context)
             "thunder" -> delegateSubcThunder(context)
-            else -> sender.sendMessage("${D_RED}Unknown subcommand ${RED}\"$sub\"${D_RED}. Do ${RED}/wthr ? ${D_RED}for help.")
+            else -> sender.sendMessage("${ccErr}Unknown subcommand ${ccErrDetl}\"$sub\"${ccErr}. Do ${ccErrDetl}/wthr ? ${ccErr}for help.")
         }
     }
 
@@ -82,6 +90,12 @@ class WeatherCommand : CommandBase() {
     }
 
     private fun delegateSubcClear(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
         val args = context.args
         val sender = context.sender
         var w: World = sender.getCurrentWorldOrDefault()
@@ -89,14 +103,22 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
         }
 
         w.clearRain()
-        sender.sendMessage("${GOLD}Weather cleared for world ${RED}${w.name}")
+        sender.sendMessage("${ccPrim}Weather cleared for world ${ccDetl}${w.name}")
     }
 
     private fun delegateSubcDisplay(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getChatColor(ChatColorKey.Value)
+        val ccReset = ChatColor.RESET
+
         val args = context.args
         val sender = context.sender
         var w: World = sender.getCurrentWorldOrDefault()
@@ -104,7 +126,7 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
         }
 
         val wTicks = w.weatherDuration
@@ -113,13 +135,19 @@ class WeatherCommand : CommandBase() {
         val cSecs = cTicks / 20.0
 
         sender.sendMessage(
-            "${D_GRAY}> ${GRAY}Is Clear: ${RESET}${w.isClearWeather.fmtYesNo(withColor=true)}",
-            "${D_GRAY}> ${GRAY}Weather Remaining: ${YELLOW}$wTicks ticks ${GRAY}or ${YELLOW}${wSecs.roundToDigits(1)} seconds",
-            "${D_GRAY}> ${GRAY}Clear Remaining: ${YELLOW}$cTicks ticks ${GRAY}or ${YELLOW}${cSecs.roundToDigits(1)} seconds"
+            "${ccTert}> ${ccSec}Is Clear: ${ccReset}${w.isClearWeather.fmtYesNo(withColor=true)}",
+            "${ccTert}> ${ccSec}Weather Remaining: ${ccVal}$wTicks ticks ${ccSec}or ${ccVal}${wSecs.roundToDigits(1)} seconds",
+            "${ccTert}> ${ccSec}Clear Remaining: ${ccVal}$cTicks ticks ${ccSec}or ${ccVal}${cSecs.roundToDigits(1)} seconds"
         )
     }
 
     private fun delegateSubcRain(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
         val args = context.args
         val sender = context.sender
         var w: World = sender.getCurrentWorldOrDefault()
@@ -127,15 +155,18 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${D_RED}Unknown world ${RED}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
         }
 
         w.makeRain()
-        sender.sendMessage("${GOLD}Rain turned on for world ${RED}${w.name}")
+        sender.sendMessage("${ccPrim}Rain turned on for world ${ccDetl}${w.name}")
     }
 
     private fun delegateSubcThunder(context: CommandContext) {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+
         // TODO Implement thunder
-        context.sender.sendMessage("${GOLD}Feature is in progress")
+        context.sender.sendMessage("${ccPrim}Feature is in progress")
     }
 }

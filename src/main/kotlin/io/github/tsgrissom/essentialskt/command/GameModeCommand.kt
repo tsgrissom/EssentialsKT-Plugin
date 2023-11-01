@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.GameModeSelectorGui
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
@@ -28,6 +30,10 @@ import org.bukkit.util.StringUtil
 
 class GameModeCommand : CommandBase() {
 
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
     // MARK: Static Declarations
     companion object {
         const val PERM_BASE      = "essentials.gamemode"
@@ -48,6 +54,7 @@ class GameModeCommand : CommandBase() {
                 GameMode.entries.toSet()
             val mainColor = if (negative) D_RED else GRAY
             val detailColor = if (negative) RED else YELLOW
+            // TODO Replace UI colors
 
             val builder = ComponentBuilder()
                 .appendc("Available gamemodes", mainColor)
@@ -85,6 +92,10 @@ class GameModeCommand : CommandBase() {
 
     // MARK: Text Helper Functions
     private fun getCommandUsageAsComponent(sender: CommandSender) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val isConsole = sender is ConsoleCommandSender
         val available: Set<GameMode> = if (sender is Player)
             EssPlayer(sender).getAvailableGameModes()
@@ -92,14 +103,14 @@ class GameModeCommand : CommandBase() {
             GameMode.entries.toSet()
         val availableNames = available.map { it.name.lowercase() }.toSet()
         val builder = ComponentBuilder()
-            .appendc(if (isConsole) "Console Usage: " else "Usage: ", D_RED)
-            .appendc("/gm <", RED)
+            .appendc(if (isConsole) "Console Usage: " else "Usage: ", ccErr)
+            .appendc("/gm <", ccErrDetail)
 
         if (available.isNotEmpty()) {
             for ((i, mode) in availableNames.withIndex()) {
                 val clickText = ClickableText
                     .compose(mode)
-                    .color(RED)
+                    .color(ccErrDetail)
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
                     .value("/gm $mode ")
 
@@ -107,20 +118,23 @@ class GameModeCommand : CommandBase() {
                     .append(clickText.toComponent())
 
                 if (i != (available.size - 1))
-                    builder.appendc("/", D_GRAY)
+                    builder.appendc("/", ccTert)
             }
         } else {
             builder.append("No Available Gamemodes")
         }
 
         builder
-            .appendc("> ", RED)
-            .appendc(if (isConsole) "<Target>" else "[Target]", RED)
+            .appendc("> ", ccErrDetail)
+            .appendc(if (isConsole) "<Target>" else "[Target]", ccErrDetail)
 
         return builder.create()
     }
 
     private fun getHelp(context: CommandContext) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccType = conf.getBungeeChatColor(ChatColorKey.Type)
         val sender = context.sender
         val descVerbiage = if (sender.hasPermission(PERM_OTHERS)) "a player's" else "your"
         val suggestionPostfix = if (sender.hasPermission(PERM_OTHERS)) " " else ""
@@ -128,7 +142,7 @@ class GameModeCommand : CommandBase() {
             .compose("survival")
             .withAliases("0", "surv", "sur", "s")
             .withDescription(
-                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Survival"
+                "${ccSec}Set $descVerbiage gamemode to ${ccType}Survival"
             )
             .withPermission(PERM_SURVIVAL)
             .withSuggestion("/gm survival${suggestionPostfix}")
@@ -136,7 +150,7 @@ class GameModeCommand : CommandBase() {
             .compose("creative")
             .withAliases("1", "create", "creat", "crtv", "crt", "c")
             .withDescription(
-                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Creative"
+                "${ccSec}Set $descVerbiage gamemode to ${ccType}Creative"
             )
             .withPermission(PERM_CREATIVE)
             .withSuggestion("/gm creative${suggestionPostfix}")
@@ -144,7 +158,7 @@ class GameModeCommand : CommandBase() {
             .compose("adventure")
             .withAliases("2", "adv", "a")
             .withDescription(
-                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Adventure"
+                "${ccSec}Set $descVerbiage gamemode to ${ccType}Adventure"
             )
             .withPermission(PERM_ADVENTURE)
             .withSuggestion("/gm adventure${suggestionPostfix}")
@@ -152,7 +166,7 @@ class GameModeCommand : CommandBase() {
             .compose("spectator")
             .withAliases("spect", "spec", "sp")
             .withDescription(
-                "${GRAY}Set $descVerbiage gamemode to ${AQUA}Spectator"
+                "${ccSec}Set $descVerbiage gamemode to ${ccType}Spectator"
             )
             .withPermission(PERM_SPECTATOR)
             .withSuggestion("/gm spectator${suggestionPostfix}")
@@ -163,8 +177,8 @@ class GameModeCommand : CommandBase() {
                 .compose("Target")
                 .required(targetingRequired)
                 .hoverText(
-                    "${GRAY}If provided, will apply the specified",
-                    " ${GRAY}gamemode to the targeted player"
+                    "${ccSec}If provided, will apply the specified",
+                    " ${ccSec}gamemode to the targeted player"
                 )
             subcSurvival.withArgument(targetingArgument)
             subcCreative.withArgument(targetingArgument)
@@ -184,6 +198,12 @@ class GameModeCommand : CommandBase() {
 
     // MARK: Command Body
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetail = conf.getChatColor(ChatColorKey.Detail)
+
         val sender = context.sender
         val args = context.args
         val flags = CommandFlagParser(args, ValidCommandFlag.FLAG_GRAPHICAL)
@@ -195,7 +215,7 @@ class GameModeCommand : CommandBase() {
 
         if (args.size == 1 && flags.wasPassed("gui")) {
             if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs")
             if (sender !is Player)
                 return
 
@@ -206,7 +226,7 @@ class GameModeCommand : CommandBase() {
         val target: Player = if (args.size == 1) {
             if (sender is ConsoleCommandSender)
                 return sender.sendMessage(
-                    "${D_RED}Console Usage: ${RED}/gm <adventure|creative|survival|spectator> <Target>"
+                    "${ccErr}Console Usage: ${ccErrDetail}/gm <adventure|creative|survival|spectator> <Target>"
                 )
             if (sender !is Player)
                 return
@@ -215,7 +235,7 @@ class GameModeCommand : CommandBase() {
         } else {
             val tn = args[1]
             Bukkit.getPlayer(tn)
-                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$tn")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}$tn")
         }
 
         if (target == sender && sender.lacksPermission(PERM_BASE))
@@ -224,7 +244,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
+            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter")
 
         val eTarget = EssPlayer(target)
 
@@ -259,7 +279,7 @@ class GameModeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                sender.sendMessage("${D_RED}Unknown gamemode ${RED}\"$sub\"")
+                sender.sendMessage("${ccErr}Unknown gamemode ${ccErrDetail}\"$sub\"")
                 return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }
@@ -269,9 +289,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendMessage("${GOLD}Your gamemode has been set to ${RED}$mn")
+        target.sendMessage("${ccPrimary}Your gamemode has been set to ${ccDetail}$mn")
         if (sender != target)
-            sender.sendMessage("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
+            sender.sendMessage("${ccPrimary}You set ${ccDetail}$tn's ${ccPrimary}gamemode to ${ccDetail}$mn")
     }
 
     // MARK: Tab Completion Handler

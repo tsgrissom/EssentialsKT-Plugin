@@ -1,11 +1,10 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.*
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
+import io.github.tsgrissom.pluginapi.extension.* 
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
@@ -15,15 +14,23 @@ import org.bukkit.util.StringUtil
 
 class DamageCommand : CommandBase() {
 
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
     companion object {
         const val PERM = "essentialskt.damage"
         const val PERM_PERCENT = "essentialskt.damage.percent"
     }
 
     private fun sendUsage(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val label = context.label
         val sender = context.sender
-        var usage = "${D_RED}Usage: ${RED}/$label <Target> <AmountAsDecimal"
+        var usage = "${ccErr}Usage: ${ccErrDetail}/$label <Target> <AmountAsDecimal"
 
         usage += if (sender.hasPermission(PERM_PERCENT)) {
             "OrPercentage>"
@@ -35,6 +42,12 @@ class DamageCommand : CommandBase() {
     }
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetail = conf.getChatColor(ChatColorKey.Detail)
+
         val args = context.args
         val sender = context.sender
 
@@ -46,13 +59,13 @@ class DamageCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$sub\"")
 
         if (args.size == 1) {
             if (sub.equalsIc("help", "h", "?", "usage"))
                 return sendUsage(context)
 
-            return sender.sendMessage("${D_RED}You must specify an amount of damage")
+            return sender.sendMessage("${ccErr}You must specify an amount of damage")
         }
 
         val arg1 = args[1]
@@ -67,16 +80,22 @@ class DamageCommand : CommandBase() {
             amount = arg1.toDouble()
 
             if (amount <= 0)
-                return sender.sendMessage("${D_RED}Your damage amount must be a positive nonzero number")
+                return sender.sendMessage("${ccErr}Your damage amount must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
-            return sender.sendMessage("${D_RED}Your damage amount must be a decimal or integer value")
+            return sender.sendMessage("${ccErr}Your damage amount must be a decimal or integer value")
         }
 
         t.damage(amount)
-        sender.sendMessage("${GOLD}Damaged ${RED}${t.name} ${GOLD}for ${RED}${amount} hearts")
+        sender.sendMessage("${ccPrimary}Damaged ${ccDetail}${t.name} ${ccPrimary}for ${ccDetail}${amount} hearts")
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccDetail = conf.getChatColor(ChatColorKey.Detail)
+        val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_PERCENT))
@@ -89,9 +108,9 @@ class DamageCommand : CommandBase() {
             percent = sansPercent.toDouble()
 
             if (percent <= 0)
-                return sender.sendMessage("${D_RED}A percent of max health to damage must be a positive nonzero number")
+                return sender.sendMessage("${ccErr}A percent of max health to damage must be a positive nonzero number")
         } catch (ignored: NumberFormatException) {
-            val text = "${D_RED}Your damage percentage must be a decimal or integer value followed by a percent symbol"
+            val text = "${ccErr}Your damage percentage must be a decimal or integer value followed by a percent symbol"
             return sender.sendMessage(text)
         }
 
@@ -101,7 +120,7 @@ class DamageCommand : CommandBase() {
         val amount = chunk * maxHealth
 
         target.damage(amount)
-        sender.sendMessage("${GOLD}You damaged ${RED}${target.name} ${GOLD}for ${RED}${percent}% ${GOLD}of their max health ${D_GRAY}(${RED}${amount.roundToDigits(2)}${D_GRAY})")
+        sender.sendMessage("${ccPrimary}You damaged ${ccDetail}${target.name} ${ccPrimary}for ${ccDetail}${percent}% ${ccPrimary}of their max health ${ccTert}(${ccDetail}${amount.roundToDigits(2)}${ccTert})")
     }
 
     override fun onTabComplete(

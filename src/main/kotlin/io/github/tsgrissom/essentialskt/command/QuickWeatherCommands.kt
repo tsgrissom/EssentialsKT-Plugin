@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
@@ -23,12 +25,25 @@ class ClearWeatherCommand
 
 abstract class QuickWeatherCommand(private val weatherName: String) : CommandBase() {
 
-    private fun getWeatherSetMessage(w: World) =
-        "${GOLD}You set world ${RED}${w.name}'s ${GOLD}weather to ${RED}$weatherName"
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
+    private fun getWeatherSetMessage(w: World) : String {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
+        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}weather to ${ccDetl}$weatherName"
+    }
 
     abstract fun setWeather(w: World)
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val sender = context.sender
 
@@ -40,7 +55,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendMessage("${D_RED}Could not find world ${RED}\"$sub\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetail}\"$sub\"")
         }
 
         val message = getWeatherSetMessage(world)

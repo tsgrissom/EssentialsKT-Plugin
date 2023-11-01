@@ -23,11 +23,13 @@ import org.bukkit.command.CommandSender
 import org.bukkit.permissions.Permission
 import org.bukkit.util.StringUtil
 
+// TODO Implement configuration-driven chat colors
 class TimeCommand : CommandBase() {
 
     // MARK: Dependency Injection
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
     private fun getTimeUtility() =
         getPlugin().getTimeUtility()
 

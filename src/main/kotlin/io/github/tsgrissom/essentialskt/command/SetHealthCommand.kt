@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
@@ -7,8 +9,6 @@ import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.isPercentage
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command
@@ -17,6 +17,10 @@ import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 class SetHealthCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     companion object {
         const val PERM         = "essentialskt.sethealth"
@@ -27,6 +31,12 @@ class SetHealthCommand : CommandBase() {
     private val flagMax = ValidCommandFlag("max")
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
         val args = context.args
         val len = args.size
         val sender = context.sender
@@ -36,14 +46,14 @@ class SetHealthCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (len == 0)
-            return sender.sendMessage("${D_RED}Usage: ${RED}/sethealth <Target> <AmountAsDouble>")
+            return sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/sethealth <Target> <AmountAsDouble>")
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
 
         if (len == 1)
-            return sender.sendMessage("${D_RED}Please provide an amount of health to set to")
+            return sender.sendMessage("${ccErr}Please provide an amount of health to set to")
 
         val arg1 = args[1]
 
@@ -52,10 +62,10 @@ class SetHealthCommand : CommandBase() {
         }
 
         val arg1d = arg1.toDoubleOrNull()
-            ?: return sender.sendMessage("${D_RED}Invalid decimal value for ${RED}\"$arg1\"")
+            ?: return sender.sendMessage("${ccErr}Invalid decimal value for ${ccErr}\"$arg1\"")
 
         if (arg1d <= 0)
-            return sender.sendMessage("${D_RED}New health value must be a nonzero positive number")
+            return sender.sendMessage("${ccErr}New health value must be a nonzero positive number")
 
         if (flags.wasPassed(flagMax)) {
             return handleChangeMaxHealth(context, t, arg1d)
@@ -64,13 +74,17 @@ class SetHealthCommand : CommandBase() {
         val max = EssPlayer(t).getMaxHealth()
 
         if (arg1d > max)
-            return sender.sendMessage("${RED}$arg1d ${D_RED}would exceed ${RED}${t.name}'s ${D_RED}max health of ${RED}$max")
+            return sender.sendMessage("${ccErrDetl}$arg1d ${ccErr}would exceed ${ccErrDetl}${t.name}'s ${ccErr}max health of ${ccErrDetl}$max")
 
         t.health = arg1d
-        sender.sendMessage("${GOLD}You set ${RED}${t.name}'s ${GOLD}health to ${RED}$arg1")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}$arg1")
     }
 
     private fun handleChangeMaxHealth(context: CommandContext, t: Player, maxHealth: Double) {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_MAX))
@@ -78,10 +92,16 @@ class SetHealthCommand : CommandBase() {
 
         t.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = maxHealth
         t.health = maxHealth
-        sender.sendMessage("${GOLD}You set ${RED}${t.name}'s ${GOLD}maximum health to ${RED}$maxHealth")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}maximum health to ${ccDetl}$maxHealth")
     }
 
     private fun handlePercentageInput(context: CommandContext, t: Player, input: String) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_PERCENT))
@@ -89,10 +109,10 @@ class SetHealthCommand : CommandBase() {
 
         val sansPercent = input.removeSuffix("%")
         val value = sansPercent.toDoubleOrNull()
-            ?: return sender.sendMessage("${RED}\"$input\" ${D_RED}is not a valid percentage value")
+            ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value")
 
         if (value <= 0)
-            return sender.sendMessage("${D_RED}A percentage of max health must be a positive nonzero number")
+            return sender.sendMessage("${ccErr}A percentage of max health must be a positive nonzero number")
 
         val chunk = value / 100
         val attr = t.getAttribute(Attribute.GENERIC_MAX_HEALTH)
@@ -100,7 +120,7 @@ class SetHealthCommand : CommandBase() {
         val amount = chunk * max
 
         t.health = amount
-        sender.sendMessage("${GOLD}You set ${RED}${t.name}'s ${GOLD}health to ${RED}${input} ${GOLD}of their max health")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}${input} ${ccPrim}of their max health")
     }
 
     override fun onTabComplete(

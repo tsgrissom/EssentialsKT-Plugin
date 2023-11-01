@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_BASE
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_OTHERS
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_ADVENTURE
@@ -23,7 +24,12 @@ import org.bukkit.entity.Player
 import org.bukkit.GameMode.*
 import org.bukkit.util.StringUtil
 
+// TODO Support config-driven chat colors
 class GmxCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     override fun execute(context: CommandContext) {
         val label = context.label

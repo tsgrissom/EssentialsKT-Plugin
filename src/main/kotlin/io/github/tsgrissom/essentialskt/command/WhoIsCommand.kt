@@ -1,13 +1,13 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import net.md_5.bungee.api.ChatColor.RED
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -16,6 +16,10 @@ import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 class WhoIsCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     // MARK: Static Declarations
     companion object {
@@ -26,6 +30,10 @@ class WhoIsCommand : CommandBase() {
 
     // MARK: Command Body
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val label = context.label
         val sender = context.sender
 
@@ -33,7 +41,7 @@ class WhoIsCommand : CommandBase() {
             "whoami", "ewhoami" -> handleWhoAmI(context)
             "whois", "ewhois" -> handleWhoIs(context)
             else -> {
-                sender.sendMessage("${D_RED}Unknown ${RED}/whois ${D_RED}command label (this should not happen)")
+                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/whois ${ccErr}command label (this should not happen)")
                 error("Unhandled command label \"$label\" was passed to /whois handler")
             }
         }
@@ -90,6 +98,10 @@ class WhoIsCommand : CommandBase() {
 
     // MARK: Handlers
     private fun handleWhoAmI(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val label = args.size
         val sender = context.sender
@@ -98,7 +110,7 @@ class WhoIsCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console Usage: ${RED}/whois <Target>")
+            return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetl}/whois <Target>")
 
         if (sender !is Player)
             return
@@ -109,7 +121,7 @@ class WhoIsCommand : CommandBase() {
             val sub = args[0]
 
             if (sub.equalsIc(KEYS_SUBC_HELP))
-                return sender.sendMessage("${D_RED}Usage: ${RED}/$label [temporary,permanent]")
+                return sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/$label [temporary,permanent]")
 
             when (sub.lowercase()) {
                 "temporary", "temp", "t" -> displayTemporaryWhoIs(sender, sender)
@@ -121,20 +133,24 @@ class WhoIsCommand : CommandBase() {
     }
 
     private fun handleWhoIs(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val label = context.label
         val len = args.size
         val sender = context.sender
 
         if (args.isEmpty())
-            return sender.sendMessage("${D_RED}Usage: ${RED}/whois <Target>")
+            return sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/whois <Target>")
 
         if (sender.lacksPermission(PERM_OTHERS))
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         val sub = args[0]
         val t = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
 
         if (len == 1) {
             displayWhoIs(sender, t)
@@ -142,7 +158,7 @@ class WhoIsCommand : CommandBase() {
             val arg1 = args[1]
 
             if (arg1.equalsIc(KEYS_SUBC_HELP_OR_USAGE))
-                return sender.sendMessage("${D_RED}Usage: ${RED}/$label <Target> [temporary,permanent]")
+                return sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/$label <Target> [temporary,permanent]")
 
             when (arg1.lowercase()) {
                 "temporary", "temp", "t" -> displayTemporaryWhoIs(sender, t)

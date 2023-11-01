@@ -10,8 +10,10 @@ Colors:
   Primary: GOLD
   Secondary: GRAY
   Success: GREEN
+  Tertiary: DARK_GRAY
   Type: AQUA
   Username: YELLOW
+  Value: YELLOW
 
 Messages:
   JoinEvent: "&a&l+ &e%pd% &6has joined the server"

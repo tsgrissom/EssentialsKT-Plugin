@@ -3,7 +3,7 @@ package io.github.tsgrissom.essentialskt.manager
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.equalsIc
-import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
@@ -77,6 +77,14 @@ class ConfigManager {
             ?: ChatColor.WHITE // Might happen, therefore default to
     }
 
+    fun getBungeeChatColor(key: ChatColorKey) : net.md_5.bungee.api.ChatColor {
+        val def = BungeeChatColor.MAGIC
+        val conf = getFileConfiguration().getConfigurationSection("Colors")
+            ?: return def // This does not happen
+        val colorValue = conf.getString(key.name, getDefaultColorMap()[key.name])!! // Non-null asserted because default provided
+        return BungeeChatColor.valueOf(colorValue)
+    }
+
     /* Base Options */
     fun isDebuggingActive() : Boolean =
         getFileConfiguration().getBoolean("IsDebuggingActive", false)
@@ -94,13 +102,30 @@ class ConfigManager {
     private fun getMessagesSection() : ConfigurationSection? =
         getSection("Messages")
 
+    private fun getDefaultJoinMessage() : String {
+        val ccGreen = ChatColor.GREEN.toString()
+        val ccBold = ChatColor.BOLD.toString()
+        val ccYell = ChatColor.YELLOW.toString()
+        val ccGold = ChatColor.GOLD.toString()
+        return "${ccGreen}${ccBold}+ ${ccYell}%pd% ${ccGold}has joined the server"
+    }
+
     fun getJoinMessage() : String {
-        val def = "${GREEN}${BOLD}+ ${YELLOW}%pd% ${GOLD}has joined the server"
+        val def = getDefaultJoinMessage()
         val sect = getMessagesSection() ?: return def
         return sect.getString("JoinEvent", def) ?: def
     }
+
+    private fun getDefaultQuitMessage() : String {
+        val ccRed = ChatColor.RED.toString()
+        val ccBold = ChatColor.BOLD.toString()
+        val ccYell = ChatColor.YELLOW.toString()
+        val ccGold = ChatColor.GOLD.toString()
+        return "${ccRed}${ccBold}- ${ccYell}%pd% ${ccGold}has left the server"
+    }
+
     fun getQuitMessage() : String {
-        val def = "${RED}${BOLD}- ${YELLOW}%pd% ${GOLD}has left the server"
+        val def = getDefaultQuitMessage()
         val sect = getMessagesSection() ?: return def
         return sect.getString("QuitEvent", def) ?: def
     }

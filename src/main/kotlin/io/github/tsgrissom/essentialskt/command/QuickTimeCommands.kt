@@ -1,10 +1,11 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -24,15 +25,28 @@ class MidnightCommand
 class SunriseCommand
     : QuickTimeCommand(TimeCommand.TIME_SUNRISE, "Dawn")
 
-private fun getTimeSetMessage(w: World, tn: String) =
-    "${GOLD}You set world ${RED}${w.name}'s ${GOLD}time to ${RED}$tn"
-
 open class QuickTimeCommand(
     private val time: Long,
     private val timeName: String
 ) : CommandBase() {
 
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
+    private fun getTimeSetMessage(w: World, tn: String) : String {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+
+        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}time to ${ccDetl}$tn"
+    }
+
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val sender = context.sender
 
@@ -44,7 +58,7 @@ open class QuickTimeCommand(
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendMessage("${D_RED}Could not find world ${RED}\"$sub\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetail}\"$sub\"")
         }
 
         if (TimeCommand.lacksPermissionToSetWorldTime(sender, world))

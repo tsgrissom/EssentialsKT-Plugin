@@ -9,11 +9,9 @@ import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import net.md_5.bungee.api.ChatColor.RED
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 
 class EssKtCommand : CommandBase() {
 
@@ -53,7 +51,9 @@ class EssKtCommand : CommandBase() {
 
     override fun execute(context: CommandContext) {
         val sender = context.sender
-        val ccError = getConfig().getChatColor(ChatColorKey.Error)
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         if (context.lacksPermission(PERM))
             return context.sendNoPermission(sender, PERM)
@@ -70,7 +70,7 @@ class EssKtCommand : CommandBase() {
             "version", "v" -> handleSubcVersion(context)
             "reload", "refresh" -> handleSubcReload(context)
             else -> {
-                sender.sendMessage("${D_RED}Unknown subcommand: ${RED}\"$sub\" ${D_RED}Do ${RED}/esskt ${D_RED}for help.")
+                sender.sendMessage("${ccErr}Unknown subcommand: ${ccErrDetail}\"$sub\" ${ccErr}Do ${ccErrDetail}/esskt ${ccErr}for help.")
             }
         }
     }

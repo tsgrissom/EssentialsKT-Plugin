@@ -21,11 +21,13 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
+// TODO Implement configuration-driven chat color
 class RemoveCommand : CommandBase() {
 
     // MARK: Dependency Injection
     private fun getPlugin() : EssentialsKTPlugin =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
     private fun getEntityUtility() =
         getPlugin().getEntityUtility()
 

@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.extension.*
@@ -17,11 +19,19 @@ import org.bukkit.util.StringUtil
 
 class IPAddressCommand : CommandBase() {
 
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
     companion object {
         const val PERM = "essentialskt.ipaddress"
     }
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val label = context.label
         val sender = context.sender
@@ -30,11 +40,11 @@ class IPAddressCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
-            return sender.sendMessage("${D_RED}Usage: ${RED}/$label <Target>")
+            return sender.sendMessage("${ccErr}Usage: ${ccErrDetail}/$label <Target>")
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${D_RED}Could not find player ${RED}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$sub\"")
 
         sender.sendChatComponents(generateDisplayIPAddressAsTextComponent(t))
     }
@@ -56,6 +66,12 @@ class IPAddressCommand : CommandBase() {
     }
 
     private fun generateDisplayIPAddressAsTextComponent(t: Player) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
+
         val data = ClickableText
             .compose(t.getIPString())
             .color(YELLOW)
@@ -63,10 +79,10 @@ class IPAddressCommand : CommandBase() {
             .value(t.getIPString())
             .toComponent()
         val builder = ComponentBuilder()
-            .appendc(" ---------------------------------------\n", DARK_GRAY)
-            .appendc(" | ", DARK_GRAY).appendc("IP Address of ", GRAY).appendc(t.name, YELLOW).append("\n")
-            .appendc(" | ", DARK_GRAY).appendc("> ", GOLD).bold(true).append(data).bold(false).append("\n").reset()
-            .appendc(" ---------------------------------------", DARK_GRAY) // TODO Write a TextBoxGenerator to create these displays
+            .appendc(" ---------------------------------------\n", ccTert)
+            .appendc(" | ", ccTert).appendc("IP Address of ", ccSec).appendc(t.name, ccUser).append("\n")
+            .appendc(" | ", ccTert).appendc("> ", ccPrim).bold(true).append(data).bold(false).append("\n").reset()
+            .appendc(" ---------------------------------------", ccTert) // TODO Write a TextBoxGenerator to create these displays
 
         return builder.create()
     }

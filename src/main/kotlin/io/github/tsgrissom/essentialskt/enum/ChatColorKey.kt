@@ -9,6 +9,8 @@ enum class ChatColorKey(val defaultValue: ChatColor) {
     Primary(ChatColor.GOLD),
     Secondary(ChatColor.GRAY),
     Success(ChatColor.GREEN),
+    Tertiary(ChatColor.DARK_GRAY),
     Type(ChatColor.AQUA),
-    Username(ChatColor.YELLOW);
+    Username(ChatColor.YELLOW),
+    Value(ChatColor.YELLOW);
 }

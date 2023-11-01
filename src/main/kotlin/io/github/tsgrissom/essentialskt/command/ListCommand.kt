@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.gui.ListEntitiesGui
 import io.github.tsgrissom.essentialskt.gui.ListOnlinePlayersGui
 import io.github.tsgrissom.pluginapi.chat.HoverableText
@@ -21,7 +22,12 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
+// TODO Support config-driven chat colors
 class ListCommand : CommandBase() {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     // MARK: Static Declarations
     companion object {
