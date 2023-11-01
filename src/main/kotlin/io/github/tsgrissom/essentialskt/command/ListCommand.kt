@@ -24,7 +24,7 @@ import org.bukkit.util.StringUtil
 // TODO Support config-driven chat colors
 class ListCommand : CommandBase() {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

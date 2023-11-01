@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 
 class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

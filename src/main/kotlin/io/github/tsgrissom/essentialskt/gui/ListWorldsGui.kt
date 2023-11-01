@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 
 class ListWorldsGui : ChestGui(1, "Worlds") {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

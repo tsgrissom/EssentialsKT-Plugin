@@ -24,7 +24,7 @@ import org.bukkit.util.StringUtil
 
 class EssKtCommand : CommandBase() {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("Plugin not instantiated!")
     private fun getConfig() =
         getPlugin().getConfigManager()

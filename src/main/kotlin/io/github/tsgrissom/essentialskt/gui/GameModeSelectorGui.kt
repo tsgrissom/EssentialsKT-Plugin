@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack
 
 class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, "Select Gamemode") {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

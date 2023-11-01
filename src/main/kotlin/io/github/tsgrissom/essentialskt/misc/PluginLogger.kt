@@ -6,7 +6,7 @@ import org.bukkit.Bukkit
 class PluginLogger {
 
     companion object {
-        private fun getPlugin() : EssentialsKTPlugin =
+        private fun getPlugin() =
             EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
         private val isDebugging: Boolean = getPlugin().getConfigManager().isDebuggingActive()

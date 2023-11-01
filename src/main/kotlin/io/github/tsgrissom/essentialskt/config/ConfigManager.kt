@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration
 
 class ConfigManager {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getFileConfiguration() : FileConfiguration = getPlugin().config
     private fun getSection(key: String) : ConfigurationSection? =

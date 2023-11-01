@@ -14,7 +14,7 @@ import org.bukkit.util.StringUtil
 
 class WeatherCommand : CommandBase() {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

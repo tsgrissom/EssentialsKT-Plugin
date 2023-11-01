@@ -18,7 +18,7 @@ import org.bukkit.util.StringUtil
 
 class SetHealthCommand : CommandBase() {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

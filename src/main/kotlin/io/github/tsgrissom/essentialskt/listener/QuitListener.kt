@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 class QuitListener : Listener {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

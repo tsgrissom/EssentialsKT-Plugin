@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 
 class ToggleDownfallCommand : CommandBase() {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 

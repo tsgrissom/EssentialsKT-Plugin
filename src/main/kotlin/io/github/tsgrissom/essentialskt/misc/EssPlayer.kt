@@ -19,7 +19,7 @@ import java.util.*
 
 class EssPlayer(private val uuid: UUID) {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
 
     private val player: Player = Bukkit.getPlayer(uuid)

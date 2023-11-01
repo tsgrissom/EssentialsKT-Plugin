@@ -20,7 +20,7 @@ class ConfigureChatColorGui(
     private val key: ChatColorKey
 ) : ChestGui(2, "Select new color") {
 
-    private fun getPlugin() : EssentialsKTPlugin =
+    private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
