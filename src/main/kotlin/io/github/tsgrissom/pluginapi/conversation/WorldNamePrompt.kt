@@ -1,7 +1,7 @@
-package io.github.tsgrissom.essentialskt.conversation.prompt
+package io.github.tsgrissom.pluginapi.conversation
 
 import io.github.tsgrissom.pluginapi.extension.equalsIc
-import net.md_5.bungee.api.ChatColor.*
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.conversations.ConversationContext
 import org.bukkit.conversations.Prompt
@@ -13,7 +13,7 @@ class WorldNamePrompt(private val nextPrompt: Prompt?) : ValidatingPrompt() {
     constructor() : this(null)
 
     override fun getPromptText(context: ConversationContext): String {
-        return "${GOLD}Which world are you targeting? ${YELLOW}Current ${GOLD}for the current${DARK_GRAY}: "
+        return "${ChatColor.GOLD}Which world are you targeting? ${ChatColor.YELLOW}Current ${ChatColor.GOLD}for the current${ChatColor.DARK_GRAY}: "
     }
 
     override fun isInputValid(context: ConversationContext, input: String): Boolean {
@@ -22,10 +22,10 @@ class WorldNamePrompt(private val nextPrompt: Prompt?) : ValidatingPrompt() {
 
     override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
         if (input.equalsIc("none", "exit"))
-            return Prompt.END_OF_CONVERSATION
+            return END_OF_CONVERSATION
 
         if (context.forWhom is Player)
-            (context.forWhom as Player).sendMessage("${GREEN}The world you entered is valid")
+            (context.forWhom as Player).sendMessage("${ChatColor.GREEN}The world you entered is valid")
 
         context.setSessionData("world", input)
 
