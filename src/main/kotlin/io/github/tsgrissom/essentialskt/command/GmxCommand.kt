@@ -35,7 +35,6 @@ class GmxCommand : CommandBase() {
         val ccErr = conf.getChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
-        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
 
         val label = context.label
         val sender = context.sender

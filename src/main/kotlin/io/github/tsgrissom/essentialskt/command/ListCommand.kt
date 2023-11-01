@@ -1,6 +1,7 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ListEntitiesGui
 import io.github.tsgrissom.essentialskt.gui.ListOnlinePlayersGui
 import io.github.tsgrissom.pluginapi.chat.HoverableText
@@ -11,8 +12,6 @@ import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import org.bukkit.Bukkit
@@ -45,38 +44,51 @@ class ListCommand : CommandBase() {
     }
 
     // MARK: Text Helper Functions
-    private fun getAvailableLists() =
-        arrayOf(
-            "${GOLD}Available Lists",
-            "${AQUA}Optional flag available to players",
-            "${D_GRAY}> ${YELLOW}entities ${AQUA}--gui",
-            "${D_GRAY}> ${YELLOW}mobs ${AQUA}--gui",
-            "${D_GRAY}> ${YELLOW}players ${AQUA}--gui",
-            "${D_GRAY}> ${YELLOW}worlds ${AQUA}--gui"
+    private fun getAvailableLists() : Array<String> {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+        val ccType = conf.getChatColor(ChatColorKey.Type)
+        val ccVal = conf.getChatColor(ChatColorKey.Value)
+
+        return arrayOf(
+            "${ccPrim}Available Lists",
+            "${ccType}Optional flag available to players",
+            "${ccTert}> ${ccVal}entities ${ccType}--gui",
+            "${ccTert}> ${ccVal}mobs ${ccType}--gui",
+            "${ccTert}> ${ccVal}players ${ccType}--gui",
+            "${ccTert}> ${ccVal}worlds ${ccType}--gui"
         )
+    }
 
     private fun generatePlayerListAsTextComponents() : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
+        
         val onlinePlayers = Bukkit.getOnlinePlayers()
         val count = onlinePlayers.size
         val max = Bukkit.getMaxPlayers()
         val builder = ComponentBuilder()
-            .appendc("Player List ", GRAY)
+            .appendc("Player List ", ccSec)
 
         if (onlinePlayers.isEmpty()) {
             builder
-                .appendc("(", D_GRAY)
-                .appendc("None", RED)
-                .appendc(")", D_GRAY)
+                .appendc("(", ccTert)
+                .appendc("None", ccErrDetl)
+                .appendc(")", ccTert)
 
             return builder.create()
         }
 
         builder
-            .appendc("(", D_GRAY)
-            .appendc("$count", GOLD)
-            .appendc("/", D_GRAY)
-            .appendc("$max", GOLD)
-            .appendc(") ", D_GRAY)
+            .appendc("(", ccTert)
+            .appendc("$count", ccVal)
+            .appendc("/", ccTert)
+            .appendc("$max", ccVal)
+            .appendc(") ", ccTert)
 
         for ((index, p) in onlinePlayers.withIndex()) {
             val loc = p.location
@@ -91,10 +103,10 @@ class ListCommand : CommandBase() {
                     .compose(p.name)
                     .color(YELLOW)
                     .hoverText(
-                        "${D_GRAY}> ${GRAY}Nickname${D_GRAY}: ${RESET}$dn",
-                        "${D_GRAY}> ${GRAY}UUID${D_GRAY}: ${YELLOW}$uuid",
-                        "${D_GRAY}> ${GRAY}Current World${D_GRAY}: ${YELLOW}$wn",
-                        "${D_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${D_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
+                        "${ccTert}> ${ccSec}Nickname${ccTert}: ${RESET}$dn",
+                        "${ccTert}> ${ccSec}UUID${ccTert}: ${ccVal}$uuid",
+                        "${ccTert}> ${ccSec}Current World${ccTert}: ${ccVal}$wn",
+                        "${ccTert}> ${ccSec}Location ${RED}X${GREEN}Y${AQUA}Z${ccTert}: ${RED}$x ${GREEN}$y ${AQUA}$z"
                     )
                     .toComponent()
             )
@@ -107,6 +119,10 @@ class ListCommand : CommandBase() {
 
     // MARK: Command Body
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val sender = context.sender
         val flagGui = ValidCommandFlag.FLAG_GRAPHICAL
@@ -125,12 +141,17 @@ class ListCommand : CommandBase() {
             "mobs", "mob" -> handleSubcMobs(context, flags)
             "players", "pl", "online" -> handleSubcPlayers(context, flags)
             "worlds", "world" -> handleSubcWorlds(context, flags)
-            else -> sender.sendMessage("${D_RED}Unknown list type ${RED}\"$sub\"${D_RED}. Do ${RED}/ls ${D_RED}to view valid types.")
+            else -> {
+                sender.sendMessage("${ccErr}Unknown list type ${ccErrDetl}\"$sub\"${ccErr}. Do ${ccErrDetl}/ls ${ccErr}to view valid types.")
+            }
         }
     }
 
     // MARK: Handlers
     private fun handleSubcPlayers(context: CommandContext, flags: CommandFlagParser) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_PLAYERS))
@@ -142,7 +163,7 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
 
             if (hasGraphicalFlag)
-                sender.sendMessage("${D_RED}Console cannot view GUIs")
+                sender.sendMessage("${ccErr}Console cannot view GUIs")
 
             return
         }
@@ -157,6 +178,9 @@ class ListCommand : CommandBase() {
     }
 
     private fun handleSubcEntities(context: CommandContext, flags: CommandFlagParser) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+
         val sender = context.sender
 
         if  (sender.lacksPermission(PERM_ENTITIES))
@@ -166,7 +190,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs")
 
         // TODO Send text list of entities
     }
@@ -183,6 +207,9 @@ class ListCommand : CommandBase() {
     }
 
     private fun handleSubcMobs(context: CommandContext, flags: CommandFlagParser) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+
         val sender = context.sender
 
         if (sender.lacksPermission(PERM_MOBS))
@@ -192,7 +219,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${D_RED}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs")
 
         sender.sendMessage("TODO Display mobs as text")
         // TODO Display mobs as text components
