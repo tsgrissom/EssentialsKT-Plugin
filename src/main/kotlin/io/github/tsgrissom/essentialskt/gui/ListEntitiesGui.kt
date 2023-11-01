@@ -5,9 +5,9 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.*
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
@@ -47,6 +47,13 @@ class ListEntitiesGui(
             0
 
     private fun createEntityTypeGuiItem(type: EntityType) : GuiItem {
+        val conf = getConfig()
+        val ccType = conf.getChatColor(ChatColorKey.Type)
+        val ccUser = conf.getChatColor(ChatColorKey.Username)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+        val ccReset = ChatColor.RESET
+
         val typeName = type.name
         val name = typeName.capitalizeEachWordAllCaps()
         val isAlive = type.isAlive.fmtYesNo(withColor=true)
@@ -57,11 +64,11 @@ class ListEntitiesGui(
 
         return GuiItem(
             ItemStack(material)
-                .name("${YELLOW}$name")
+                .name("${ccUser}$name")
                 .lore(
-                    "${D_GRAY}> ${GRAY}Type${D_GRAY}: ${AQUA}$typeName",
-                    "${D_GRAY}> ${GRAY}Alive${D_GRAY}: ${RESET}$isAlive",
-                    "${D_GRAY}> ${GRAY}Spawnable${D_GRAY}: ${RESET}$isSpawnable"
+                    "${ccTert}> ${ccSec}Type${ccTert}: ${ccType}$typeName",
+                    "${ccTert}> ${ccSec}Alive${ccTert}: ${ccReset}$isAlive",
+                    "${ccTert}> ${ccSec}Spawnable${ccTert}: ${ccReset}$isSpawnable"
                 )
         ) {
             // TODO Do something on entity gui click
@@ -78,10 +85,14 @@ class ListEntitiesGui(
     }
 
     private fun createToolbar(pagination: PaginatedPane) : OutlinePane {
+        val conf = getConfig()
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+
         val toolbar = OutlinePane(0, paginatedPaneHeight, 9, 1)
-        val itemPrevious = ItemStack(Material.ARROW).name("${GOLD}Previous Page")
-        val itemCenter = ItemStack(Material.COMPASS).name("${GRAY}Navigation")
-        val itemNext = ItemStack(Material.ARROW).name("${GOLD}Next Page")
+        val itemPrevious = ItemStack(Material.ARROW).name("${ccPrim}Previous Page")
+        val itemCenter = ItemStack(Material.COMPASS).name("${ccSec}Navigation")
+        val itemNext = ItemStack(Material.ARROW).name("${ccPrim}Next Page")
         val btnPrevious = GuiItem(itemPrevious) {
             pagination.setPage(getPreviousIndex(pagination))
             updateTitle(pagination)

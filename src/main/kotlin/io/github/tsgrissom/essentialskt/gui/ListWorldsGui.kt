@@ -4,6 +4,7 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.lore
 import io.github.tsgrissom.pluginapi.extension.name
 import net.md_5.bungee.api.ChatColor.*
@@ -47,6 +48,12 @@ class ListWorldsGui : ChestGui(1, "Worlds") {
     }
 
     private fun createWorldGuiButton(w: World) : GuiItem {
+        val conf = getConfig()
+        val ccType = conf.getChatColor(ChatColorKey.Type)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+
         val env = w.environment
         val material = when (env) {
             World.Environment.NORMAL -> Material.GRASS_BLOCK
@@ -63,8 +70,8 @@ class ListWorldsGui : ChestGui(1, "Worlds") {
 
         return GuiItem(
             ItemStack(material)
-                .name("${GOLD}\"${w.name}\"")
-                .lore("${GRAY}Type${D_GRAY}: ${AQUA}$type")
+                .name("${ccPrim}\"${w.name}\"")
+                .lore("${ccSec}Type${ccTert}: ${ccType}$type")
         ) {
             val who = it.whoClicked
 

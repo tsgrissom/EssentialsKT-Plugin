@@ -5,8 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.*
-import net.md_5.bungee.api.ChatColor.*
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -32,13 +32,18 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
         Bukkit.dispatchCommand(whoClicked, "gm $mode ${target.name}")
 
     init {
+        val conf = getConfig()
+        val ccUser = conf.getChatColor(ChatColorKey.Username)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccType = conf.getChatColor(ChatColorKey.Type)
+
         val tn = target.name
         val gm = target.gameMode.name.capitalizeAllCaps()
         val currentItem = GuiItem(
             ItemStack(Material.PLAYER_HEAD)
                 .playerHeadOf(target)
-                .name("${YELLOW}$tn")
-                .lore("${GRAY}In ${AQUA}$gm")
+                .name("${ccUser}$tn")
+                .lore("${ccSec}In ${ccType}$gm")
         )
 
         val pane = OutlinePane(2, 0, 5, 1)
@@ -62,6 +67,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     }
 
     private fun getAdventureGuiItem(): GuiItem {
+        val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.ADVENTURE) {
             STR_CURRENT
         } else {
@@ -74,7 +80,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
 
         return GuiItem(
             ItemStack(Material.MAP)
-                .name("${GOLD}Adventure Mode")
+                .name("${ccPrim}Adventure Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked
@@ -84,6 +90,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     }
 
     private fun getCreativeGuiItem(): GuiItem {
+        val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.CREATIVE) {
             STR_CURRENT
         } else {
@@ -96,7 +103,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
 
         return GuiItem(
             ItemStack(Material.BEDROCK)
-                .name("${GOLD}Creative Mode")
+                .name("${ccPrim}Creative Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked
@@ -106,6 +113,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     }
 
     private fun getSurvivalGuiItem(): GuiItem {
+        val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.SURVIVAL) {
             STR_CURRENT
         } else {
@@ -118,7 +126,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
 
         return GuiItem(
             ItemStack(Material.STONE_SWORD)
-                .name("${GOLD}Survival Mode")
+                .name("${ccPrim}Survival Mode")
                 .lore(lore)
                 .flag(ItemFlag.HIDE_ATTRIBUTES)
         ) { e ->
@@ -129,6 +137,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     }
 
     private fun getSpectatorGuiItem() : GuiItem {
+        val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.SPECTATOR) {
             STR_CURRENT
         } else {
@@ -141,7 +150,7 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
 
         return GuiItem(
             ItemStack(Material.COMPASS)
-                .name("${GOLD}Spectator Mode")
+                .name("${ccPrim}Spectator Mode")
                 .lore(lore)
         ) { e ->
             val who = e.whoClicked

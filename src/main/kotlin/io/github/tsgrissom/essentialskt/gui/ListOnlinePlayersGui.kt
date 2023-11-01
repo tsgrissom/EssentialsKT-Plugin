@@ -4,6 +4,7 @@ import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
@@ -29,6 +30,12 @@ class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
     }
 
     private fun createPlayerHead(p: Player) : GuiItem {
+        val conf = getConfig()
+        val ccUser = conf.getChatColor(ChatColorKey.Username)
+        val ccVal = conf.getChatColor(ChatColorKey.Value)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+        
         val wn = p.world.name
         val x = p.location.x.roundToDigits(1)
         val y = p.location.y.roundToDigits(1)
@@ -43,11 +50,11 @@ class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
                 .playerHeadOf(p)
                 .name("${GOLD}$n")
                 .lore(
-                    "${GRAY}Click to view their ${YELLOW}/whois ${GRAY}profile",
-                    "${D_GRAY}> ${GRAY}Nickname${D_GRAY}: ${YELLOW}$dn",
-                    "${D_GRAY}> ${GRAY}UUID${D_GRAY}: ${YELLOW}$uuid",
-                    "${D_GRAY}> ${GRAY}World${D_GRAY}: ${YELLOW}$wn",
-                    "${D_GRAY}> ${GRAY}Location ${RED}X${GREEN}Y${AQUA}Z${D_GRAY}: ${RED}$x ${GREEN}$y ${AQUA}$z"
+                    "${ccSec}Click to view their ${ccVal}/whois ${ccSec}profile",
+                    "${ccTert}> ${ccSec}Nickname${ccTert}: ${ccUser}$dn",
+                    "${ccTert}> ${ccSec}UUID${ccTert}: ${ccUser}$uuid",
+                    "${ccTert}> ${ccSec}World${ccTert}: ${ccVal}$wn",
+                    "${ccTert}> ${ccSec}Location ${RED}X${GREEN}Y${AQUA}Z${ccTert}: ${RED}$x ${GREEN}$y ${AQUA}$z"
                 )
                 .flag(ItemFlag.HIDE_ATTRIBUTES)
         ) { e ->
