@@ -3,6 +3,7 @@ package io.github.tsgrissom.essentialskt.manager
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -39,13 +40,10 @@ class ConfigManager {
             save()
             return new
         }
-        fun validateColorString(str: String) : Boolean {
-            val resolved = ChatColor.entries.firstOrNull { it.name == str}
-                ?: return false
-
-            return !resolved.isFormat && resolved != ChatColor.RESET
-        }
-
+        fun validateColorString(str: String) : Boolean =
+            ChatColor.entries
+                .filter { NonFormattingChatColorPredicate().test(it) }
+                .firstOrNull { it.name == str} != null
 
         var colors = conf.getConfigurationSection("Colors")!!
         var keys = colors.getKeys(false)

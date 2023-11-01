@@ -13,6 +13,7 @@ import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
+import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -98,20 +99,20 @@ class EssKtCommand : CommandBase() {
         }
 
         fun listChatColors() {
+            val validColors = ChatColor.entries
+                .filter { NonFormattingChatColorPredicate().test(it) }
             sender.sendMessage("Valid Chat Colors:")
 
-            for (c in ChatColor.entries.filter { !it.isFormat && it != ChatColor.RESET }) {
+            for (c in validColors) {
                 val cc = c.toString()
                 val name = c.name.capitalizeEachWordAllCaps()
-                sender.sendMessage(" - $cc$name$ccReset = \"${name.replace(" ", "_")}\"")
+                val inputName = name.replace(" ", "_")
+                sender.sendMessage(" - $cc$name$ccReset = \"$inputName\"")
             }
         }
 
-        if (len == 1) {
-            sender.sendMessage("${ccSec}Options: ${ccVal}colors")
-
-            return
-        }
+        if (len == 1)
+            return sender.sendMessage("${ccSec}Options: ${ccVal}colors")
 
         val arg1 = args[1]
 
@@ -298,7 +299,7 @@ class EssKtCommand : CommandBase() {
         fun String.isValidColorKey() =
             getConfig().fetchColorByKey(this) != null
         val allChatColors = ChatColor.entries
-            .filter { !it.isFormat && it != ChatColor.RESET }
+            .filter { NonFormattingChatColorPredicate().test(it) }
             .map { it.name }
             .toList()
 

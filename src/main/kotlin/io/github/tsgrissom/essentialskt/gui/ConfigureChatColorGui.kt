@@ -9,6 +9,7 @@ import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
 import io.github.tsgrissom.pluginapi.extension.click
 import io.github.tsgrissom.pluginapi.extension.lore
 import io.github.tsgrissom.pluginapi.extension.name
+import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
@@ -45,7 +46,7 @@ class ConfigureChatColorGui(
         val currentColor = conf.getChatColor(key)
 
         val validColors = ChatColor.entries
-            .filter { !it.isFormat && it != ChatColor.RESET }
+            .filter { NonFormattingChatColorPredicate().test(it) }
             .toList()
         val pane = OutlinePane(0, 0, 9, 2)
 
