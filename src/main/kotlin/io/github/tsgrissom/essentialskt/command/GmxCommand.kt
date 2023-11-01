@@ -7,6 +7,7 @@ import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_A
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_CREATIVE
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_SURVIVAL
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_SPECTATOR
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
@@ -14,8 +15,6 @@ import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -24,7 +23,6 @@ import org.bukkit.entity.Player
 import org.bukkit.GameMode.*
 import org.bukkit.util.StringUtil
 
-// TODO Support config-driven chat colors
 class GmxCommand : CommandBase() {
 
     private fun getPlugin() : EssentialsKTPlugin =
@@ -32,13 +30,20 @@ class GmxCommand : CommandBase() {
     private fun getConfig() = getPlugin().getConfigManager()
 
     override fun execute(context: CommandContext) {
+        val conf = getConfig()
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+
         val label = context.label
         val sender = context.sender
         val args = context.args
 
         val target: Player = if (args.isEmpty()) {
             if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${D_RED}Console Usage: ${RED}/$label <Target>")
+                return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetl}/$label <Target>")
             else if (sender !is Player)
                 return
 
@@ -46,7 +51,7 @@ class GmxCommand : CommandBase() {
         } else {
             val tn = args[0]
             val t = Bukkit.getPlayer(tn)
-                ?: return sender.sendMessage("${D_RED}Could not find player ${RED}$tn")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn")
 
             t
         }
@@ -57,7 +62,7 @@ class GmxCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console does not have a gamemode to alter")
+            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter")
 
         val eTarget = EssPlayer(target)
 
@@ -98,9 +103,9 @@ class GmxCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendMessage("${GOLD}Your gamemode is set to ${RED}$mn")
+        target.sendMessage("${ccPrim}Your gamemode is set to ${ccDetl}$mn")
         if (sender != target)
-            sender.sendMessage("${GOLD}You set ${RED}$tn's ${GOLD}gamemode to ${RED}$mn")
+            sender.sendMessage("${ccPrim}You set ${ccDetl}$tn's ${ccPrim}gamemode to ${ccDetl}$mn")
     }
 
     override fun onTabComplete(
