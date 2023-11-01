@@ -1,15 +1,13 @@
 package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.*
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
-import net.md_5.bungee.api.ChatColor.DARK_RED as D_RED
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -38,6 +36,12 @@ class RemoveCommand : CommandBase() {
 
     // MARK: Text Helper Functions
     private fun generateHelpText(context: CommandContext) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
+        val ccSucc = conf.getBungeeChatColor(ChatColorKey.Success)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        
         return CommandHelpGenerator(context)
             .withAliases("killall", "eremove")
             .withSubcommand(
@@ -48,9 +52,9 @@ class RemoveCommand : CommandBase() {
                             .compose("Type")
                             .required(true)
                             .hoverText(
-                                "${GRAY}Type${D_GRAY}: ${RED}Required",
-                                "${GRAY}Type provided can either be a valid entity type",
-                                " ${GRAY}or a preset entity group"
+                                "${ccSec}Type${ccTert}: ${ccErrDetl}Required",
+                                "${ccSec}Type provided can either be a valid entity type",
+                                " ${ccSec}or a preset entity group"
                             )
                     )
                     .withArgument(
@@ -58,11 +62,11 @@ class RemoveCommand : CommandBase() {
                             .compose("Radius OR World")
                             .required(false)
                             .hoverText(
-                                "${GRAY}Type${D_GRAY}: ${GREEN}Optional",
-                                "${GRAY}One of either${D_GRAY}:",
-                                " ${D_GRAY}- ${GRAY}An integer or decimal radius within which",
-                                "   ${GRAY}to clear entities",
-                                " ${D_GRAY}- ${GRAY}A world name to clear the entities in"
+                                "${ccSec}Type${ccTert}: ${ccSucc}Optional",
+                                "${ccSec}One of either${ccTert}:",
+                                " ${ccTert}- ${ccSec}An integer or decimal radius within which",
+                                "   ${ccSec}to clear entities",
+                                " ${ccTert}- ${ccSec}A world name to clear the entities in"
                             )
                     )
                     .withDescription(
@@ -88,34 +92,40 @@ class RemoveCommand : CommandBase() {
         )
 
     private fun getGroupedTypesAsComponents(context: CommandContext) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
+        
         val label = context.label
         val builder = ComponentBuilder()
-            .appendc("Types", GOLD)
-            .appendc(": ", D_GRAY)
+            .appendc("Types", ccPrim)
+            .appendc(": ", ccTert)
 
         for ((i, type) in getValidGroupedTypes().withIndex()) {
             val clickText = ClickableText
                 .compose(type)
-                .color(YELLOW)
+                .color(ccVal)
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
                 .value("/$label $type ")
             builder.append(clickText.toComponent())
 
             if (i != (getValidGroupedTypes().size - 1))
-                builder.appendc(",", GRAY)
+                builder.appendc(",", ccSec)
         }
 
         val click = ClickableText
             .compose("/list mobs")
-            .color(YELLOW)
+            .color(ccVal)
             .action(ClickEvent.Action.RUN_COMMAND)
             .value("/list mobs")
 
         builder
             .append("\n")
-            .appendc("Do ", GOLD)
+            .appendc("Do ", ccPrim)
             .append(click.toComponent())
-            .appendc(" to display valid mob specifiers", GOLD)
+            .appendc(" to display valid mob specifiers", ccPrim)
 
 
         return builder.create()
@@ -128,6 +138,10 @@ class RemoveCommand : CommandBase() {
         targetedType: String,
         radius: Double
     ) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        
         val validGroups = getValidGroupedTypes()
         val validMobs = getEntityUtility().getMobTypes()
             .map { it.name.lowercase() }
@@ -135,8 +149,8 @@ class RemoveCommand : CommandBase() {
 
         if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
             sender.sendMessage(
-                "${D_RED}Unknown entity type ${RED}\"$targetedType\"",
-                "${D_RED}Do ${RED}/remove types ${D_RED}to view valid groups, or ${RED}/list mobs ${D_RED}to view valid mobs."
+                "${ccErr}Unknown entity type ${ccErrDetl}\"$targetedType\"",
+                "${ccErr}Do ${ccErrDetl}/remove types ${ccErr}to view valid groups, or ${ccErrDetl}/list mobs ${ccErr}to view valid mobs."
             )
             return
         }
@@ -144,6 +158,7 @@ class RemoveCommand : CommandBase() {
         val radiusStr: String = if (radius < 0) "infinite" else radius.toString()
 
         Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius")
+        // TODO Implement remove entities in world within radius
     }
 
     // MARK: Command Body
@@ -165,6 +180,10 @@ class RemoveCommand : CommandBase() {
 
     // MARK: Handlers
     private fun handleOneArgument(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val label = context.label
         val sender = context.sender
@@ -178,7 +197,7 @@ class RemoveCommand : CommandBase() {
         }
 
         if (sender is ConsoleCommandSender)
-            return sender.sendMessage("${D_RED}Console Usage: ${RED}/${label} <Type> <World>")
+            return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetl}/${label} <Type> <World>")
         if (sender !is Player)
             return
 
@@ -189,6 +208,10 @@ class RemoveCommand : CommandBase() {
     }
 
     private fun handleMoreThanOneArgument(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+
         val args = context.args
         val label = context.label
         val sender = context.sender
@@ -201,7 +224,7 @@ class RemoveCommand : CommandBase() {
             arg1d = arg1.toDoubleOrNull()
 
             if (arg1d != null && arg1d <= 0.0)
-                return sender.sendMessage("${D_RED}Removal range should be greater than zero. Do ${RED}/${label} ? ${D_RED}for help.")
+                return sender.sendMessage("${ccErr}Removal range should be greater than zero. Do ${ccErrDetl}/${label} ? ${ccErr}for help.")
         } catch (ignored: NumberFormatException) {}
 
         val radius = arg1d ?: -1.0
@@ -209,7 +232,7 @@ class RemoveCommand : CommandBase() {
 
         if (radius < 0) {
             world = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${D_RED}Could not find world ${RED}\"$arg1\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$arg1\"")
         }
 
         removeEntities(sender, world, sub, radius)
