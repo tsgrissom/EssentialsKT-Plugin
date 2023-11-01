@@ -2,10 +2,14 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.enum.ChatColorKey
+import io.github.tsgrissom.essentialskt.gui.ConfigureChatColorGui
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
+import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.extension.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.sendChatComponents
@@ -13,6 +17,8 @@ import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
 class EssKtCommand : CommandBase() {
@@ -55,8 +61,10 @@ class EssKtCommand : CommandBase() {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
         val ccSec = conf.getChatColor(ChatColorKey.Secondary)
         val ccVal = conf.getChatColor(ChatColorKey.Value)
+        val ccReset = ChatColor.RESET
 
         val args = context.args
         val sender = context.sender
@@ -68,7 +76,6 @@ class EssKtCommand : CommandBase() {
 
             for ((i, color) in colors.withIndex()) {
                 val cc = getConfig().getChatColor(color)
-                val ccReset = ChatColor.RESET
                 val name = "$cc${color.name}${ccReset}"
                 list += name
                 if (i != (colors.size - 1)) {
@@ -79,7 +86,7 @@ class EssKtCommand : CommandBase() {
             sender.sendMessage(list)
         }
 
-        fun listColors() {
+        fun listConfiguredColors() {
             val colors = ChatColorKey.entries
             sender.sendMessage("Color Configuration:")
 
@@ -87,6 +94,16 @@ class EssKtCommand : CommandBase() {
                 val key = color.name
                 val value = getConfig().getChatColor(color)
                 sender.sendMessage(" - $value$key Color")
+            }
+        }
+
+        fun listChatColors() {
+            sender.sendMessage("Valid Chat Colors:")
+
+            for (c in ChatColor.entries.filter { !it.isFormat && it != ChatColor.RESET }) {
+                val cc = c.toString()
+                val name = c.name.capitalizeEachWordAllCaps()
+                sender.sendMessage(" - $cc$name$ccReset = \"${name.replace(" ", "_")}\"")
             }
         }
 
@@ -100,13 +117,13 @@ class EssKtCommand : CommandBase() {
 
         if (arg1.equalsIc("colors", "color")) {
             if (len == 2)
-                return listColors()
+                return listConfiguredColors()
 
             val arg2 = args[2]
 
             if (arg2.equalsIc("alter", "change", "set", "configure")) {
                 if (len == 3) {
-                    sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/esskt conf set <Color>")
+                    sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/esskt conf color set <Key>")
                     listColorKeys()
                     return
                 }
@@ -117,18 +134,28 @@ class EssKtCommand : CommandBase() {
                     ?: return sender.sendMessage(textUnknown) // Ensure color key is valid
                 val key = configurableColor.name
 
-                if (len == 4) { // Ex: "/esskt conf color Detail"
+                if (len == 4) { // Ex: "/esskt conf color set Detail"
                     // TODO Open gui
-                    return sender.sendMessage("Open gui for color key \"$key\"")
+
+                    if (sender is Player) {
+                        ConfigureChatColorGui(configurableColor).show(sender)
+                    } else if (sender is ConsoleCommandSender) {
+                        sender.sendMessage("${ccErr}Console cannot open GUIs. Use ${ccErrDetl}/esskt conf color set <Key> <Color> ${ccErr}to alter configurable chat colors from console.")
+                    }
+
+                    return
                 }
 
                 val arg4 = args[4]
 
                 // TODO Permissions
 
-                sender.sendMessage("Validate + Attempt to set configured color to new chat color \"$arg4\"")
                 val new: ChatColor = ChatColor.entries.firstOrNull { it.name.equalsIc(arg4) }
                     ?: return sender.sendMessage("${ccErr}Unknown chat color ${ccErrDetl}\"$arg4\"")
+
+                if (new.isFormat || new == ChatColor.RESET)
+                    return sender.sendMessage("${ccErr}You cannot use a formatting code for a configurable color.")
+
                 val fc = getPlugin().config
                 val path = "Colors.$key"
 
@@ -137,8 +164,45 @@ class EssKtCommand : CommandBase() {
 
                 return sender.sendMessage("Color \"$key\" has been updated to: $new\"Example\"")
             } else if (arg2.equalsIc("list", "ls")) {
-                listColors()
+                listConfiguredColors()
+            } else if (arg2.equalsIc("listvalid", "listcolors", "listcolor")) {
+                listChatColors()
+            } else if (arg2.equalsIc("reset", "resetall")) {
+                val flagConfirm = ValidCommandFlag("Confirm")
+                val flags = CommandFlagParser(args, flagConfirm)
+
+                if (flags.wasPassed(flagConfirm)) {
+                    val fc = getPlugin().config
+                    var alteredCount = 0
+
+                    for (key in ChatColorKey.entries) {
+                        val path = "Colors.${key.name}"
+                        val def = key.defaultValue
+                        val current = fc.getString(path)
+
+                        if (current == null || def != ChatColor.valueOf(current)) {
+                            fc.set(path, key.defaultValue.name)
+                            alteredCount++
+                        }
+                    }
+
+                    if (alteredCount > 0) {
+                        getPlugin().saveConfig()
+                        sender.sendMessage("${ccPrim}All ${ccVal}$alteredCount ${ccPrim}customized chat colors were reset to their default values.")
+                    } else {
+                        sender.sendMessage("${ccErr}There was nothing to change. All colors match their default values.")
+                    }
+
+                    return
+                }
+
+                sender.sendMessage("${ccErr}Are you sure you want to reset the \"Colors\" section of the EssentialsKT configuration? This operation is irreversible.")
+                sender.sendMessage("${ccErr}Execute the command again with the ${ccErrDetl}--confirm ${ccErr}flag if you are sure.")
+            } else {
+                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt conf color ${ccErr}sub-command ${ccErrDetl}\"$arg2\"")
             }
+        } else {
+            sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt ${ccErr}sub-command ${ccErrDetl}\"$arg1\"")
         }
     }
 
@@ -181,7 +245,7 @@ class EssKtCommand : CommandBase() {
 
         val suggestArg0 = mutableListOf("conf", "reload", "version")
         val suggestConfigAreas = mutableListOf("color")
-        val suggestConfigColorSubc = listOf("set", "list")
+        val suggestConfigColorSubc = listOf("set", "list", "listcolors", "reset")
         val validSubcConfigureAliases = listOf("conf", "config", "configure")
         val validConfigColorAliases = listOf("colors", "color")
         val validSetColorSubc = listOf("alter", "change", "set", "configure")
@@ -233,9 +297,8 @@ class EssKtCommand : CommandBase() {
         val arg3 = args[3]
         fun String.isValidColorKey() =
             getConfig().fetchColorByKey(this) != null
-        val formattingCodes = ChatColor.entries.filter { it.isFormat }.toList()
         val allChatColors = ChatColor.entries
-            .filter { !formattingCodes.contains(it) }
+            .filter { !it.isFormat && it != ChatColor.RESET }
             .map { it.name }
             .toList()
 

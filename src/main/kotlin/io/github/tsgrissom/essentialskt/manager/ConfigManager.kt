@@ -39,8 +39,13 @@ class ConfigManager {
             save()
             return new
         }
-        fun validateColorString(str: String) =
-            ChatColor.entries.firstOrNull { it.name == str } != null
+        fun validateColorString(str: String) : Boolean {
+            val resolved = ChatColor.entries.firstOrNull { it.name == str}
+                ?: return false
+
+            return !resolved.isFormat && resolved != ChatColor.RESET
+        }
+
 
         var colors = conf.getConfigurationSection("Colors")!!
         var keys = colors.getKeys(false)
