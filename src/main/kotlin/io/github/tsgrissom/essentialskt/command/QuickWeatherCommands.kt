@@ -40,7 +40,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
     override fun execute(context: CommandContext) {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         val args = context.args
         val sender = context.sender
@@ -53,7 +53,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetail}\"$sub\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$sub\"")
         }
 
         val message = getWeatherSetMessage(world)

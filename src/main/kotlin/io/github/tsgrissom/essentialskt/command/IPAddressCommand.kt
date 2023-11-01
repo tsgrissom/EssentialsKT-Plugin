@@ -29,7 +29,7 @@ class IPAddressCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         val args = context.args
         val label = context.label
@@ -39,11 +39,11 @@ class IPAddressCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM)
 
         if (args.isEmpty())
-            return sender.sendMessage("${ccErr}Usage: ${ccErrDetail}/$label <Target>")
+            return sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/$label <Target>")
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
 
         sender.sendChatComponents(generateDisplayIPAddressAsTextComponent(t))
     }

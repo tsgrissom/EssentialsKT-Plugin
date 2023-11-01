@@ -26,11 +26,11 @@ class DamageCommand : CommandBase() {
     private fun sendUsage(context: CommandContext) {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         val label = context.label
         val sender = context.sender
-        var usage = "${ccErr}Usage: ${ccErrDetail}/$label <Target> <AmountAsDecimal"
+        var usage = "${ccErr}Usage: ${ccErrDetl}/$label <Target> <AmountAsDecimal"
 
         usage += if (sender.hasPermission(PERM_PERCENT)) {
             "OrPercentage>"
@@ -44,7 +44,7 @@ class DamageCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
         val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
         val ccDetail = conf.getChatColor(ChatColorKey.Detail)
 
@@ -59,7 +59,7 @@ class DamageCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
 
         if (args.size == 1) {
             if (sub.equalsIc("help", "h", "?", "usage"))

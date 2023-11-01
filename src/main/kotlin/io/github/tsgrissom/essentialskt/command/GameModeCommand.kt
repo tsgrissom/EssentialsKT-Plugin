@@ -94,7 +94,7 @@ class GameModeCommand : CommandBase() {
     private fun getCommandUsageAsComponent(sender: CommandSender) : Array<BaseComponent> {
         val conf = getConfig()
         val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val isConsole = sender is ConsoleCommandSender
         val available: Set<GameMode> = if (sender is Player)
@@ -104,13 +104,13 @@ class GameModeCommand : CommandBase() {
         val availableNames = available.map { it.name.lowercase() }.toSet()
         val builder = ComponentBuilder()
             .appendc(if (isConsole) "Console Usage: " else "Usage: ", ccErr)
-            .appendc("/gm <", ccErrDetail)
+            .appendc("/gm <", ccErrDetl)
 
         if (available.isNotEmpty()) {
             for ((i, mode) in availableNames.withIndex()) {
                 val clickText = ClickableText
                     .compose(mode)
-                    .color(ccErrDetail)
+                    .color(ccErrDetl)
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
                     .value("/gm $mode ")
 
@@ -125,8 +125,8 @@ class GameModeCommand : CommandBase() {
         }
 
         builder
-            .appendc("> ", ccErrDetail)
-            .appendc(if (isConsole) "<Target>" else "[Target]", ccErrDetail)
+            .appendc("> ", ccErrDetl)
+            .appendc(if (isConsole) "<Target>" else "[Target]", ccErrDetl)
 
         return builder.create()
     }
@@ -200,7 +200,7 @@ class GameModeCommand : CommandBase() {
     override fun execute(context: CommandContext) {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
         val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
         val ccDetail = conf.getChatColor(ChatColorKey.Detail)
 
@@ -226,7 +226,7 @@ class GameModeCommand : CommandBase() {
         val target: Player = if (args.size == 1) {
             if (sender is ConsoleCommandSender)
                 return sender.sendMessage(
-                    "${ccErr}Console Usage: ${ccErrDetail}/gm <adventure|creative|survival|spectator> <Target>"
+                    "${ccErr}Console Usage: ${ccErrDetl}/gm <adventure|creative|survival|spectator> <Target>"
                 )
             if (sender !is Player)
                 return
@@ -235,7 +235,7 @@ class GameModeCommand : CommandBase() {
         } else {
             val tn = args[1]
             Bukkit.getPlayer(tn)
-                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}$tn")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn")
         }
 
         if (target == sender && sender.lacksPermission(PERM_BASE))
@@ -279,7 +279,7 @@ class GameModeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                sender.sendMessage("${ccErr}Unknown gamemode ${ccErrDetail}\"$sub\"")
+                sender.sendMessage("${ccErr}Unknown gamemode ${ccErrDetl}\"$sub\"")
                 return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }

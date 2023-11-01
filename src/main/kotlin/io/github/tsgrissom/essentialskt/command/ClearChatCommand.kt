@@ -54,13 +54,13 @@ class ClearChatCommand : CommandBase() {
         val sender = context.sender
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetail = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
 
         if (sender.lacksPermission(PERM_SELF))
             return context.sendNoPermission(sender, PERM_SELF)
 
         if (sender is ConsoleCommandSender)
-            return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetail}/cls <Target OR all>")
+            return sender.sendMessage("${ccErr}Console Usage: ${ccErrDetl}/cls <Target OR all>")
         if (sender !is Player)
             return
 
@@ -84,7 +84,7 @@ class ClearChatCommand : CommandBase() {
         val args = context.args
         val sender = context.sender
         val ccErr = getConfig().getChatColor(ChatColorKey.Error)
-        val ccErrDetail = getConfig().getChatColor(ChatColorKey.ErrorDetail)
+        val ccErrDetl = getConfig().getChatColor(ChatColorKey.ErrorDetail)
         val ccPrimary = getConfig().getChatColor(ChatColorKey.Primary)
 
         val clearedPlayers = mutableListOf<String>()
@@ -92,10 +92,10 @@ class ClearChatCommand : CommandBase() {
         for (i in 0..args.size) {
             val arg = args[i]
             val t: Player = Bukkit.getPlayer(arg)
-                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetail}\"$arg\"")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$arg\"")
             val tn = t.name
             if (clearedPlayers.contains(tn)) {
-                sender.sendMessage("${ccErr}You already cleared ${ccErrDetail}${tn}'s ${ccErr}chat")
+                sender.sendMessage("${ccErr}You already cleared ${ccErrDetl}${tn}'s ${ccErr}chat")
                 continue
             }
             if (t == sender && sender.lacksPermission(PERM_SELF)) {
@@ -127,7 +127,7 @@ class ClearChatCommand : CommandBase() {
         }
 
         if (!self)
-            sender.sendMessage("${ccPrimary}You cleared ${ccErrDetail}${who} ${ccPrimary}chat messages")
+            sender.sendMessage("${ccPrimary}You cleared ${ccErrDetl}${who} ${ccPrimary}chat messages")
     }
 
     override fun onTabComplete(
