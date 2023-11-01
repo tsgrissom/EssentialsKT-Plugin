@@ -5,7 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.essentialskt.enum.ChatColorKey
+import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -124,7 +124,7 @@ class ListEntitiesGui(
 
         addPane(createToolbar(pagination))
         addPane(pagination)
-        
+
         setOnGlobalClick {
             it.isCancelled = true
         }

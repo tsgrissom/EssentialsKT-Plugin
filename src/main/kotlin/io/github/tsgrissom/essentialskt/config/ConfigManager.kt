@@ -1,7 +1,6 @@
-package io.github.tsgrissom.essentialskt.manager
+package io.github.tsgrissom.essentialskt.config
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.essentialskt.enum.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.equalsIc
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.ChatColor as BungeeChatColor

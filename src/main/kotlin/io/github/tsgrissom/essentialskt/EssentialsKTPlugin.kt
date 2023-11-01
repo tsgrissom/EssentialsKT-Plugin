@@ -4,7 +4,7 @@ import com.earth2me.essentials.Essentials
 import io.github.tsgrissom.essentialskt.command.*
 import io.github.tsgrissom.essentialskt.listener.JoinListener
 import io.github.tsgrissom.essentialskt.listener.QuitListener
-import io.github.tsgrissom.essentialskt.manager.ConfigManager
+import io.github.tsgrissom.essentialskt.config.ConfigManager
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.utility.EntityUtility

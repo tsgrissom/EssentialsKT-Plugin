@@ -7,7 +7,7 @@ import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_A
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_CREATIVE
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_SURVIVAL
 import io.github.tsgrissom.essentialskt.command.GameModeCommand.Companion.PERM_SPECTATOR
-import io.github.tsgrissom.essentialskt.enum.ChatColorKey
+import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext

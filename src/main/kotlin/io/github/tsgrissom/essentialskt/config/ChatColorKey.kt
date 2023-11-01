@@ -1,4 +1,4 @@
-package io.github.tsgrissom.essentialskt.enum
+package io.github.tsgrissom.essentialskt.config
 
 import org.bukkit.ChatColor
 
