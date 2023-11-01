@@ -150,6 +150,7 @@ class EssKtCommand : CommandBase() {
                 val arg4 = args[4]
 
                 // TODO Permissions
+                // TODO Support chat color codes
 
                 val new: ChatColor = ChatColor.entries.firstOrNull { it.name.equalsIc(arg4) }
                     ?: return sender.sendMessage("${ccErr}Unknown chat color ${ccErrDetl}\"$arg4\"")

@@ -33,19 +33,6 @@ class ListEntitiesGui(
         populateContents()
     }
 
-    private fun getPageIndexString(pagination: PaginatedPane) : String =
-        "${pagination.page + 1}/${pagination.pages}"
-    private fun getPreviousIndex(pagination: PaginatedPane) =
-        if (pagination.page > 0)
-            pagination.page - 1
-        else
-            pagination.pages - 1
-    private fun getNextIndex(pagination: PaginatedPane) =
-        if ((pagination.pages - 1) > pagination.page)
-            pagination.page + 1
-        else
-            0
-
     private fun createEntityTypeGuiItem(type: EntityType) : GuiItem {
         val conf = getConfig()
         val ccType = conf.getChatColor(ChatColorKey.Type)
@@ -76,7 +63,7 @@ class ListEntitiesGui(
     }
 
     private fun updateTitle(pagination: PaginatedPane) {
-        val indexStr = getPageIndexString(pagination)
+        val indexStr = pagination.getPageIndexString()
         if (indexStr=="1/1") {
             this.title = titleNoun
             return
@@ -94,13 +81,13 @@ class ListEntitiesGui(
         val itemCenter = ItemStack(Material.COMPASS).name("${ccSec}Navigation")
         val itemNext = ItemStack(Material.ARROW).name("${ccPrim}Next Page")
         val btnPrevious = GuiItem(itemPrevious) {
-            pagination.setPage(getPreviousIndex(pagination))
+            pagination.setPage(pagination.getPreviousIndex())
             updateTitle(pagination)
             update()
         }
         val btnCenter = GuiItem(itemCenter)
         val btnNext = GuiItem(itemNext) {
-            pagination.setPage(getNextIndex(pagination))
+            pagination.setPage(pagination.getNextIndex())
             updateTitle(pagination)
             update()
         }
@@ -137,9 +124,14 @@ class ListEntitiesGui(
 
         addPane(createToolbar(pagination))
         addPane(pagination)
+        
         setOnGlobalClick {
             it.isCancelled = true
         }
+        setOnClose {
+            click(it.player)
+        }
+
         updateTitle(pagination)
     }
 }

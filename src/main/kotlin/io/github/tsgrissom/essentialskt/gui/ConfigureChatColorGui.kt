@@ -15,7 +15,6 @@ import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.function.Consumer
 
 class ConfigureChatColorGui(
     private val key: ChatColorKey
@@ -71,12 +70,11 @@ class ConfigureChatColorGui(
             pane.addItem(item)
         }
 
-        onGlobalClick = Consumer { e ->
-            e.isCancelled = true
+        setOnGlobalClick {
+            it.isCancelled = true
         }
-
-        onClose = Consumer { e ->
-            click(e.player)
+        setOnClose {
+            click(it.player)
         }
 
         addPane(pane)
