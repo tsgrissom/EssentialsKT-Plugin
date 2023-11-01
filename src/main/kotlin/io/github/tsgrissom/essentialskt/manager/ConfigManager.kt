@@ -67,6 +67,9 @@ class ConfigManager {
         }
     }
 
+    fun fetchColorByKey(str: String) : ChatColorKey? =
+        ChatColorKey.entries.firstOrNull { it.name.equalsIc(str) }
+
     // TODO Write in docs about unexpected colors white or magic text and their meaning
     fun getChatColor(key: ChatColorKey) : ChatColor {
         val def = ChatColor.MAGIC
