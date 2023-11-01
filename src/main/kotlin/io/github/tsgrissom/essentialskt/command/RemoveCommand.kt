@@ -19,7 +19,6 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
 
-// TODO Implement configuration-driven chat color
 class RemoveCommand : CommandBase() {
 
     // MARK: Dependency Injection

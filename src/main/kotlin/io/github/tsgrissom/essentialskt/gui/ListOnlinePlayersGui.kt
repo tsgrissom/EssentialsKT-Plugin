@@ -3,6 +3,7 @@ package io.github.tsgrissom.essentialskt.gui
 import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
@@ -13,6 +14,10 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     init {
         val op = Bukkit.getOnlinePlayers()

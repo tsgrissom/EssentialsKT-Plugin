@@ -20,6 +20,7 @@ class ListEntitiesGui(
 
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
     private fun getEntityUtility() =
         getPlugin().getEntityUtility()
 

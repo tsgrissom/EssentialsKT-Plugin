@@ -3,6 +3,7 @@ package io.github.tsgrissom.essentialskt.gui
 import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.pluginapi.extension.lore
 import io.github.tsgrissom.pluginapi.extension.name
 import net.md_5.bungee.api.ChatColor.*
@@ -13,6 +14,20 @@ import org.bukkit.World
 import org.bukkit.inventory.ItemStack
 
 class ListWorldsGui : ChestGui(1, "Worlds") {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
+
+    init {
+        this.rows = calculateRows()
+
+        val pane = OutlinePane(0, 0, 9, this.rows)
+
+        Bukkit.getWorlds().forEach { pane.addItem(createWorldGuiButton(it)) }
+
+        this.addPane(pane)
+    }
 
     private fun calculateRows() : Int {
         val size = Bukkit.getWorlds().size
@@ -57,15 +72,5 @@ class ListWorldsGui : ChestGui(1, "Worlds") {
             who.closeInventory()
             // TODO Do something on world gui click
         }
-    }
-
-    init {
-        this.rows = calculateRows()
-
-        val pane = OutlinePane(0, 0, 9, this.rows)
-
-        Bukkit.getWorlds().forEach { pane.addItem(createWorldGuiButton(it)) }
-
-        this.addPane(pane)
     }
 }

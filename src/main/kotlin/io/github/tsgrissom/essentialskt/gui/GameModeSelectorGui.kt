@@ -3,10 +3,10 @@ package io.github.tsgrissom.essentialskt.gui
 import com.github.stefvanschie.inventoryframework.gui.GuiItem
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
+import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.extension.*
 import net.md_5.bungee.api.ChatColor.*
-import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -16,7 +16,11 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.function.Consumer
 
-class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Gamemode") {
+class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, "Select Gamemode") {
+
+    private fun getPlugin() : EssentialsKTPlugin =
+        EssentialsKTPlugin.instance ?: error("plugin instance is null")
+    private fun getConfig() = getPlugin().getConfigManager()
 
     companion object {
         private const val STR_CURRENT      = "&eYour current gamemode"
@@ -25,14 +29,14 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
     }
 
     private fun alterGameMode(whoClicked: HumanEntity, mode: String) =
-        Bukkit.dispatchCommand(whoClicked, "gm $mode ${t.name}")
+        Bukkit.dispatchCommand(whoClicked, "gm $mode ${target.name}")
 
     init {
-        val tn = t.name
-        val gm = t.gameMode.name.capitalizeAllCaps()
+        val tn = target.name
+        val gm = target.gameMode.name.capitalizeAllCaps()
         val currentItem = GuiItem(
             ItemStack(Material.PLAYER_HEAD)
-                .playerHeadOf(t)
+                .playerHeadOf(target)
                 .name("${YELLOW}$tn")
                 .lore("${GRAY}In ${AQUA}$gm")
         )
@@ -58,10 +62,10 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
     }
 
     private fun getAdventureGuiItem(): GuiItem {
-        val lore = if (p.gameMode == GameMode.ADVENTURE) {
+        val lore = if (sender.gameMode == GameMode.ADVENTURE) {
             STR_CURRENT
         } else {
-            if (p.hasPermission(GameModeCommand.PERM_ADVENTURE)) {
+            if (sender.hasPermission(GameModeCommand.PERM_ADVENTURE)) {
                 STR_CLICK
             } else {
                 STR_NOPERMISSION
@@ -80,10 +84,10 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
     }
 
     private fun getCreativeGuiItem(): GuiItem {
-        val lore = if (p.gameMode == GameMode.CREATIVE) {
+        val lore = if (sender.gameMode == GameMode.CREATIVE) {
             STR_CURRENT
         } else {
-            if (p.hasPermission(GameModeCommand.PERM_CREATIVE)) {
+            if (sender.hasPermission(GameModeCommand.PERM_CREATIVE)) {
                 STR_CLICK
             } else {
                 STR_NOPERMISSION
@@ -102,10 +106,10 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
     }
 
     private fun getSurvivalGuiItem(): GuiItem {
-        val lore = if (p.gameMode == GameMode.SURVIVAL) {
+        val lore = if (sender.gameMode == GameMode.SURVIVAL) {
             STR_CURRENT
         } else {
-            if (p.hasPermission(GameModeCommand.PERM_SURVIVAL)) {
+            if (sender.hasPermission(GameModeCommand.PERM_SURVIVAL)) {
                 STR_CLICK
             } else {
                 STR_NOPERMISSION
@@ -125,10 +129,10 @@ class GameModeSelectorGui(val p: Player, val t: Player) : ChestGui(1, "Select Ga
     }
 
     private fun getSpectatorGuiItem() : GuiItem {
-        val lore = if (p.gameMode == GameMode.SPECTATOR) {
+        val lore = if (sender.gameMode == GameMode.SPECTATOR) {
             STR_CURRENT
         } else {
-            if (p.hasPermission(GameModeCommand.PERM_SPECTATOR)) {
+            if (sender.hasPermission(GameModeCommand.PERM_SPECTATOR)) {
                 STR_CLICK
             } else {
                 STR_NOPERMISSION
