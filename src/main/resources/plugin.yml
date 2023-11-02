@@ -6,90 +6,90 @@ api-version: "1.20"
 depend: ["Essentials"]
 
 author: "tsgrissom"
-description: "A lightweight Essentials replacer written in Kotlin"
+description: "An addon for EssentialsX which adds numerous commands and missing features."
 website: "https://github.com/tsgrissom/EssentialsKT"
 
 commands:
   # General (A-Z)
   clearchat:
-    description: "Clear the visible chat messages of various players on the server"
+    description: "Clear the visible chat messages of various players on the server."
     aliases: ["clearc", "cc", "cls"]
   clearweather:
-    description: "Clear a world's weather"
+    description: "Clear a world's weather."
     aliases: ["clearw", "unrain", "norain", "rainoff"]
   damage:
-    description: "Damage a player for an amount of HP"
+    description: "Damage a player for an amount of HP."
     aliases: [ "dmg", "hurt", "wound", "injure" ]
   esskt:
-    description: "View plugin information"
+    description: "View plugin information."
     aliases: ["essentialskt"]
   gamemode:
-    description: "Alter a player's gamemode"
+    description: "Alter a player's gamemode."
     aliases: ["egamemode", "gm", "egm"]
   gms:
-    description: "Alter a player's gamemode"
+    description: "Alter a player's gamemode."
     aliases: [ "gm0", "gms", "egms", "gm1", "gmc", "egmc", "gm2", "gma", "egma", "gmsp", "egmsp", "gmt", "gmtoggle" ]
   ipaddress:
-    description: "View a player's IP address"
+    description: "View a player's IP address."
     aliases: ["ip", "address", "eipaddress", "eip", "eaddress"]
   list:
-    description: "Display various lists"
+    description: "Display various lists."
     aliases: ["ls"]
   rain:
-    description: "Set a world's weather to be raining"
+    description: "Set a world's weather to be raining."
   remove:
-    description: "Remove entities from a world or within a range"
+    description: "Remove entities from a world or within a range."
     aliases: ["killall", "eremove"]
   renameitem:
-    description: "Rename items without an anvil"
+    description: "Rename items without an anvil."
   setfoodlevel:
-    description: "Set a player's food level"
+    description: "Set a player's food level."
     aliases: ["sethunger"]
   sethealth:
-    description: "Set a player's health"
+    description: "Set a player's health."
   time:
-    description: "View and set world time"
+    description: "View and set world time."
     aliases: ["etime"]
   toggledownfall:
-    description: "Toggles weather in the current world"
+    description: "Toggles weather in the current world."
     aliases: ["tdf"]
   uniqueid:
-    description: "View a player's UUID"
+    description: "View a player's UUID."
     aliases: [ "uuid", "uid" ]
   weather:
-    description: "Set various weather options for each world"
+    description: "Set various weather options for each world."
     aliases: ["wthr"]
   whois:
-    description: "Displays a bunch of player-related information"
+    description: "Displays a bunch of player-related information."
     aliases: ["ewhoami", "ewhoami", "whoami"]
   worlds:
-    description: "Displays list of worlds"
+    description: "Displays list of worlds."
     aliases: ["eworlds", "listworlds", "elistworlds"]
   # Time Setting (Earliest-Latest)
   day:
-    description: "Sets a world's time to day"
+    description: "Sets a world's time to day."
   midnight:
-    description: "Sets a world's time to midnight"
+    description: "Sets a world's time to midnight."
   night:
-    description: "Sets a world's time to night"
+    description: "Sets a world's time to night."
   noon:
-    description: "Sets a world's time to noon"
+    description: "Sets a world's time to noon."
   sunset:
-    description: "Sets a world's time to sunset"
+    description: "Sets a world's time to sunset."
     aliases: [ "dusk" ]
   sunrise:
-    description: "Sets a world's time to sunrise"
+    description: "Sets a world's time to sunrise."
     aliases: [ "dawn" ]
 
 permissions:
   # Grouped Permissions
   essentialskt.*:
-    description: "Grants all permissions for the plugin"
+    description: "Grants all permissions for the plugin."
     children:
       essentialskt.command.*: true
       essentialskt.disclosepermission: true
   essentialskt.command.*:
-    description: "Grants all command-related permissions for the plugin"
+    description: "Grants all command-related permissions for the plugin."
     children:
       essentialskt.clearchat.*: true
       essentialskt.damage: true
@@ -107,106 +107,106 @@ permissions:
       essentialskt.whois: true
       essentialskt.whoami: true
   essentialskt.clearchat.*:
-    description: "Grants all permissions related to /cls"
+    description: "Grants all permissions related to /cls."
     children:
       essentialskt.clearchat: true
       essentialskt.clearchat.all: true
       essentialskt.clearchat.others: true
       essentialskt.clearchat.exemptall: true
   essentialskt.damage.*:
-    description: "Grants all permissions related to /damage"
+    description: "Grants all permissions related to /damage."
     children:
       essentialskt.damage: true
       essentialskt.damage.percent: true
   essentialskt.list.*:
-    description: "Grants all /list related permissions"
+    description: "Grants all /list related permissions."
     children:
       essentialskt.list: true
       essentialskt.list.entities: true
       essentialskt.list.mobs: true
       essentialskt.list.players: true
   essentialskt.renameitem.*:
-    description: "Grants access to all /renameitem permissions"
+    description: "Grants access to all /renameitem permissions."
     children:
       essentialskt.renameitem: true
       essentialskt.renameitem.bypasslimit: true
   essentialskt.setfoodlevel.*:
-    description: "Grants access to all /setfoodlevel permissions"
+    description: "Grants access to all /setfoodlevel permissions."
     children:
       essentialskt.setfoodlevel: true
       essentialskt.setfoodlevel.percent: true
   essentialskt.sethealth.*:
-    description: "Grants access to all /sethealth permissions"
+    description: "Grants access to all /sethealth permissions."
     children:
       essentialskt.sethealth: true
       essentialskt.sethealth.max: true
       essentialskt.sethealth.percent: true
   # New Command Permissions
   essentialskt.clearchat:
-    description: "Allows you to clear your own chat"
+    description: "Allows you to clear your own chat."
   essentialskt.clearchat.all:
-    description: "Allows you clear the chats of everyone on the server"
+    description: "Allows you clear the chats of everyone on the server."
   essentialskt.clearchat.others:
-    description: "Allows you clear the chat of another player"
+    description: "Allows you clear the chat of another player."
   essentialskt.clearchat.exemptall:
-    description: "Allows you to bypass having your chat cleared when someone executes /cls all"
+    description: "Allows you to bypass having your chat cleared when someone executes /cls all."
   essentialskt.damage:
-    description: "Allows you to damage a player by force, either with direct damage or a percent of their max health"
+    description: "Allows you to damage a player by force, either with direct damage or a percent of their max health."
   essentialskt.damage.percent:
-    description: "Allows you to damage a percentage of a player's max health"
+    description: "Allows you to damage a percentage of a player's max health."
   essentialskt.essentialskt:
-    description: "Allows you to view plugin info with /esskt"
+    description: "Allows you to view plugin info with /esskt."
   essentialskt.gamemode:
-    description: "Allows you to alter your own gamemode"
+    description: "Allows you to alter your own gamemode."
   essentialskt.gamemode.others:
-    description: "Allows you to alter another player's gamemode"
+    description: "Allows you to alter another player's gamemode."
   essentialskt.gamemode.adventure:
-    description: "Allows you to set your gamemode to Adventure"
+    description: "Allows you to set your gamemode to Adventure."
   essentialskt.gamemode.creative:
-    description: "Allows you to set your gamemode to Creative"
+    description: "Allows you to set your gamemode to Creative."
   essentialskt.gamemode.survival:
-    description: "Allows you to set your gamemode to Survival"
+    description: "Allows you to set your gamemode to Survival."
   essentialskt.gamemode.spectator:
-    description: "Allows you to set your gamemode to Spectator"
+    description: "Allows you to set your gamemode to Spectator."
   essentialskt.ipaddress:
-    description: "Allows you view a player's IP address"
+    description: "Allows you view a player's IP address."
   essentialskt.list:
-    description: "Allows you to access /ls"
+    description: "Allows you to access /ls."
   essentialskt.list.entities:
-    description: "Allows you to access /ls entities"
+    description: "Allows you to access /ls entities."
   essentialskt.list.mobs:
-    description: "Allows you to access /ls mobs"
+    description: "Allows you to access /ls mobs."
   essentialskt.list.players:
-    description: "Allows you to access /ls players"
+    description: "Allows you to access /ls players."
   essentialskt.renameitem:
-    description: "Allows you to rename items without an anvil"
+    description: "Allows you to rename items without an anvil."
   essentialskt.renameitem.bypasslimit:
-    description: "Allows you to exceed the character limit of renaming items"
+    description: "Allows you to exceed the character limit of renaming items."
   essentialskt.setfoodlevel:
-    description: "Allows you to set a player's food level"
+    description: "Allows you to set a player's food level."
   essentialskt.setfoodlevel.percent:
-    description: "Allows you to set a player's food level to a percent of 20"
+    description: "Allows you to set a player's food level to a percent of 20."
   essentialskt.sethealth:
-    description: "Allows you to set a player's health"
+    description: "Allows you to set a player's health."
   essentialskt.sethealth.max:
-    description: "Allows you to set a player's max health"
+    description: "Allows you to set a player's max health."
   essentialskt.sethealth.percent:
-    description: "Allows you to set a player's health to a percent of their max health"
+    description: "Allows you to set a player's health to a percent of their max health."
   essentialskt.toggledownfall:
-    description: "Allows you to toggle the weather"
+    description: "Allows you to toggle the weather."
   essentialskt.uniqueid:
-    description: "Allows you to view and copy the UUIDs of players"
+    description: "Allows you to view and copy the UUIDs of players."
   essentialskt.whois:
-    description: "Allows you view a player's /whois profile"
+    description: "Allows you view a player's /whois profile."
   essentialskt.whois.ip:
-    description: "Allows you to view a player's IP address in /whois"
+    description: "Allows you to view a player's IP address in /whois."
   essentialskt.whoami:
-    description: "Allows you to view your own /whois profile"
+    description: "Allows you to view your own /whois profile."
 
   # Special Permissions
   essentials.gamemode.noalter:
-    description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions"
+    description: "Negates any alteration made to your gamemode by another player. Excluded from wildcard permissions."
     default: false
   essentialskt.disclosepermission:
-    description: "Displays missing permission when failing a permission check"
+    description: "Displays missing permission when failing a permission check."
     default: op
