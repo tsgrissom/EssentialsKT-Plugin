@@ -11,6 +11,9 @@ import org.bukkit.ChatColor
 
 class StringUtility {
 
+    /**
+     * TODO Generate multi-line list
+     */
     companion object {
         fun createFormattedList(
             name: String = "List",
@@ -66,7 +69,7 @@ class StringUtility {
             name: String = "List",
             collection: Collection<String>,
             delimiter: String = ", ",
-            onHoverElement: (str: String) -> Array<BaseComponent>,
+            onHoverElement: (String) -> Array<BaseComponent>,
             colorPrimary: BungeeChatColor = BungeeChatColor.GOLD,
             colorPunctuation: BungeeChatColor = BungeeChatColor.DARK_GRAY,
             colorValue: BungeeChatColor = BungeeChatColor.YELLOW
@@ -115,8 +118,8 @@ class StringUtility {
             name: String = "List",
             collection: Collection<String>,
             delimiter: String = ", ",
-            onClickAction: (str: String) -> ClickEvent.Action,
-            onClickValue: (str: String) -> String,
+            onClickAction: (String) -> ClickEvent.Action,
+            onClickValue: (String) -> String,
             colorPrimary: BungeeChatColor = BungeeChatColor.GOLD,
             colorPunctuation: BungeeChatColor = BungeeChatColor.DARK_GRAY,
             colorValue: BungeeChatColor = BungeeChatColor.YELLOW

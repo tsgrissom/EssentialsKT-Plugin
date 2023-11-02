@@ -2,6 +2,7 @@ name: "EssentialsKT"
 main: "io.github.tsgrissom.essentialskt.EssentialsKTPlugin"
 version: "1.0.0"
 api-version: "1.20"
+prefix: "EssKT"
 
 depend: ["Essentials"]
 

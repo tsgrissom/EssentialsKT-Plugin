@@ -17,8 +17,6 @@ import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
-import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.chat.hover.content.Content
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -37,6 +35,7 @@ class EssKtCommand : CommandBase() {
         const val PERM = "essentialskt.essentialskt"
     }
 
+    // MARK: Text Helper Functions
     private fun getHelpAsComponents(context: CommandContext) : Array<BaseComponent> {
         val help = CommandHelpGenerator(context)
 
@@ -50,6 +49,7 @@ class EssKtCommand : CommandBase() {
         return help.toComponents()
     }
 
+    // MARK: Handlers
     private fun handleSubcVersion(context: CommandContext) {
         val version = getPlugin().description.version
         context.sender.sendMessage("EssentialsKT version: $version")
@@ -120,13 +120,13 @@ class EssKtCommand : CommandBase() {
 
         val arg1 = args[1]
 
-        if (arg1.equalsIc("colors", "color")) {
+        fun handleConfigurationAreaColors() {
             if (len == 2)
                 return listConfiguredColors()
 
             val arg2 = args[2]
 
-            if (arg2.equalsIc("alter", "change", "set", "configure")) {
+            fun handleSet() {
                 if (len == 3) {
                     sender.sendMessage("${ccErr}Usage: ${ccErrDetl}/esskt conf color set <Key>")
                     listColorKeys()
@@ -168,11 +168,9 @@ class EssKtCommand : CommandBase() {
                 getPlugin().saveConfig()
 
                 return sender.sendMessage("Color \"$key\" has been updated to: $new\"Example\"")
-            } else if (arg2.equalsIc("list", "ls")) {
-                listConfiguredColors()
-            } else if (arg2.equalsIc("listvalid", "listcolors", "listcolor")) {
-                listChatColors()
-            } else if (arg2.equalsIc("reset", "resetall")) {
+            }
+
+            fun handleReset() {
                 val flagConfirm = ValidCommandFlag("Confirm")
                 val flags = CommandFlagParser(args, flagConfirm)
 
@@ -201,13 +199,28 @@ class EssKtCommand : CommandBase() {
                     return
                 }
 
-                sender.sendMessage("${ccErr}Are you sure you want to reset the \"Colors\" section of the EssentialsKT configuration? This operation is irreversible.")
-                sender.sendMessage("${ccErr}Execute the command again with the ${ccErrDetl}--confirm ${ccErr}flag if you are sure.")
-            } else {
-                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt conf color ${ccErr}sub-command ${ccErrDetl}\"$arg2\"")
+                sender.sendMessage(
+                    "${ccErr}Are you sure you want to reset the \"Colors\" section of the EssentialsKT configuration? This operation is irreversible.",
+                    "${ccErr}Execute the command again with the ${ccErrDetl}--confirm ${ccErr}flag if you are sure."
+                )
             }
-        } else {
-            sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt ${ccErr}sub-command ${ccErrDetl}\"$arg1\"")
+
+            when (arg2.lowercase()) {
+                "alter", "change", "configure", "set" -> handleSet()
+                "list", "ls" -> listConfiguredColors()
+                "listvalid", "listcolors", "listcolor" -> listChatColors()
+                "reset", "resetall" -> handleReset()
+                else -> {
+                    sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt conf color ${ccErr}sub-command ${ccErrDetl}\"$arg2\"")
+                }
+            }
+        }
+
+        when (arg1.lowercase()) {
+            "colors", "color" -> handleConfigurationAreaColors()
+            else -> {
+                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/esskt ${ccErr}sub-command ${ccErrDetl}\"$arg1\"")
+            }
         }
     }
 
@@ -241,26 +254,18 @@ class EssKtCommand : CommandBase() {
             sender.sendMessage(list)
         }
 
-        val path = "IsDebuggingActive"
-        val fc = getPlugin().config
-        fun save() = getPlugin().saveConfig()
-
         fun handleToggle() {
-            val inv = !conf.isDebuggingActive()
-            fc.set(path, inv)
-            save()
+            conf.toggleDebugging()
             printDebugState()
         }
 
         fun handleOn() {
-            fc.set(path, true)
-            save()
+            conf.setDebugging(true)
             printDebugState()
         }
 
         fun handleOff() {
-            fc.set(path, false)
-            save()
+            conf.setDebugging(false)
             printDebugState()
         }
 
@@ -283,6 +288,7 @@ class EssKtCommand : CommandBase() {
         }
     }
 
+    // MARK: Command Body
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val conf = getConfig()
@@ -318,12 +324,8 @@ class EssKtCommand : CommandBase() {
 
                 val clickableList = StringUtility.createClickableFormattedList(
                     collection=listOf("dog", "cat", "rat", "bat"),
-                    onClickAction={
-                        ClickEvent.Action.SUGGEST_COMMAND
-                    },
-                    onClickValue={
-                        it
-                    }
+                    onClickAction={ClickEvent.Action.SUGGEST_COMMAND},
+                    onClickValue={it}
                 )
 
                 sender.sendChatComponents(clickableList)
@@ -335,6 +337,7 @@ class EssKtCommand : CommandBase() {
         }
     }
 
+    // MARK: Tab Completion Handler
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
@@ -370,8 +373,8 @@ class EssKtCommand : CommandBase() {
             if (arg0.equalsIc(validSubcConfigureAliases)) {
                 StringUtil.copyPartialMatches(args[1], suggestConfigAreas, tab)
             } else if (arg0.equalsIc(validSubcDebugAliases)) {
-                val debug = getConfig().isDebuggingActive()
-                suggestDebugSubc.add(if (debug) "disable" else "enable")
+                val isDebugging = getConfig().isDebuggingActive()
+                suggestDebugSubc.add(if (isDebugging) "disable" else "enable")
 
                 StringUtil.copyPartialMatches(args[1], suggestDebugSubc, tab)
             }

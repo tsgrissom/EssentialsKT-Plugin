@@ -46,12 +46,12 @@ class EssentialsKTPlugin : JavaPlugin() {
         val pl: Plugin? = getPluginManager().getPlugin("Essentials")
 
         if (pl == null) {
-            PluginLogger.severe("[EssentialsKT] Essentials not found! Please install EssentialsX to use EssentialsKT.")
+            PluginLogger.severe("Essentials not found! Please install EssentialsX to use EssentialsKT.", withPrefix=true)
             return getPluginManager().disablePlugin(this)
         }
 
         this.essentialsPlugin = pl as Essentials
-        PluginLogger.info("[EssentialsKT] Essentials hook created.")
+        PluginLogger.info("Essentials hook created.", withPrefix=true)
     }
 
     private fun registerCommands() {

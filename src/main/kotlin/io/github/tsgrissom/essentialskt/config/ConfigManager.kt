@@ -1,6 +1,7 @@
 package io.github.tsgrissom.essentialskt.config
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
+import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
@@ -13,23 +14,16 @@ class ConfigManager {
 
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
-    private fun getFileConfiguration() : FileConfiguration = getPlugin().config
-    private fun getSection(key: String) : ConfigurationSection? =
-        getFileConfiguration().getConfigurationSection(key)
+    private fun getFileConfiguration() = getPlugin().config
+    private fun save() = getPlugin().saveConfig()
+
+    // MARK: Bootstrapping
 
     init {
         processConfiguration()
     }
 
-    // TODO Reload command + logic here
-
-    private fun getDefaultColorMap() =
-        ChatColorKey.entries.associate {
-            it.name to it.defaultValue.name
-        }
-
     private fun processConfiguration() {
-        val bLog = Bukkit.getLogger()
         val conf = getFileConfiguration()
         val defColors = getDefaultColorMap()
 
@@ -39,10 +33,6 @@ class ConfigManager {
             save()
             return new
         }
-//        fun isValidColorString(str: String) : Boolean =
-//            ChatColor.entries
-//                .filter { NonFormattingChatColorPredicate().test(it) }
-//                .firstOrNull { it.name == str} != null
 
         fun isValidColorString(value: String) : Boolean {
             val isInFiltered = ChatColor.entries
@@ -61,25 +51,40 @@ class ConfigManager {
         if (keys.isEmpty()) {
             colors = createColorsSection()
             keys = colors.getKeys()
-            bLog.warning("[EssKT] A new Colors section was created in the config.yml")
+            PluginLogger.warn("A new Colors section was created in the config.yml", withPrefix=true)
         }
 
         for (key in keys) {
             if (!defColors.contains(key)) {
-                bLog.warning("Unknown key in Colors section \"$key\", skipping...")
+                PluginLogger.warnD("Unknown key in Colors section \"$key\", skipping...")
                 continue
             }
             val value = colors.getString(key) ?: "NOT_A_STR"
             if (!isValidColorString(value)) {
-                bLog.warning("In config.yml: \"Colors.$key\": Color value \"$value\" is not a valid color reference")
+                PluginLogger.warnD("In config.yml: \"Colors.$key\": Color value \"$value\" is not a valid color reference")
                 continue
             }
             // Key is valid, ChatColor value is valid
-            if (isDebuggingActive()) {
-                bLog.info("Configured key-color value validated: \"Colors.$key\"->\"$value\"")
-            }
+            PluginLogger.infoD("Configured key-color value validated: \"Colors.$key\"->\"$value\"")
         }
     }
+
+    // MARK: Configuration Sections
+
+    private fun getSection(key: String) : ConfigurationSection? =
+        getFileConfiguration().getConfigurationSection(key)
+    private fun getMessagesSection() =
+        getSection("Messages")
+    private fun getCommandsSection() =
+        getSection("Commands")
+
+    // TODO Reload command + logic here
+    // MARK: Configurable ChatColor
+
+    private fun getDefaultColorMap() =
+        ChatColorKey.entries.associate {
+            it.name to it.defaultValue.name
+        }
 
     fun getKeyedChatColorByName(str: String) : ChatColorKey? =
         ChatColorKey.entries.firstOrNull { it.name.equalsIc(str) }
@@ -98,22 +103,30 @@ class ConfigManager {
     fun getBungeeChatColor(key: ChatColorKey) : BungeeChatColor =
         getChatColor(key).convertToBungeeChatColor()
 
-    /* Base Options */
+    // MARK: Debugger
+
     fun isDebuggingActive() : Boolean =
         getFileConfiguration().getBoolean("IsDebuggingActive", false)
 
-    /* Command Options */
-    private fun getCommandsSection() : ConfigurationSection? =
-        getSection("Commands")
+    fun setDebugging(b: Boolean) {
+        getPlugin().config.set("IsDebuggingActive", b)
+        save()
+    }
+
+    fun toggleDebugging() : Boolean {
+        val inverse = !isDebuggingActive()
+        setDebugging(inverse)
+        return inverse
+    }
+
+    // MARK: Configurable Commands Features
 
     fun getClearChatRepeatBlankLineCount() : Int {
         val sect = getCommandsSection() ?: return 500
         return sect.getInt("ClearChatRepeatBlankLine", 500)
     }
 
-    /* Chat Messages */
-    private fun getMessagesSection() : ConfigurationSection? =
-        getSection("Messages")
+    // MARK: Configurable Chat Messages
 
     private fun getDefaultJoinMessage() : String {
         val ccGreen = ChatColor.GREEN.toString()

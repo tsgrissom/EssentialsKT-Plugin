@@ -94,7 +94,7 @@ class CommandContext(
 
         val executed = getExecutedString(withLabel=false, startIndex, endIndex)
 
-        PluginLogger.info(
+        PluginLogger.infoD(
             "Debug Print for getQuotedStringFromArgsRange(${startIndex}, ${endIndex})",
             "Executed String for $range=${executed}",
             "Is Quoted=${executed.isQuoted()}",
@@ -150,7 +150,7 @@ class CommandContext(
                 val leadingMark = arg.startsWithQuote()
                     ?: continue
 
-                PluginLogger.info(
+                PluginLogger.infoD(
                     "Found leading quotation mark (${leadingMark}) in args[${n}](=${arg}) of potential quoted String(=${fullString})"
                 )
 
@@ -165,7 +165,7 @@ class CommandContext(
                 val trailingMark = arg.endsWithQuote()
 
                 if (trailingMark == null) {
-                    PluginLogger.info(
+                    PluginLogger.infoD(
                         "Any trailing quote mark not found at args[$n](=$arg), continuing"
                     )
                     continue
@@ -178,16 +178,16 @@ class CommandContext(
         }
 
         if (startIndex == null) {
-            PluginLogger.warn("Search loop terminated without finding a startIndex")
+            PluginLogger.warnD("Search loop terminated without finding a startIndex")
             return null
         } else if (endIndex == null) {
-            PluginLogger.warn("Search loop terminated without finding an endIndex")
+            PluginLogger.warnD("Search loop terminated without finding an endIndex")
             return null
         }
 
         val range = "Range[$startIndex, $endIndex]"
 
-        PluginLogger.info(
+        PluginLogger.infoD(
             "getAnyQuotedString has found potential quoted String for $range. Passing to getQuotedStringForRange method."
         )
         return getQuotedStringFromArgsRange(startIndex, endIndex)
