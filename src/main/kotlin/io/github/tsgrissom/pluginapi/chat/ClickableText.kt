@@ -1,5 +1,6 @@
 package io.github.tsgrissom.pluginapi.chat
 
+import io.github.tsgrissom.pluginapi.extension.getDynamicHoverEvent
 import io.github.tsgrissom.pluginapi.extension.translateColor
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatColor.GRAY
@@ -127,26 +128,14 @@ class ClickableText(
      * @return The constructed TextComponent.
      */
     fun toComponent() : TextComponent {
-        fun getShowTextOnHoverEvent(text: String) : HoverEvent =
-            HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(text.translateColor()))
-
         val text = TextComponent(text)
-        val hoverEvent: HoverEvent? = if (hoverText.isNotEmpty()) {
-            HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText.map { Text(it) })
-        } else {
-            when (action) {
-                CHANGE_PAGE -> getShowTextOnHoverEvent("${GRAY}Click to change page")
-                COPY_TO_CLIPBOARD -> getShowTextOnHoverEvent("${GRAY}Click to copy to clipboard: ${YELLOW}$value")
-                OPEN_FILE -> getShowTextOnHoverEvent("${GRAY}Click to open file")
-                OPEN_URL -> getShowTextOnHoverEvent("${GRAY}Click to open URL: ${YELLOW}$value")
-                SUGGEST_COMMAND -> getShowTextOnHoverEvent("${GRAY}Click to suggest command: ${YELLOW}$value")
-                RUN_COMMAND -> getShowTextOnHoverEvent("${GRAY}Click to run command: ${YELLOW}$value")
-
-                else -> null
-            }
-        }
-
         text.clickEvent = ClickEvent(action, value)
+
+        val hoverEvent: HoverEvent? = if (hoverText.isNotEmpty())
+            HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText.map { Text(it) })
+        else
+            text.clickEvent.getDynamicHoverEvent()
+
         if (prependColor != null)
             text.color = prependColor
         if (hoverEvent != null)

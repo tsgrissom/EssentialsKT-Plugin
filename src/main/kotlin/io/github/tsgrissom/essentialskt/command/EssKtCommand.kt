@@ -15,6 +15,7 @@ import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import io.github.tsgrissom.pluginapi.utility.StringUtility
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Content
@@ -314,6 +315,18 @@ class EssKtCommand : CommandBase() {
                     }
                 )
                 sender.sendChatComponents(hoverableList)
+
+                val clickableList = StringUtility.createClickableFormattedList(
+                    collection=listOf("dog", "cat", "rat", "bat"),
+                    onClickAction={
+                        ClickEvent.Action.SUGGEST_COMMAND
+                    },
+                    onClickValue={
+                        it
+                    }
+                )
+
+                sender.sendChatComponents(clickableList)
             }
             "version", "v" -> handleSubcVersion(context)
             else -> {

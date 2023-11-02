@@ -1,11 +1,12 @@
 package io.github.tsgrissom.pluginapi.utility
 
+import io.github.tsgrissom.pluginapi.extension.getDynamicHoverEvent
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
-import net.md_5.bungee.api.chat.hover.content.Content
 import org.bukkit.ChatColor
 
 class StringUtility {
@@ -63,27 +64,27 @@ class StringUtility {
             onHoverElement: (str: String) -> Array<BaseComponent>,
             colorPrimary: BungeeChatColor = BungeeChatColor.GOLD,
             colorPunctuation: BungeeChatColor = BungeeChatColor.DARK_GRAY,
-            colorValue: BungeeChatColor = BungeeChatColor.YELLOW,
+            colorValue: BungeeChatColor = BungeeChatColor.YELLOW
         ) : Array<BaseComponent> {
-            val parent = TextComponent(name)
-            parent.color = colorPrimary
-            fun finish() = ComponentBuilder(parent).create()
+            val root = TextComponent(name)
+            root.color = colorPrimary
+            fun finish() = ComponentBuilder(root).create()
 
             val colon = TextComponent(": ")
             colon.color = colorPunctuation
-            parent.addExtra(colon)
+            root.addExtra(colon)
 
             if (collection.isEmpty()) {
                 val none = TextComponent("None")
                 none.color = BungeeChatColor.RED
 
-                parent.addExtra(none)
+                root.addExtra(none)
 
                 return finish()
             }
 
-            val delimiterComponent = TextComponent(delimiter)
-            delimiterComponent.color = colorPunctuation
+            val delim = TextComponent(delimiter)
+            delim.color = colorPunctuation
 
             val list = TextComponent()
 
@@ -96,19 +97,66 @@ class StringUtility {
                 list.addExtra(item)
 
                 if (i != (collection.size - 1)) {
-                    list.addExtra(delimiterComponent)
+                    list.addExtra(delim)
                 }
             }
 
-            parent.addExtra(list)
+            root.addExtra(list)
 
             return finish()
         }
 
         fun createClickableFormattedList(
-
+            name: String = "List",
+            collection: Collection<String>,
+            delimiter: String = ", ",
+            onClickAction: (str: String) -> ClickEvent.Action,
+            onClickValue: (str: String) -> String,
+            colorPrimary: BungeeChatColor = BungeeChatColor.GOLD,
+            colorPunctuation: BungeeChatColor = BungeeChatColor.DARK_GRAY,
+            colorValue: BungeeChatColor = BungeeChatColor.YELLOW
         ) : Array<BaseComponent> {
-            return ComponentBuilder().create()
+            val root = TextComponent(name)
+            root.color = colorPrimary
+            fun finish() = ComponentBuilder(root).create()
+
+            val colon = TextComponent(": ")
+            colon.color = colorPunctuation
+            root.addExtra(colon)
+
+            if (collection.isEmpty()) {
+                val none = TextComponent("None")
+                none.color = BungeeChatColor.RED
+
+                root.addExtra(none)
+
+                return finish()
+            }
+
+            val delim = TextComponent(delimiter)
+            delim.color = colorPunctuation
+
+            val list = TextComponent()
+
+            for ((i, el) in collection.withIndex()) {
+                val action = onClickAction(el)
+                val value = onClickValue(el)
+                val item = TextComponent(el)
+
+                item.color = colorValue
+                item.clickEvent = ClickEvent(action, value)
+                item.hoverEvent = item.clickEvent.getDynamicHoverEvent()
+
+                list.addExtra(item)
+
+                if (i != (collection.size - 1)) {
+                    list.addExtra(delim)
+                }
+            }
+
+            root.addExtra(list)
+
+            return finish()
         }
     }
 }
