@@ -55,7 +55,12 @@ class StringUtility {
             name: String = "List",
             collection: Collection<String>,
             delimiter: String = ", "
-        ) = createFormattedList(name, collection, delimiter=delimiter)
+        ) : String {
+            return createFormattedList(
+                name, collection, delimiter=delimiter,
+                colorPrimary=ChatColor.WHITE, colorPunctuation=ChatColor.WHITE, colorValue=ChatColor.WHITE
+            )
+        }
 
         fun createHoverableFormattedList(
             name: String = "List",
