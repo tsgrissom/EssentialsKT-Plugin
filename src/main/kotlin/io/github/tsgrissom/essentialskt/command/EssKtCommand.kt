@@ -13,7 +13,11 @@ import io.github.tsgrissom.pluginapi.enum.BooleanFormat
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import io.github.tsgrissom.pluginapi.utility.StringUtility
+import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Content
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -299,6 +303,18 @@ class EssKtCommand : CommandBase() {
             "conf", "config", "configure" -> handleSubcConfig(context)
             "debug", "d" -> handleSubcDebug(context)
             "reload", "refresh" -> handleSubcReload(context)
+            "test" -> {
+                val hoverableList = StringUtility.createHoverableFormattedList(
+                    collection=listOf("One thing", "another thing", "another thing"),
+                    onHoverElement={
+                        ComponentBuilder("This is line 1 for ")
+                            .color(BungeeChatColor.GRAY)
+                            .appendc(it, BungeeChatColor.GREEN)
+                            .create()
+                    }
+                )
+                sender.sendChatComponents(hoverableList)
+            }
             "version", "v" -> handleSubcVersion(context)
             else -> {
                 sender.sendMessage("${ccErr}Unknown subcommand: ${ccErrDetl}\"$sub\" ${ccErr}Do ${ccErrDetl}/esskt ${ccErr}for help.")
