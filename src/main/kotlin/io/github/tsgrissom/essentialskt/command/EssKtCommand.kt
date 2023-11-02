@@ -9,8 +9,10 @@ import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.enum.BooleanFormat
 import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
+import io.github.tsgrissom.pluginapi.utility.StringUtility
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -147,7 +149,6 @@ class EssKtCommand : CommandBase() {
                 val arg4 = args[4]
 
                 // TODO Permissions
-                // TODO Support chat color codes
 
                 val new: ChatColor = arg4.resolveChatColor()
                     ?: return sender.sendMessage("${ccErr}Unknown chat color ${ccErrDetl}\"$arg4\"")
@@ -205,6 +206,78 @@ class EssKtCommand : CommandBase() {
         }
     }
 
+    private fun handleSubcDebug(context: CommandContext) {
+        val conf = getConfig()
+        val ccErr = conf.getChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
+        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getChatColor(ChatColorKey.Value)
+        val ccReset = ChatColor.RESET
+
+        val args = context.args
+        val len = args.size
+        val sender = context.sender
+
+        fun printDebugState() {
+            val b = conf.isDebuggingActive().fmt(BooleanFormat.ENABLED_DISABLED, capitalize=true)
+            sender.sendMessage("${ccSec}EssentialsKT Debugging${ccTert}: $ccReset$b")
+        }
+
+        fun listDebugSubcommands(negative: Boolean = false) {
+            val subc = setOf("toggle", "true", "false")
+            val prim = if (negative) ccErr else ccSec
+            val punc = if (negative) ccErr else ccTert
+            val valu = if (negative) ccErrDetl else ccVal
+            val list = StringUtility.createFormattedList(
+                "Debug Sub-Commands", subc,
+                colorPrimary=prim, colorPunctuation=punc, colorValue=valu
+            )
+            sender.sendMessage(list)
+        }
+
+        val path = "IsDebuggingActive"
+        val fc = getPlugin().config
+        fun save() = getPlugin().saveConfig()
+
+        fun handleToggle() {
+            val inv = !conf.isDebuggingActive()
+            fc.set(path, inv)
+            save()
+            printDebugState()
+        }
+
+        fun handleOn() {
+            fc.set(path, true)
+            save()
+            printDebugState()
+        }
+
+        fun handleOff() {
+            fc.set(path, false)
+            save()
+            printDebugState()
+        }
+
+        if (len == 1) {
+            printDebugState()
+            listDebugSubcommands()
+            return
+        }
+
+        val arg1 = args[1]
+
+        when (arg1.lowercase()) {
+            "toggle", "t" -> handleToggle()
+            "true", "on", "enable", "yes" -> handleOn()
+            "false", "off", "disable", "no" -> handleOff()
+            else -> {
+                sender.sendMessage("${ccErr}Unknown debug sub-command ${ccErrDetl}\"$arg1\"")
+                listDebugSubcommands(negative=true)
+            }
+        }
+    }
+
     override fun execute(context: CommandContext) {
         val sender = context.sender
         val conf = getConfig()
@@ -224,6 +297,7 @@ class EssKtCommand : CommandBase() {
 
         when (sub.lowercase()) {
             "conf", "config", "configure" -> handleSubcConfig(context)
+            "debug", "d" -> handleSubcDebug(context)
             "reload", "refresh" -> handleSubcReload(context)
             "version", "v" -> handleSubcVersion(context)
             else -> {
@@ -242,9 +316,11 @@ class EssKtCommand : CommandBase() {
         fun tabSorted() =
             tab.sorted().toMutableList()
 
-        val suggestArg0 = mutableListOf("conf", "reload", "version")
+        val suggestArg0 = mutableListOf("conf", "debug", "reload", "version")
         val suggestConfigAreas = mutableListOf("color")
         val suggestConfigColorSubc = listOf("set", "list", "listcolors", "reset")
+        val suggestDebugSubc = mutableListOf("toggle")
+        val validSubcDebugAliases = listOf("debug", "d")
         val validSubcConfigureAliases = listOf("conf", "config", "configure")
         val validConfigColorAliases = listOf("colors", "color")
         val validSetColorSubc = listOf("alter", "change", "set", "configure")
@@ -261,9 +337,14 @@ class EssKtCommand : CommandBase() {
 
         val arg0 = args[0]
 
-        if (len == 2) {
+        if (len == 2) { // Example /esskt debug toggle
             if (arg0.equalsIc(validSubcConfigureAliases)) {
                 StringUtil.copyPartialMatches(args[1], suggestConfigAreas, tab)
+            } else if (arg0.equalsIc(validSubcDebugAliases)) {
+                val debug = getConfig().isDebuggingActive()
+                suggestDebugSubc.add(if (debug) "disable" else "enable")
+
+                StringUtil.copyPartialMatches(args[1], suggestDebugSubc, tab)
             }
             return tabSorted()
         }
