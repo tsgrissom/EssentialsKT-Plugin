@@ -1,4 +1,4 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.kt
 
 /**
  * Formats the Double to the requisite number of fractional digits trailing the decimal separator.

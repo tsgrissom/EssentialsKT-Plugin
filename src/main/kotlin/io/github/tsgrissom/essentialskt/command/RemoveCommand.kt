@@ -6,8 +6,12 @@ import io.github.tsgrissom.pluginapi.command.*
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
-import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.chat.ClickableText
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder

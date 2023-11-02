@@ -1,6 +1,6 @@
 package io.github.tsgrissom.pluginapi.chat
 
-import io.github.tsgrissom.pluginapi.extension.translateColor
+import io.github.tsgrissom.pluginapi.extension.kt.translateColor
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
@@ -10,6 +10,15 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 
 class HoverableText(private var text: String) {
+
+    companion object {
+
+        /**
+         * Begin creating a HoverableText via this static method.
+         * @return A new HoverableText instance for the provided text.
+         */
+        fun compose(text: String) : HoverableText = HoverableText(text)
+    }
 
     private var autoscroll: Boolean = true
     private var prependColor: ChatColor? = null
@@ -30,15 +39,6 @@ class HoverableText(private var text: String) {
      * Whether the hover text field (a List) is empty.
      */
     fun hasHoverText() = this.hoverText.isNotEmpty()
-
-    companion object {
-
-        /**
-         * Begin creating a HoverableText via this static method.
-         * @return A new HoverableText instance for the provided text.
-         */
-        fun compose(text: String) : HoverableText = HoverableText(text)
-    }
 
     /**
      * Chainable. Sets whether to append newline characters between each line of the hover

@@ -11,10 +11,10 @@ import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.capitalizeAllCaps
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.kt.capitalizeAllCaps
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

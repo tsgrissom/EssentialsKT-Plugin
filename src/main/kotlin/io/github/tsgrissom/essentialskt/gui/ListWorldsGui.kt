@@ -5,8 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
-import io.github.tsgrissom.pluginapi.extension.lore
-import io.github.tsgrissom.pluginapi.extension.name
+import io.github.tsgrissom.pluginapi.extension.bukkit.lore
+import io.github.tsgrissom.pluginapi.extension.bukkit.name
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.World

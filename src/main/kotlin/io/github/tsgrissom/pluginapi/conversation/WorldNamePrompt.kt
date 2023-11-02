@@ -1,6 +1,6 @@
 package io.github.tsgrissom.pluginapi.conversation
 
-import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.conversations.ConversationContext

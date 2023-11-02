@@ -1,4 +1,4 @@
-package io.github.tsgrissom.pluginapi.enum
+package io.github.tsgrissom.pluginapi.extension.kt
 
 /**
  * Enumeration of the types of BooleanFormats for the Boolean#fmt extension method. Provides a true and a false String.

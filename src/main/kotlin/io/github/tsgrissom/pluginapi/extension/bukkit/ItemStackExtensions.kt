@@ -1,5 +1,6 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.bukkit
 
+import io.github.tsgrissom.pluginapi.extension.kt.translateColor
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer

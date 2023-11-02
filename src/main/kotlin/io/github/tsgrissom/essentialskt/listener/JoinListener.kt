@@ -1,7 +1,7 @@
 package io.github.tsgrissom.essentialskt.listener
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.pluginapi.extension.translateColor
+import io.github.tsgrissom.pluginapi.extension.kt.translateColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent

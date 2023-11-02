@@ -1,7 +1,7 @@
 package io.github.tsgrissom.pluginapi.command.help
 
-import io.github.tsgrissom.pluginapi.extension.appendc
-import io.github.tsgrissom.pluginapi.extension.translateColor
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.extension.kt.translateColor
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder

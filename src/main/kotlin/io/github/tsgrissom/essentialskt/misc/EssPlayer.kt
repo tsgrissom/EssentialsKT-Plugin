@@ -4,7 +4,11 @@ import com.earth2me.essentials.User
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.extension.bukkit.getIPString
+import io.github.tsgrissom.pluginapi.extension.kt.capitalizeAllCaps
+import io.github.tsgrissom.pluginapi.extension.kt.fmtYesNo
+import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.ChatColor.DARK_GRAY as D_GRAY
 import net.md_5.bungee.api.chat.BaseComponent

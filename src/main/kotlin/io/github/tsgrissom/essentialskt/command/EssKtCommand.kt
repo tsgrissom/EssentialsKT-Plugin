@@ -9,8 +9,14 @@ import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
-import io.github.tsgrissom.pluginapi.enum.BooleanFormat
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.kt.BooleanFormat
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.kt.capitalizeEachWordAllCaps
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
+import io.github.tsgrissom.pluginapi.extension.kt.fmt
+import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import io.github.tsgrissom.pluginapi.utility.StringUtility
 import net.md_5.bungee.api.ChatColor as BungeeChatColor

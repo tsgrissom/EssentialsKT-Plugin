@@ -7,8 +7,8 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
-import io.github.tsgrissom.pluginapi.extension.isPercentage
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.kt.isPercentage
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.command.Command

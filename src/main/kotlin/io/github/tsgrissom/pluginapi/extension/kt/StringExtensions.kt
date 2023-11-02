@@ -1,5 +1,6 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.kt
 
+import io.github.tsgrissom.pluginapi.extension.bukkit.getValidInputAliases
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -266,7 +267,6 @@ fun String.resolveChatColor() : ChatColor? {
         return color
     } else {
         // TODO Something to support hex codes
-        // TODO Support alternate spellings of the ChatColor enum names (sans underscore)
 
         for (c in ChatColor.entries.filter { NonFormattingChatColorPredicate().test(it) }) {
             val aliases = c.getValidInputAliases().toList()

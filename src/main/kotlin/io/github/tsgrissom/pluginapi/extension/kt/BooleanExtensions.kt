@@ -1,6 +1,5 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.kt
 
-import io.github.tsgrissom.pluginapi.enum.BooleanFormat
 import org.bukkit.ChatColor
 
 /**

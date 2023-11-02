@@ -1,4 +1,4 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.bukkit
 
 import org.bukkit.World
 

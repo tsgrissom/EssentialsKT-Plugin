@@ -1,6 +1,6 @@
 package io.github.tsgrissom.pluginapi.command.flag
 
-import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import org.bukkit.Bukkit
 
 /**

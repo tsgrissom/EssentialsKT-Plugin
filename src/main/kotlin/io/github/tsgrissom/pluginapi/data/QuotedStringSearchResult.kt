@@ -1,7 +1,7 @@
 package io.github.tsgrissom.pluginapi.data
 
-import io.github.tsgrissom.pluginapi.extension.dequoted
-import io.github.tsgrissom.pluginapi.extension.isQuoted
+import io.github.tsgrissom.pluginapi.extension.kt.dequoted
+import io.github.tsgrissom.pluginapi.extension.kt.isQuoted
 
 /**
  * Represents the results of a quoted String parsing operations within CommandContext.

@@ -6,7 +6,9 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
+import io.github.tsgrissom.pluginapi.extension.kt.capitalizeEachWordAllCaps
+import io.github.tsgrissom.pluginapi.extension.kt.fmtYesNo
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.EntityType

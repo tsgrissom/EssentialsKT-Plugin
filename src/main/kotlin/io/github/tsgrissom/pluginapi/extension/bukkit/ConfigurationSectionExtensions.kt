@@ -1,5 +1,6 @@
-package io.github.tsgrissom.pluginapi.extension
+package io.github.tsgrissom.pluginapi.extension.bukkit
 
+import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 

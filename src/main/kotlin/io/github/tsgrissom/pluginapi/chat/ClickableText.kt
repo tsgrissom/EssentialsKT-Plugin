@@ -1,10 +1,8 @@
 package io.github.tsgrissom.pluginapi.chat
 
-import io.github.tsgrissom.pluginapi.extension.getDynamicHoverEvent
-import io.github.tsgrissom.pluginapi.extension.translateColor
+import io.github.tsgrissom.pluginapi.extension.bukkit.getDynamicHoverEvent
+import io.github.tsgrissom.pluginapi.extension.kt.translateColor
 import net.md_5.bungee.api.ChatColor
-import net.md_5.bungee.api.ChatColor.GRAY
-import net.md_5.bungee.api.ChatColor.YELLOW
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.*
 import net.md_5.bungee.api.chat.HoverEvent

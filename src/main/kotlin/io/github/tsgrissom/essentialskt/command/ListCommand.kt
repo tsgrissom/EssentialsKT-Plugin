@@ -9,7 +9,12 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.extension.bukkit.getUniqueString
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
+import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent

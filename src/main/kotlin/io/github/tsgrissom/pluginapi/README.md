@@ -8,3 +8,12 @@ pattern.
 
 ### `pluginapi.command`
 
+### `pluginapi.conversation`
+
+### `pluginapi.data`
+
+### `pluginapi.extension`
+
+### `pluginapi.func`
+
+### `pluginapi.utility`

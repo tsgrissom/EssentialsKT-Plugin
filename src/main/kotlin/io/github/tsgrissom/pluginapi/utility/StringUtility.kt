@@ -1,6 +1,6 @@
 package io.github.tsgrissom.pluginapi.utility
 
-import io.github.tsgrissom.pluginapi.extension.getDynamicHoverEvent
+import io.github.tsgrissom.pluginapi.extension.bukkit.getDynamicHoverEvent
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent

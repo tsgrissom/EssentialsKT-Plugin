@@ -4,10 +4,10 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.name
-import io.github.tsgrissom.pluginapi.extension.sendColored
-import io.github.tsgrissom.pluginapi.extension.translateAndStripColorCodes
+import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
+import io.github.tsgrissom.pluginapi.extension.bukkit.name
+import io.github.tsgrissom.pluginapi.extension.bukkit.sendColored
+import io.github.tsgrissom.pluginapi.extension.kt.translateAndStripColorCodes
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.command.Command

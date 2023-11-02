@@ -6,7 +6,8 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
+import io.github.tsgrissom.pluginapi.extension.kt.capitalizeAllCaps
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material

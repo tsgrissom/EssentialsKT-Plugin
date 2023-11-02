@@ -2,7 +2,9 @@ package io.github.tsgrissom.pluginapi.command
 
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.data.QuotedStringSearchResult
-import io.github.tsgrissom.pluginapi.extension.*
+import io.github.tsgrissom.pluginapi.extension.kt.isDoubleQuoted
+import io.github.tsgrissom.pluginapi.extension.kt.isQuoted
+import io.github.tsgrissom.pluginapi.extension.kt.isSingleQuoted
 import net.md_5.bungee.api.ChatColor.RED
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

@@ -1,6 +1,6 @@
 package io.github.tsgrissom.pluginapi.command.help
 
-import io.github.tsgrissom.pluginapi.extension.appendc
+import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import net.md_5.bungee.api.ChatColor.GRAY
 import net.md_5.bungee.api.ChatColor.YELLOW
 import net.md_5.bungee.api.chat.ClickEvent
