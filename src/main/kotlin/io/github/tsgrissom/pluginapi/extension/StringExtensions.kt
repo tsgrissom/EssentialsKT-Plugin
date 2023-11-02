@@ -1,5 +1,7 @@
 package io.github.tsgrissom.pluginapi.extension
 
+import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 
 /* MARK: Equality Checks */
@@ -238,4 +240,42 @@ fun List<String>.translateColor() : List<String> {
 fun String.isOnlyColorCodes() : Boolean {
     val stripped = this.translateAndStripColorCodes().trim()
     return stripped == ""
+}
+
+fun String.resolveChatColor() : ChatColor? {
+    val bLog = Bukkit.getLogger()
+
+    if (this.length == 2 && this.startsWith("&")) { // TODO Check if color code is contained in the String of valid chars
+        val colorCode = this.removePrefix("&")
+        val color = ChatColor.getByChar(colorCode)
+
+        if (color == null) {
+            bLog.warning("Thought \"$this\" was a ampersand + color code but getByChar resolved to null")
+            return null
+        }
+
+        return color
+    } else if (this.length == 1) {
+        val color = ChatColor.getByChar(this)
+
+        if (color == null) {
+            bLog.warning("Thought \"$this\" was a single-character color code but getByChar resolved to null")
+            return null
+        }
+
+        return color
+    } else {
+        // TODO Something to support hex codes
+        // TODO Support alternate spellings of the ChatColor enum names (sans underscore)
+
+        for (c in ChatColor.entries.filter { NonFormattingChatColorPredicate().test(it) }) {
+            val aliases = c.getValidInputAliases().toList()
+
+            if (this.equalsIc(aliases))
+                return c
+        }
+
+        bLog.warning("Could not determine what ChatColor \"$this\" is supposed to be")
+        return null
+    }
 }

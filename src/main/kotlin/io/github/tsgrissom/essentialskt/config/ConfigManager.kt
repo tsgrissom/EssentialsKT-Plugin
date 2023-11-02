@@ -1,7 +1,7 @@
 package io.github.tsgrissom.essentialskt.config
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
-import io.github.tsgrissom.pluginapi.extension.equalsIc
+import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.Bukkit
@@ -32,24 +32,36 @@ class ConfigManager {
         val bLog = Bukkit.getLogger()
         val conf = getFileConfiguration()
         val defColors = getDefaultColorMap()
+
         fun save() = getPlugin().saveConfig()
         fun createColorsSection() : ConfigurationSection {
-            bLog.warning("Colors section is missing from the config.yml. Creating new one from defaults...")
-            val new = conf.createSection("Colors", getDefaultColorMap())
+            val new = conf.createSection("Colors", defColors)
             save()
             return new
         }
-        fun validateColorString(str: String) : Boolean =
-            ChatColor.entries
+//        fun isValidColorString(str: String) : Boolean =
+//            ChatColor.entries
+//                .filter { NonFormattingChatColorPredicate().test(it) }
+//                .firstOrNull { it.name == str} != null
+
+        fun isValidColorString(value: String) : Boolean {
+            val isInFiltered = ChatColor.entries
                 .filter { NonFormattingChatColorPredicate().test(it) }
-                .firstOrNull { it.name == str} != null
+                .firstOrNull { it.isInputAlias(value) } != null
+            if (isInFiltered)
+                return true
+
+            val isColorCode = value.resolveChatColor()
+            return isColorCode != null
+        }
 
         var colors = conf.getConfigurationSection("Colors")!!
-        var keys = colors.getKeys(false)
+        var keys = colors.getKeys()
 
         if (keys.isEmpty()) {
             colors = createColorsSection()
-            keys = colors.getKeys(false)
+            keys = colors.getKeys()
+            bLog.warning("[EssKT] A new Colors section was created in the config.yml")
         }
 
         for (key in keys) {
@@ -58,37 +70,33 @@ class ConfigManager {
                 continue
             }
             val value = colors.getString(key) ?: "NOT_A_STR"
-            if (!validateColorString(value)) {
+            if (!isValidColorString(value)) {
                 bLog.warning("In config.yml: \"Colors.$key\": Color value \"$value\" is not a valid color reference")
                 continue
             }
             // Key is valid, ChatColor value is valid
             if (isDebuggingActive()) {
-                bLog.info("Validated configured color \"$value\" at key \"Colors.$key\" in config.yml")
+                bLog.info("Configured key-color value validated: \"Colors.$key\"->\"$value\"")
             }
         }
     }
 
-    fun fetchColorByKey(str: String) : ChatColorKey? =
+    fun getKeyedChatColorByName(str: String) : ChatColorKey? =
         ChatColorKey.entries.firstOrNull { it.name.equalsIc(str) }
 
     // TODO Write in docs about unexpected colors white or magic text and their meaning
     fun getChatColor(key: ChatColorKey) : ChatColor {
-        val def = ChatColor.MAGIC
+        val defStr = getDefaultColorMap()[key.name]!!
+        val def = ChatColor.valueOf(defStr)
         val conf = getFileConfiguration().getConfigurationSection("Colors")
             ?: return def // This does not happen
-        val colorValue = conf.getString(key.name, getDefaultColorMap()[key.name])!! // Non-null asserted because default provided
-        return ChatColor.entries.firstOrNull { it.name.equalsIc(colorValue) }
+        val colorValue = conf.getString(key.name, defStr)!! // Non-null asserted because default provided
+        return colorValue.resolveChatColor()
             ?: ChatColor.WHITE // Might happen, therefore default to
     }
 
-    fun getBungeeChatColor(key: ChatColorKey) : net.md_5.bungee.api.ChatColor {
-        val def = BungeeChatColor.MAGIC
-        val conf = getFileConfiguration().getConfigurationSection("Colors")
-            ?: return def // This does not happen
-        val colorValue = conf.getString(key.name, getDefaultColorMap()[key.name])!! // Non-null asserted because default provided
-        return BungeeChatColor.valueOf(colorValue)
-    }
+    fun getBungeeChatColor(key: ChatColorKey) : BungeeChatColor =
+        getChatColor(key).convertToBungeeChatColor()
 
     /* Base Options */
     fun isDebuggingActive() : Boolean =

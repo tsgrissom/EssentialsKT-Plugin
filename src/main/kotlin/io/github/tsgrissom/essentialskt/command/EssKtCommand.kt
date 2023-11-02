@@ -9,10 +9,7 @@ import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
-import io.github.tsgrissom.pluginapi.extension.capitalizeEachWordAllCaps
-import io.github.tsgrissom.pluginapi.extension.equalsIc
-import io.github.tsgrissom.pluginapi.extension.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.ChatColor
@@ -131,7 +128,7 @@ class EssKtCommand : CommandBase() {
 
                 val arg3 = args[3]
                 val textUnknown = "${ccErr}Unknown color key: ${ccErrDetl}\"$arg3\"${ccErr}. Do ${ccErrDetl}/esskt conf colors ${ccErr}to view valid keys."
-                val configurableColor = conf.fetchColorByKey(arg3)
+                val configurableColor = conf.getKeyedChatColorByName(arg3)
                     ?: return sender.sendMessage(textUnknown) // Ensure color key is valid
                 val key = configurableColor.name
 
@@ -152,7 +149,7 @@ class EssKtCommand : CommandBase() {
                 // TODO Permissions
                 // TODO Support chat color codes
 
-                val new: ChatColor = ChatColor.entries.firstOrNull { it.name.equalsIc(arg4) }
+                val new: ChatColor = arg4.resolveChatColor()
                     ?: return sender.sendMessage("${ccErr}Unknown chat color ${ccErrDetl}\"$arg4\"")
 
                 if (new.isFormat || new == ChatColor.RESET)
@@ -298,7 +295,7 @@ class EssKtCommand : CommandBase() {
 
         val arg3 = args[3]
         fun String.isValidColorKey() =
-            getConfig().fetchColorByKey(this) != null
+            getConfig().getKeyedChatColorByName(this) != null
         val allChatColors = ChatColor.entries
             .filter { NonFormattingChatColorPredicate().test(it) }
             .map { it.name }

@@ -36,7 +36,7 @@ fun PaginatedPane.getPreviousIndex() =
 
 /**
  * Calculates the index of the next page of the PaginatedPane. If the pagination is on the last page of the pages, the
- * index returned is 0, or the first page page of the pages.
+ * index returned is 0, or the index of the first page.
  */
 fun PaginatedPane.getNextIndex() =
     if ((this.pages - 1) > this.page)
