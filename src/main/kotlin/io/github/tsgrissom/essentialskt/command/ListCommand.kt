@@ -9,10 +9,7 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
-import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
-import io.github.tsgrissom.pluginapi.extension.bukkit.getUniqueString
-import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
@@ -101,7 +98,7 @@ class ListCommand : CommandBase() {
             val y = loc.y.roundToDigits(1)
             val z = loc.z.roundToDigits(1)
             val dn = p.displayName
-            val uuid = p.getUniqueString()
+            val uuid = p.uniqueString
             val wn = p.world.name
             builder.append(
                 HoverableText

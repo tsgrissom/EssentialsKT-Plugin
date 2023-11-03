@@ -2,6 +2,8 @@ package io.github.tsgrissom.pluginapi.extension.bukkit
 
 import org.bukkit.World
 
+// MARK: Weather
+
 /**
  * Checks if the World's weather is not clear.
  * @return Whether it is currently raining in the World.

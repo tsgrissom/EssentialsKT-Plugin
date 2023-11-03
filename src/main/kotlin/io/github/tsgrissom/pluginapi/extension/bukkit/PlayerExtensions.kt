@@ -2,6 +2,10 @@ package io.github.tsgrissom.pluginapi.extension.bukkit
 
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
+
+// MARK: String Functions
 
 /**
  * Retrieves the Player's IP address as String and optionally formats it to omit the leading slash character.
@@ -16,11 +20,18 @@ fun Player.getIPString(fmt: Boolean = true) : String {
 }
 
 /**
- * Retrieves the Player's UUID as a String. Reduces mental overhead from calling <code>Player#getUniqueId#toString</code>.
- * @return The Player's UUID as a String.
+ * Retrieves the Player's IP address as a formatted String which omits the leading slash character.
  */
-fun Player.getUniqueString() : String =
-    this.uniqueId.toString()
+val Player.ipString: String
+    get() = getIPString(fmt=true)
+
+/**
+ * Retrieves the Player's UUID as a String. Reduces mental overhead from calling <code>Player#getUniqueId#toString</code>.
+ */
+val Player.uniqueString: String
+    get() = this.uniqueId.toString()
+
+// MARK: Helper Functions
 
 /**
  * Plays the requisite Sound for the Player at their location with the provided volume and pitch.
@@ -34,3 +45,13 @@ fun Player.playSound(
     pitch: Float = 1F
 ) =
     this.playSound(this.location, sound, volume, pitch)
+
+// MARK: Inventory Functions
+
+fun PlayerInventory.clearArmor() =
+    this.setArmorContents(arrayOf<ItemStack?>(null, null, null, null))
+
+fun PlayerInventory.clearAll() {
+    this.clear()
+    this.clearArmor()
+}

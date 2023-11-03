@@ -43,7 +43,7 @@ class ListOnlinePlayersGui : ChestGui(5, "Online Players") {
 
         val n = p.name
         val dn = p.displayName
-        val uuid = p.getUniqueString()
+        val uuid = p.uniqueString
 
         return GuiItem(
             ItemStack(Material.PLAYER_HEAD)

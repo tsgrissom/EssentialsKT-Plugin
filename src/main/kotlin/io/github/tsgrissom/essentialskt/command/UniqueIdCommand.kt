@@ -5,10 +5,7 @@ import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
-import io.github.tsgrissom.pluginapi.extension.bukkit.getUniqueString
-import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -83,7 +80,7 @@ class UniqueIdCommand : CommandBase() {
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
 
-        val uuid = t.getUniqueString()
+        val uuid = t.uniqueString
         val data = ClickableText
             .compose(uuid)
             .color(ccUser)
