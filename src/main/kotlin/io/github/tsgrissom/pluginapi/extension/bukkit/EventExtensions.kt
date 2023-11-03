@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.event.player.PlayerMoveEvent
 
 fun ClickEvent.getDynamicHoverEvent(
     colorText: ChatColor = ChatColor.GRAY,
@@ -25,3 +26,9 @@ fun ClickEvent.getDynamicHoverEvent(
         else -> null
     }
 }
+
+val PlayerMoveEvent.isCameraMovement: Boolean
+    get() = this.from.x == this.to?.x && this.from.y == this.to?.y && this.from.z == this.to?.z
+
+val PlayerMoveEvent.isPhysicalMovement: Boolean
+    get() = !this.isCameraMovement

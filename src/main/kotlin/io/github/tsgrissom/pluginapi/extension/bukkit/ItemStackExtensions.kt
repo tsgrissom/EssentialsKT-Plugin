@@ -14,6 +14,8 @@ import org.bukkit.profile.PlayerProfile
 import java.util.*
 import java.util.function.Consumer
 
+// MARK: ItemStack Builder Functions
+
 /**
  * Alters the ItemStack amount to the requisite integer.
  * @param amount The new amount of the ItemStack.
@@ -200,3 +202,33 @@ fun ItemStack.type(material: Material): ItemStack {
     type = material
     return this
 }
+
+// MARK: Material Extension Functions
+inline val Material.isPickaxe: Boolean
+    get() = this.name.endsWith("PICKAXE")
+inline val Material.isSword: Boolean
+    get() = this.name.endsWith("SWORD")
+inline val Material.isAxe: Boolean
+    get() = this.name.endsWith("_AXE")
+inline val Material.isSpade: Boolean
+    get() = this.name.endsWith("SPADE")
+inline val Material.isHoe: Boolean
+    get() = this.name.endsWith("HOE")
+inline val Material.isOre: Boolean
+    get() = this.name.endsWith("ORE")
+inline val Material.isIngot: Boolean
+    get() = this.name.endsWith("INGOT")
+inline val Material.isDoor: Boolean
+    get() = this.name.endsWith("_DOOR")
+inline val Material.isTrapdoor: Boolean
+    get() = this.name.endsWith("_TRAPDOOR")
+inline val Material.isBoat: Boolean
+    get() = this.name.endsWith("_BOAT")
+inline val Material.isMinecart: Boolean
+    get() = this.name.endsWith("MINECART")
+inline val Material.isVehicle: Boolean
+    get() = this.isBoat || this.isMinecart
+inline val Material.isWater: Boolean
+    get() = this == Material.WATER || this == Material.LEGACY_STATIONARY_WATER
+inline val Material.isLava: Boolean
+    get() = this == Material.LAVA || this == Material.LEGACY_STATIONARY_LAVA
