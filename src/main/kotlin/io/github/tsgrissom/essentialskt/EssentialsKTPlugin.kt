@@ -7,21 +7,14 @@ import io.github.tsgrissom.essentialskt.listener.QuitListener
 import io.github.tsgrissom.essentialskt.config.ConfigManager
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.command.CommandBase
+import io.github.tsgrissom.pluginapi.extension.bukkit.registerCommand
+import io.github.tsgrissom.pluginapi.extension.bukkit.registerListeners
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import io.github.tsgrissom.pluginapi.utility.TimeUtility
 import org.bukkit.Bukkit.getPluginManager
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-
-private fun JavaPlugin.registerCommand(label: String, impl: CommandBase) {
-    val bukkitCommand = this.getCommand(label)!!
-    bukkitCommand.setExecutor(impl)
-    bukkitCommand.tabCompleter = impl
-}
-
-private fun JavaPlugin.registerListeners(vararg listeners: Listener) =
-    listeners.forEach { getPluginManager().registerEvents(it, this) }
 
 class EssentialsKTPlugin : JavaPlugin() {
 
