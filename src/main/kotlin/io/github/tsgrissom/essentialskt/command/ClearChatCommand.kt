@@ -27,14 +27,8 @@ class ClearChatCommand : CommandBase() {
         const val PERM_EXEMPT = "essentialskt.clearchat.exemptall"
     }
 
-    private fun performClearChatOperation(
-        t: Player,
-        count: Int = getConfiguredRepeatCount()
-    ) {
-        repeat(count) {
-            t.sendMessage("")
-        }
-    }
+    private fun performClearChat(target: Player, count: Int = getConfiguredRepeatCount()) =
+        repeat(count) { target.sendMessage("") }
 
     override fun execute(context: CommandContext) {
         val args = context.args
@@ -64,7 +58,7 @@ class ClearChatCommand : CommandBase() {
         if (sender !is Player)
             return
 
-        performClearChatOperation(sender)
+        performClearChat(sender)
     }
 
     private fun handleSubcAll(context: CommandContext) {
@@ -76,7 +70,7 @@ class ClearChatCommand : CommandBase() {
 
         Bukkit.getOnlinePlayers()
             .filter { it.lacksPermission(PERM_EXEMPT) }
-            .forEach { performClearChatOperation(it, getConfiguredRepeatCount()) }
+            .forEach { performClearChat(it, getConfiguredRepeatCount()) }
         sender.sendMessage("${ccPrimary}You cleared the chat messages of all players on the server")
     }
 
@@ -107,7 +101,7 @@ class ClearChatCommand : CommandBase() {
                 continue
             }
 
-            performClearChatOperation(t)
+            performClearChat(t)
             clearedPlayers.add(tn)
         }
 
