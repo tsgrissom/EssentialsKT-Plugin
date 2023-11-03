@@ -6,7 +6,6 @@ import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.permissions.Permission
 
 /**
  * Sends the variable Strings to the CommandSender after processing them with ChatColor#translateAlternateColorCodes
