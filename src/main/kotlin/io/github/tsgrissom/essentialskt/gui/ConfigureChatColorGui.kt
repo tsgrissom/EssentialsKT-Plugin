@@ -7,6 +7,7 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.kt.capitalizeEachWordAllCaps
 import io.github.tsgrissom.pluginapi.extension.bukkit.click
+import io.github.tsgrissom.pluginapi.extension.bukkit.getRepresentativeMaterial
 import io.github.tsgrissom.pluginapi.extension.bukkit.lore
 import io.github.tsgrissom.pluginapi.extension.bukkit.name
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
@@ -36,11 +37,10 @@ class ConfigureChatColorGui(
 
     init {
         val conf = getConfig()
-        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
-        val ccTer = conf.getChatColor(ChatColorKey.Tertiary)
-        val ccSucc = conf.getChatColor(ChatColorKey.Success)
-        val ccVal = conf.getChatColor(ChatColorKey.Value)
-        val ccWhite = ChatColor.WHITE
+        val ccSucc = ChatColor.GREEN
+        val ccVal = ChatColor.YELLOW
+        val ccSec = ChatColor.GRAY
+        val ccTer = ChatColor.DARK_GRAY
 
         val currentColor = conf.getChatColor(key)
 
@@ -53,14 +53,18 @@ class ConfigureChatColorGui(
         for (color in validColors) {
             val cc = color.toString()
             val name = color.name.capitalizeEachWordAllCaps()
-            val material = if (currentColor == color) Material.MAP else Material.PAPER
+            var material = color.getRepresentativeMaterial()
             val text = if (currentColor == color) "${ccSucc}Currently set to this color" else "${ccVal}Click to set"
+            val ccName = if (currentColor == color) ChatColor.GREEN else ChatColor.GRAY
+
+            if (currentColor == color)
+                material = Material.NETHER_STAR
 
             val item = GuiItem(
                 ItemStack(material)
-                    .name("$ccWhite$name")
+                    .name("$ccName$name")
                     .lore(
-                        "${ccSec}Example${ccTer}: $cc\"Some text\"",
+                        "${ccSec}Example${ccTer}: ${ccSec}\"${cc}Some text${ccSec}\"",
                         text
                     )
             ) {

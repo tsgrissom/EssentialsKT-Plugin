@@ -4,6 +4,7 @@ import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.ChatColor
+import org.bukkit.Material
 
 fun ChatColor.getValidInputAliases() : Set<String> {
     val set = mutableSetOf<String>()
@@ -43,6 +44,32 @@ fun ChatColor.convertToBungeeChatColor(): BungeeChatColor {
 
     return BungeeChatColor.of(name)
         ?: error("Unable to resolve BungeeChatColor for name \"$name\"")
+}
+
+fun ChatColor.getRepresentativeMaterial() : Material {
+    val def = Material.GLASS
+    val name = this.name
+    val special = mapOf(
+        ChatColor.GREEN to Material.LIME_WOOL,
+        ChatColor.DARK_GREEN to Material.GREEN_WOOL,
+        ChatColor.AQUA to Material.LIGHT_BLUE_WOOL,
+        ChatColor.DARK_AQUA to Material.CYAN_WOOL,
+        ChatColor.BLUE to Material.BLUE_CONCRETE_POWDER,
+        ChatColor.DARK_BLUE to Material.BLUE_WOOL,
+        ChatColor.RED to Material.RED_WOOL,
+        ChatColor.DARK_RED to Material.REDSTONE_BLOCK,
+        ChatColor.GRAY to Material.LIGHT_GRAY_WOOL,
+        ChatColor.DARK_GRAY to Material.GRAY_WOOL,
+        ChatColor.GOLD to Material.YELLOW_WOOL,
+        ChatColor.YELLOW to Material.GOLD_BLOCK,
+        ChatColor.LIGHT_PURPLE to Material.PURPLE_WOOL,
+        ChatColor.DARK_PURPLE to Material.PURPLE_CONCRETE
+    )
+
+    if (special.contains(this))
+        return special[this]!!
+
+    return Material.entries.firstOrNull { it.name.contains(name, ignoreCase=true) } ?: def
 }
 
 // TODO Convert to Bungee ChatColor and vice-versa
