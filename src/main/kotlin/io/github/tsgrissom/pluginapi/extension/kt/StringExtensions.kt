@@ -243,28 +243,29 @@ fun String.isOnlyColorCodes() : Boolean {
     return stripped == ""
 }
 
+/**
+ * Resolves the String to a ChatColor with a few techniques. First, method tries to match the String to an ampersand
+ * followed by a valid chat color character. Next, it tries to match the string to a valid chat color character if the
+ * String is only one character long. Finally, the method tries to match the String to the valid input aliases of each
+ * enumerated ChatColor. This could be the regular spelling ("DARK_GRAY"), spelling without underscores ("DARKGRAY"),
+ * or even special cases of alternative spellings ("DARKGREY" or "DARK_GREY", invalid but common mistake.)
+ * @return A ChatColor or null.
+ */
 fun String.resolveChatColor() : ChatColor? {
     val bLog = Bukkit.getLogger()
+    fun warnAndNull(str: String) : ChatColor? {
+        bLog.warning(str)
+        return null
+    }
 
     if (this.length == 2 && this.startsWith("&")) { // TODO Check if color code is contained in the String of valid chars
         val colorCode = this.removePrefix("&")
-        val color = ChatColor.getByChar(colorCode)
 
-        if (color == null) {
-            bLog.warning("Thought \"$this\" was a ampersand + color code but getByChar resolved to null")
-            return null
-        }
-
-        return color
+        return ChatColor.getByChar(colorCode)
+            ?: return warnAndNull("Thought \"$this\" was a ampersand + color code but getByChar resolved to null")
     } else if (this.length == 1) {
-        val color = ChatColor.getByChar(this)
-
-        if (color == null) {
-            bLog.warning("Thought \"$this\" was a single-character color code but getByChar resolved to null")
-            return null
-        }
-
-        return color
+        return ChatColor.getByChar(this)
+            ?: return warnAndNull("Thought \"$this\" was a single-character color code but getByChar resolved to null")
     } else {
         // TODO Something to support hex codes
 
@@ -275,7 +276,6 @@ fun String.resolveChatColor() : ChatColor? {
                 return c
         }
 
-        bLog.warning("Could not determine what ChatColor \"$this\" is supposed to be")
-        return null
+        return warnAndNull("Could not determine what ChatColor \"$this\" is supposed to be")
     }
 }

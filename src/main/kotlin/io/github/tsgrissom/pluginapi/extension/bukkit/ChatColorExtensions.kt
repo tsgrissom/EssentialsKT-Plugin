@@ -2,15 +2,24 @@ package io.github.tsgrissom.pluginapi.extension.bukkit
 
 import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
+import org.bukkit.Bukkit
 import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.ChatColor
 import org.bukkit.Material
 
+/**
+ * Creates a Set of Strings representing input aliases for the receiver ChatColor. These aliases are potential forms
+ * that a user might enter with the intent of using the receiver ChatColor.
+ * @return A Set of Strings representing the receiver ChatColor.
+ */
 fun ChatColor.getValidInputAliases() : Set<String> {
     val set = mutableSetOf<String>()
     val name = this.name
+    val code = this.char
 
     set.add(name)
+    set.add("&${code}")
+    set.add("$code")
 
     if (name.contains("_"))
         set.add(name.replace("_", ""))
@@ -24,6 +33,11 @@ fun ChatColor.getValidInputAliases() : Set<String> {
     return set.toSet()
 }
 
+/**
+ * Checks if the requisite String is an input alias for the receiver ChatColor.
+ * @param str The String to test.
+ * @return Whether the provided string is an input alias for the ChatColor.
+ */
 fun ChatColor.isInputAlias(str: String) : Boolean {
     val valid = getValidInputAliases()
 
@@ -35,17 +49,30 @@ fun ChatColor.isInputAlias(str: String) : Boolean {
     return false
 }
 
-fun ChatColor.convertToBungeeChatColor(): BungeeChatColor {
+/**
+ * Converts a Bukkit ChatColor value to a BungeeChatColor for compatibility with the Chat Component API. Does not
+ * support formatting chat colors.
+ * @return A Bungee ChatColor or null.
+ */
+fun ChatColor.convertToBungeeChatColor(): BungeeChatColor? {
     val formattingColors = ChatColor.entries.filterNot { NonFormattingChatColorPredicate().test(it) }.toList()
     val name = this.name
+    fun warnAndNull(str: String) : BungeeChatColor? {
+        Bukkit.getLogger().warning(str)
+        return null
+    }
 
     if (formattingColors.contains(this))
-        error("Cannot convert Bukkit ChatColor.${name} to a BungeeChatColor: Formatting codes are not able to be converted")
+        return warnAndNull("Cannot convert Bukkit ChatColor.${name} to a BungeeChatColor: Formatting codes are not able to be converted")
 
-    return BungeeChatColor.of(name)
-        ?: error("Unable to resolve BungeeChatColor for name \"$name\"")
+    return BungeeChatColor.of(name) ?: warnAndNull("Unable to resolve BungeeChatColor for name \"$name\"")
 }
+// TODO Convert to Bungee ChatColor and vice-versa
 
+/**
+ * Attempts to match the ChatColor to a Material to represent it in GUIs. Falls back to glass if no matches are made.
+ * @return The best matching Material for the ChatColor.
+ */
 fun ChatColor.getRepresentativeMaterial() : Material {
     val def = Material.GLASS
     val name = this.name
@@ -71,5 +98,3 @@ fun ChatColor.getRepresentativeMaterial() : Material {
 
     return Material.entries.firstOrNull { it.name.contains(name, ignoreCase=true) } ?: def
 }
-
-// TODO Convert to Bungee ChatColor and vice-versa

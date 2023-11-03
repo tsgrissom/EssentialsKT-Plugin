@@ -85,7 +85,7 @@ class ConfigManager {
 
     private fun getDefaultColorMap() =
         ChatColorKey.entries.associate {
-            it.name to it.defaultValue.name
+            it.name to it.defaultBukkit.name
         }
 
     fun getKeyedChatColorByName(str: String) : ChatColorKey? =
@@ -102,8 +102,10 @@ class ConfigManager {
             ?: ChatColor.WHITE // Might happen, therefore default to
     }
 
-    fun getBungeeChatColor(key: ChatColorKey) : BungeeChatColor =
-        getChatColor(key).convertToBungeeChatColor()
+    fun getBungeeChatColor(key: ChatColorKey) : BungeeChatColor {
+        val def = key.defaultBungee
+        return getChatColor(key).convertToBungeeChatColor() ?: def
+    }
 
     // MARK: Debugger
 

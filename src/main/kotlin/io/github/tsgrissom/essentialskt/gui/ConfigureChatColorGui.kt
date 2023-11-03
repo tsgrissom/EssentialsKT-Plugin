@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack
 
 class ConfigureChatColorGui(
     private val key: ChatColorKey
-) : ChestGui(2, "Select new color") {
+) : ChestGui(2, "New color of ${key.name}") {
 
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
@@ -49,7 +49,6 @@ class ConfigureChatColorGui(
             .toList()
         val pane = OutlinePane(0, 0, 9, 2)
 
-        // TODO Mark the current chat color
         for (color in validColors) {
             val cc = color.toString()
             val name = color.name.capitalizeEachWordAllCaps()

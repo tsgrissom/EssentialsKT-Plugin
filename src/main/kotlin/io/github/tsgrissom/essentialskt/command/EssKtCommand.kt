@@ -186,11 +186,11 @@ class EssKtCommand : CommandBase() {
 
                     for (key in ChatColorKey.entries) {
                         val path = "Colors.${key.name}"
-                        val def = key.defaultValue
+                        val def = key.defaultBukkit
                         val current = fc.getString(path)
 
                         if (current == null || def != ChatColor.valueOf(current)) {
-                            fc.set(path, key.defaultValue.name)
+                            fc.set(path, key.defaultBukkit.name)
                             alteredCount++
                         }
                     }

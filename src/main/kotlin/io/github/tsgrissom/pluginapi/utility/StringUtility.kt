@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.ChatColor
 
 class StringUtility {
@@ -100,7 +101,7 @@ class StringUtility {
                 val hoverText = onHoverElement(el)
                 val item = TextComponent(el)
                 item.color = colorValue
-                item.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)
+                item.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text(hoverText))
 
                 list.addExtra(item)
 
