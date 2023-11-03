@@ -4,6 +4,11 @@ import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 
+/**
+ * Re-implements ConfigurationSection#getKeys with a default deep value of false. Much cleaner usage when you want
+ * single-depth key scanning.
+ * @return A MutableSet of configuration keys directly descendant from the receiver ConfigurationSection.
+ */
 fun ConfigurationSection.getKeys() : MutableSet<String> =
     this.getKeys(false)
 

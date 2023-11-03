@@ -9,22 +9,6 @@ import org.bukkit.entity.Player
 import org.bukkit.permissions.Permission
 
 /**
- * Checks if the CommandSender is missing the requisite permission.
- *
- * @param perm The permission to check if the user is missing.
- * @return Whether the user lacks the requisite permission.
- */
-fun CommandSender.lacksPermission(perm: String) = !this.hasPermission(perm)
-
-/**
- * Checks if the CommandSender is missing the requisite permission.
- *
- * @param perm The permission to check if the user is missing.
- * @return Whether the user lacks the requisite permission.
- */
-fun CommandSender.lacksPermission(perm: Permission) = !this.hasPermission(perm)
-
-/**
  * Sends the variable Strings to the CommandSender after processing them with ChatColor#translateAlternateColorCodes
  * for the standard alt-code ampersand.
  *
