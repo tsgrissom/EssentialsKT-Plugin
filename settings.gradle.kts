@@ -10,3 +10,6 @@ plugins {
 }
 
 rootProject.name = "EssentialsKT"
+
+include(":PluginAPI")
+project(":PluginAPI").projectDir = file("../PluginAPI")

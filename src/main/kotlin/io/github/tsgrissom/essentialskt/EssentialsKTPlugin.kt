@@ -2,17 +2,15 @@ package io.github.tsgrissom.essentialskt
 
 import com.earth2me.essentials.Essentials
 import io.github.tsgrissom.essentialskt.command.*
+import io.github.tsgrissom.essentialskt.config.ConfigManager
 import io.github.tsgrissom.essentialskt.listener.JoinListener
 import io.github.tsgrissom.essentialskt.listener.QuitListener
-import io.github.tsgrissom.essentialskt.config.ConfigManager
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
-import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.extension.bukkit.registerCommand
 import io.github.tsgrissom.pluginapi.extension.bukkit.registerListeners
 import io.github.tsgrissom.pluginapi.utility.EntityUtility
 import io.github.tsgrissom.pluginapi.utility.TimeUtility
 import org.bukkit.Bukkit.getPluginManager
-import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 
