@@ -5,7 +5,7 @@ import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.chat.ClickableText
-import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
+import io.github.tsgrissom.pluginapi.chat.TextBoxBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.getIPString
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
@@ -13,6 +13,7 @@ import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -48,7 +49,7 @@ class IPAddressCommand : CommandBase() {
         val t: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
 
-        sender.sendChatComponents(generateDisplayIPAddressAsTextComponent(t))
+        sender.sendChatComponents(generateTextBox(t))
     }
 
     override fun onTabComplete(
@@ -67,25 +68,31 @@ class IPAddressCommand : CommandBase() {
         return tab.sorted().toMutableList()
     }
 
-    private fun generateDisplayIPAddressAsTextComponent(t: Player) : Array<BaseComponent> {
+    private fun generateTextBox(t: Player) : Array<BaseComponent> {
         val conf = getConfig()
-        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
-        val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
 
+        val l1 = TextComponent("IP Address of ")
+        l1.color = ccSec
+        val l1Name = TextComponent(t.name)
+        l1Name.color = ccVal
+        l1.addExtra(l1Name)
+
+        val l2 = TextComponent("> ")
+        l2.color = ccPrim
         val data = ClickableText
             .compose(t.getIPString())
             .color(YELLOW)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
             .value(t.getIPString())
             .toComponent()
-        val builder = ComponentBuilder()
-            .appendc(" ---------------------------------------\n", ccTert)
-            .appendc(" | ", ccTert).appendc("IP Address of ", ccSec).appendc(t.name, ccUser).append("\n")
-            .appendc(" | ", ccTert).appendc("> ", ccPrim).bold(true).append(data).bold(false).append("\n").reset()
-            .appendc(" ---------------------------------------", ccTert) // TODO Write a TextBoxGenerator to create these displays
+        l2.addExtra(data)
 
-        return builder.create()
+        return TextBoxBuilder(decorationColor=ccTert)
+            .withLine(l1, l2)
+            .toComponents()
     }
 }
