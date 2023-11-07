@@ -9,6 +9,7 @@ import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import io.github.tsgrissom.pluginapi.extension.kt.capitalizeAllCaps
 import org.bukkit.Bukkit
+import org.bukkit.Color.*
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
@@ -22,11 +23,12 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
-    companion object {
-        private const val STR_CURRENT      = "&eYour current gamemode"
-        private const val STR_CLICK        = "&aClick to use"
-        private const val STR_NOPERMISSION = "&cYou do not have permission to use this"
-    }
+    private val strClick: String
+        get() = "${GREEN}Click to use"
+    private val strCurrent: String
+        get() = "${YELLOW}Your current gamemode"
+    private val strNoPermission: String
+        get() = "${RED}You do not have permission to use this"
 
     private fun alterGameMode(whoClicked: HumanEntity, mode: String) =
         Bukkit.dispatchCommand(whoClicked, "gm $mode ${target.name}")
@@ -68,12 +70,12 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     private fun getAdventureGuiItem(): GuiItem {
         val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.ADVENTURE) {
-            STR_CURRENT
+            strCurrent
         } else {
             if (sender.hasPermission(GameModeCommand.PERM_ADVENTURE)) {
-                STR_CLICK
+                strClick
             } else {
-                STR_NOPERMISSION
+                strNoPermission
             }
         }
 
@@ -91,12 +93,12 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     private fun getCreativeGuiItem(): GuiItem {
         val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.CREATIVE) {
-            STR_CURRENT
+            strCurrent
         } else {
             if (sender.hasPermission(GameModeCommand.PERM_CREATIVE)) {
-                STR_CLICK
+                strClick
             } else {
-                STR_NOPERMISSION
+                strNoPermission
             }
         }
 
@@ -114,12 +116,12 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     private fun getSurvivalGuiItem(): GuiItem {
         val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.SURVIVAL) {
-            STR_CURRENT
+            strCurrent
         } else {
             if (sender.hasPermission(GameModeCommand.PERM_SURVIVAL)) {
-                STR_CLICK
+                strClick
             } else {
-                STR_NOPERMISSION
+                strNoPermission
             }
         }
 
@@ -138,12 +140,12 @@ class GameModeSelectorGui(val sender: Player, val target: Player) : ChestGui(1, 
     private fun getSpectatorGuiItem() : GuiItem {
         val ccPrim = getConfig().getChatColor(ChatColorKey.Primary)
         val lore = if (sender.gameMode == GameMode.SPECTATOR) {
-            STR_CURRENT
+            strCurrent
         } else {
             if (sender.hasPermission(GameModeCommand.PERM_SPECTATOR)) {
-                STR_CLICK
+                strClick
             } else {
-                STR_NOPERMISSION
+                strNoPermission
             }
         }
 
