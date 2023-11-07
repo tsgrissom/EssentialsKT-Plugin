@@ -177,20 +177,36 @@ class EssKtCommand : CommandBase() {
             }
 
             fun handleReset() {
+                val fc = getPlugin().config
+                fun resetKey(key: ChatColorKey) : Boolean {
+                    val path = "Colors.${key.name}"
+                    val def = key.defaultBukkit
+                    val current = fc.getString(path)
+                    fun setDefAndReturnTrue() : Boolean {
+                        fc.set(path, def.name)
+                        return true
+                    }
+
+                    if (current == null)
+                        return setDefAndReturnTrue()
+
+                    val resolved = current.resolveChatColor()
+                        ?: return setDefAndReturnTrue()
+
+                    if (resolved != def)
+                        return setDefAndReturnTrue()
+
+                    return false
+                }
+
                 val flagConfirm = ValidCommandFlag("Confirm")
                 val flags = CommandFlagParser(args, flagConfirm)
 
                 if (flags.wasPassed(flagConfirm)) {
-                    val fc = getPlugin().config
                     var alteredCount = 0
 
                     for (key in ChatColorKey.entries) {
-                        val path = "Colors.${key.name}"
-                        val def = key.defaultBukkit
-                        val current = fc.getString(path)
-
-                        if (current == null || def != ChatColor.valueOf(current)) {
-                            fc.set(path, key.defaultBukkit.name)
+                        if (resetKey(key)) {
                             alteredCount++
                         }
                     }
