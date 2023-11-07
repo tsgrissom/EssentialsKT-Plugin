@@ -2,11 +2,12 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
+import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.chat.ClickableText
 import io.github.tsgrissom.pluginapi.chat.TextBoxBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.getIPString
+import io.github.tsgrissom.pluginapi.extension.bukkit.ipString
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
 import net.md_5.bungee.api.ChatColor.*
@@ -74,11 +75,10 @@ class IPAddressCommand : CommandBase() {
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
 
-        val data = ClickableText
-            .compose(t.getIPString())
-            .underline(true)
-            .color(YELLOW)
+        val data = ClickTextBuilder(t.ipString)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
+            .color(YELLOW)
+            .underline(true)
             .value(t.getIPString())
             .toComponent()
         val l1 = TextComponent("IP Address of ")

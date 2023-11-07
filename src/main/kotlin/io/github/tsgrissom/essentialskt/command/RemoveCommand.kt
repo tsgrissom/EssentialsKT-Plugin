@@ -2,11 +2,11 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
+import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.*
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
-import io.github.tsgrissom.pluginapi.chat.ClickableText
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
@@ -107,27 +107,27 @@ class RemoveCommand : CommandBase() {
             .appendc(": ", ccTert)
 
         for ((i, type) in getValidGroupedTypes().withIndex()) {
-            val clickText = ClickableText
-                .compose(type)
-                .color(ccVal)
+            val data = ClickTextBuilder(type)
                 .action(ClickEvent.Action.SUGGEST_COMMAND)
+                .color(ccVal)
                 .value("/$label $type ")
-            builder.append(clickText.toComponent())
+                .toComponent()
+            builder.append(data)
 
             if (i != (getValidGroupedTypes().size - 1))
                 builder.appendc(",", ccSec)
         }
 
-        val click = ClickableText
-            .compose("/list mobs")
-            .color(ccVal)
+        val suggestedCommand = ClickTextBuilder("/list mobs")
             .action(ClickEvent.Action.RUN_COMMAND)
+            .color(ccVal)
             .value("/list mobs")
+            .toComponent()
 
         builder
             .append("\n")
             .appendc("Do ", ccPrim)
-            .append(click.toComponent())
+            .append(suggestedCommand)
             .appendc(" to display valid mob specifiers", ccPrim)
 
 

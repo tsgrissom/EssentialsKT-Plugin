@@ -3,9 +3,10 @@ package io.github.tsgrissom.essentialskt.misc
 import com.earth2me.essentials.User
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.command.GameModeCommand
-import io.github.tsgrissom.pluginapi.chat.ClickableText
+import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.getIPString
+import io.github.tsgrissom.pluginapi.extension.bukkit.uniqueString
 import io.github.tsgrissom.pluginapi.extension.kt.capitalizeAllCaps
 import io.github.tsgrissom.pluginapi.extension.kt.fmtYesNo
 import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
@@ -346,8 +347,7 @@ class EssPlayer(private val uuid: UUID) {
 
         if (!excludeIp) {
             val ip = this.getIPString()
-            val data = ClickableText
-                .compose(ip)
+            val data = ClickTextBuilder(ip)
                 .color(YELLOW)
                 .hoverText("${GRAY}Click to copy IP address")
                 .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
@@ -387,12 +387,11 @@ class EssPlayer(private val uuid: UUID) {
                 .append("\n")
 
         if (!excludeUniqueId) {
-            val uuid = player.uniqueId.toString()
-            val data = ClickableText
-                .compose(uuid)
+            val uuid = player.uniqueString
+            val data = ClickTextBuilder(uuid)
+                .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
                 .color(YELLOW)
                 .hoverText("${GRAY}Click to copy UUID")
-                .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
                 .value(uuid)
                 .toComponent()
 

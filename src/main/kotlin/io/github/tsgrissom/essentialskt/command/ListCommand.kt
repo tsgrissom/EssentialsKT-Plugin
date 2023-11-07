@@ -4,7 +4,7 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ListEntitiesGui
 import io.github.tsgrissom.essentialskt.gui.ListOnlinePlayersGui
-import io.github.tsgrissom.pluginapi.chat.HoverableText
+import io.github.tsgrissom.pluginapi.chat.HoverTextBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
@@ -101,8 +101,7 @@ class ListCommand : CommandBase() {
             val uuid = p.uniqueString
             val wn = p.world.name
             builder.append(
-                HoverableText
-                    .compose(p.name)
+                HoverTextBuilder(p.name)
                     .color(YELLOW)
                     .hoverText(
                         "${ccTert}> ${ccSec}Nickname${ccTert}: ${RESET}$dn",

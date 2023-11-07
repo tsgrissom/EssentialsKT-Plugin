@@ -2,14 +2,13 @@ package io.github.tsgrissom.essentialskt.command
 
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
+import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.chat.ClickableText
 import io.github.tsgrissom.pluginapi.chat.TextBoxBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -52,9 +51,6 @@ class UniqueIdCommand : CommandBase() {
             sender
         }
 
-        sender.sendMessage("Old")
-        sender.sendChatComponents(generateDisplayUniqueIdAsTextComponent(t))
-        sender.sendMessage("New")
         sender.sendChatComponents(generateTextBox(t))
     }
 
@@ -78,29 +74,6 @@ class UniqueIdCommand : CommandBase() {
         return tab.sorted().toMutableList()
     }
 
-    private fun generateDisplayUniqueIdAsTextComponent(t: Player) : Array<BaseComponent> {
-        val conf = getConfig()
-        val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
-        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
-        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
-        val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
-
-        val uuid = t.uniqueString
-        val data = ClickableText
-            .compose(uuid)
-            .color(ccUser)
-            .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
-            .value(uuid)
-            .toComponent()
-        val builder = ComponentBuilder()
-            .appendc(" ---------------------------------------\n", ccTert)
-            .appendc(" | ", ccTert).appendc("UUID of ", ccSec).appendc(t.name, ccUser).append("\n")
-            .appendc(" | ", ccTert).appendc("> ", ccPrim).bold(true).append(data).bold(false).append("\n").reset()
-            .appendc(" ---------------------------------------", ccTert)
-
-        return builder.create()
-    }
-
     private fun generateTextBox(target: Player) : Array<BaseComponent> {
         val conf = getConfig()
         val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
@@ -109,11 +82,10 @@ class UniqueIdCommand : CommandBase() {
         val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
 
         val uuid = target.uniqueString
-        val data = ClickableText
-            .compose(uuid)
-            .underline(true)
-            .color(ccUser)
+        val data = ClickTextBuilder(uuid)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
+            .color(ccUser)
+            .underline(true)
             .value(uuid)
             .toComponent()
         val l1 = TextComponent("UUID of ")

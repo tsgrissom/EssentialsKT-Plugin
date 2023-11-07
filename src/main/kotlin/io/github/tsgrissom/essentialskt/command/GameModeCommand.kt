@@ -4,12 +4,12 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.GameModeSelectorGui
 import io.github.tsgrissom.essentialskt.misc.EssPlayer
+import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
 import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
 import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
-import io.github.tsgrissom.pluginapi.chat.ClickableText
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
@@ -77,8 +77,7 @@ class GameModeCommand : CommandBase() {
                 if (sender.hasPermission(PERM_OTHERS))
                     value += " "
 
-                val clickText = ClickableText
-                    .compose("$detailColor$mn")
+                val clickText = ClickTextBuilder("$detailColor$mn")
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
                     .value(value)
 
@@ -112,10 +111,9 @@ class GameModeCommand : CommandBase() {
 
         if (available.isNotEmpty()) {
             for ((i, mode) in availableNames.withIndex()) {
-                val clickText = ClickableText
-                    .compose(mode)
-                    .color(ccErrDetl)
+                val clickText = ClickTextBuilder(mode)
                     .action(ClickEvent.Action.SUGGEST_COMMAND)
+                    .color(ccErrDetl)
                     .value("/gm $mode ")
 
                 builder
