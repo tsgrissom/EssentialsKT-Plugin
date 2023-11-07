@@ -5,10 +5,12 @@ import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.chat.ClickableText
+import io.github.tsgrissom.pluginapi.chat.TextBoxBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -50,7 +52,10 @@ class UniqueIdCommand : CommandBase() {
             sender
         }
 
+        sender.sendMessage("Old")
         sender.sendChatComponents(generateDisplayUniqueIdAsTextComponent(t))
+        sender.sendMessage("New")
+        sender.sendChatComponents(generateTextBox(t))
     }
 
     override fun onTabComplete(
@@ -94,5 +99,35 @@ class UniqueIdCommand : CommandBase() {
             .appendc(" ---------------------------------------", ccTert)
 
         return builder.create()
+    }
+
+    private fun generateTextBox(target: Player) : Array<BaseComponent> {
+        val conf = getConfig()
+        val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccUser = conf.getBungeeChatColor(ChatColorKey.Username)
+
+        val uuid = target.uniqueString
+        val data = ClickableText
+            .compose(uuid)
+            .underline(true)
+            .color(ccUser)
+            .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
+            .value(uuid)
+            .toComponent()
+        val l1 = TextComponent("UUID of ")
+        val l1Name = TextComponent(target.name)
+        val l2 = TextComponent("> ")
+
+        l1.color = ccSec
+        l1Name.color = ccUser
+        l1.addExtra(l1Name)
+        l2.color = ccPrim
+        l2.addExtra(data)
+
+        return TextBoxBuilder(decorationColor=ccTert)
+            .withLine(l1, l2)
+            .toComponents()
     }
 }

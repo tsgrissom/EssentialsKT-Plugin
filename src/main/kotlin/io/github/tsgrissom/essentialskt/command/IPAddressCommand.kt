@@ -12,7 +12,6 @@ import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
 import net.md_5.bungee.api.ChatColor.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -75,20 +74,21 @@ class IPAddressCommand : CommandBase() {
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
 
-        val l1 = TextComponent("IP Address of ")
-        l1.color = ccSec
-        val l1Name = TextComponent(t.name)
-        l1Name.color = ccVal
-        l1.addExtra(l1Name)
-
-        val l2 = TextComponent("> ")
-        l2.color = ccPrim
         val data = ClickableText
             .compose(t.getIPString())
+            .underline(true)
             .color(YELLOW)
             .action(ClickEvent.Action.COPY_TO_CLIPBOARD)
             .value(t.getIPString())
             .toComponent()
+        val l1 = TextComponent("IP Address of ")
+        val l1Name = TextComponent(t.name)
+        val l2 = TextComponent("> ")
+
+        l1.color = ccSec
+        l1Name.color = ccVal
+        l1.addExtra(l1Name)
+        l2.color = ccPrim
         l2.addExtra(data)
 
         return TextBoxBuilder(decorationColor=ccTert)
