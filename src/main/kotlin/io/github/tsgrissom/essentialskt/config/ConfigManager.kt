@@ -1,5 +1,7 @@
 package io.github.tsgrissom.essentialskt.config
 
+import BukkitChatColor
+import BungeeChatColor
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.misc.PluginLogger
 import io.github.tsgrissom.pluginapi.extension.bukkit.convertToBungeeChatColor
@@ -8,8 +10,6 @@ import io.github.tsgrissom.pluginapi.extension.bukkit.isInputAlias
 import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
-import net.md_5.bungee.api.ChatColor as BungeeChatColor
-import org.bukkit.ChatColor
 import org.bukkit.configuration.ConfigurationSection
 
 class ConfigManager {
@@ -37,7 +37,7 @@ class ConfigManager {
         }
 
         fun isValidColorString(value: String) : Boolean {
-            val isInFiltered = ChatColor.entries
+            val isInFiltered = BukkitChatColor.entries
                 .filter { NonFormattingChatColorPredicate().test(it) }
                 .firstOrNull { it.isInputAlias(value) } != null
             if (isInFiltered)
@@ -92,14 +92,14 @@ class ConfigManager {
         ChatColorKey.entries.firstOrNull { it.name.equalsIc(str) }
 
     // TODO Write in docs about unexpected colors white or magic text and their meaning
-    fun getChatColor(key: ChatColorKey) : ChatColor {
+    fun getChatColor(key: ChatColorKey) : BukkitChatColor {
         val defStr = getDefaultColorMap()[key.name]!!
-        val def = ChatColor.valueOf(defStr)
+        val def = BukkitChatColor.valueOf(defStr)
         val conf = getFileConfiguration().getConfigurationSection("Colors")
             ?: return def // This does not happen
         val colorValue = conf.getString(key.name, defStr)!! // Non-null asserted because default provided
         return colorValue.resolveChatColor()
-            ?: ChatColor.WHITE // Might happen, therefore default to
+            ?: BukkitChatColor.WHITE // Might happen, therefore default to
     }
 
     fun getBungeeChatColor(key: ChatColorKey) : BungeeChatColor {
@@ -133,10 +133,10 @@ class ConfigManager {
     // MARK: Configurable Chat Messages
 
     private fun getDefaultJoinMessage() : String {
-        val ccGreen = ChatColor.GREEN.toString()
-        val ccBold = ChatColor.BOLD.toString()
-        val ccYell = ChatColor.YELLOW.toString()
-        val ccGold = ChatColor.GOLD.toString()
+        val ccGreen = BukkitChatColor.GREEN.toString()
+        val ccBold  = BukkitChatColor.BOLD.toString()
+        val ccYell  = BukkitChatColor.YELLOW.toString()
+        val ccGold  = BukkitChatColor.GOLD.toString()
         return "${ccGreen}${ccBold}+ ${ccYell}%pd% ${ccGold}has joined the server"
     }
 
@@ -147,10 +147,10 @@ class ConfigManager {
     }
 
     private fun getDefaultQuitMessage() : String {
-        val ccRed = ChatColor.RED.toString()
-        val ccBold = ChatColor.BOLD.toString()
-        val ccYell = ChatColor.YELLOW.toString()
-        val ccGold = ChatColor.GOLD.toString()
+        val ccRed  = BukkitChatColor.RED.toString()
+        val ccBold = BukkitChatColor.BOLD.toString()
+        val ccYell = BukkitChatColor.YELLOW.toString()
+        val ccGold = BukkitChatColor.GOLD.toString()
         return "${ccRed}${ccBold}- ${ccYell}%pd% ${ccGold}has left the server"
     }
 

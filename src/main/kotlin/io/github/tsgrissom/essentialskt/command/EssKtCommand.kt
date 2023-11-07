@@ -1,5 +1,6 @@
 package io.github.tsgrissom.essentialskt.command
 
+import BukkitChatColor
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ConfigureChatColorGui
@@ -19,11 +20,10 @@ import io.github.tsgrissom.pluginapi.extension.kt.fmt
 import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import io.github.tsgrissom.pluginapi.utility.StringUtility
-import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
-import org.bukkit.ChatColor
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -73,7 +73,7 @@ class EssKtCommand : CommandBase() {
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
         val ccSec = conf.getChatColor(ChatColorKey.Secondary)
         val ccVal = conf.getChatColor(ChatColorKey.Value)
-        val ccReset = ChatColor.RESET
+        val ccReset = BukkitChatColor.RESET
 
         val args = context.args
         val sender = context.sender
@@ -107,7 +107,7 @@ class EssKtCommand : CommandBase() {
         }
 
         fun listChatColors() {
-            val validColors = ChatColor.entries
+            val validColors = BukkitChatColor.entries
                 .filter { NonFormattingChatColorPredicate().test(it) }
             sender.sendMessage("Valid Chat Colors:")
 
@@ -159,10 +159,10 @@ class EssKtCommand : CommandBase() {
 
                 // TODO Permissions
 
-                val new: ChatColor = arg4.resolveChatColor()
+                val new: BukkitChatColor = arg4.resolveChatColor()
                     ?: return sender.sendMessage("${ccErr}Unknown chat color ${ccErrDetl}\"$arg4\"")
 
-                if (new.isFormat || new == ChatColor.RESET)
+                if (new.isFormat || new == BukkitChatColor.RESET)
                     return sender.sendMessage("${ccErr}You cannot use a formatting code for a configurable color.")
 
                 val fc = getPlugin().config
@@ -251,7 +251,7 @@ class EssKtCommand : CommandBase() {
         val ccSec = conf.getChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
         val ccVal = conf.getChatColor(ChatColorKey.Value)
-        val ccReset = ChatColor.RESET
+        val ccReset = BukkitChatColor.RESET
 
         val args = context.args
         val len = args.size
@@ -429,7 +429,7 @@ class EssKtCommand : CommandBase() {
         val arg3 = args[3]
         fun String.isValidColorKey() =
             getConfig().getKeyedChatColorByName(this) != null
-        val allChatColors = ChatColor.entries
+        val allChatColors = BukkitChatColor.entries
             .filter { NonFormattingChatColorPredicate().test(it) }
             .map { it.name }
             .toList()
