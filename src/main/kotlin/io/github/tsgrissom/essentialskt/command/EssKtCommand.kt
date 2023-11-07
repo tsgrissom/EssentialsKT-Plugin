@@ -7,8 +7,8 @@ import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
-import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
-import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
 import io.github.tsgrissom.pluginapi.extension.kt.BooleanFormat
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
@@ -43,11 +43,10 @@ class EssKtCommand : CommandBase() {
 
     // MARK: Text Helper Functions
     private fun getHelpAsComponents(context: CommandContext) : Array<BaseComponent> {
-        val help = CommandHelpGenerator(context)
+        val help = CommandHelpBuilder(context)
 
         help.withSubcommand(
-            SubcommandHelp
-                .compose("version")
+            SubcHelpBuilder("version")
                 .withAliases("v")
                 .withDescription("View plugin version")
         )

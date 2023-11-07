@@ -4,9 +4,9 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
-import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
-import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.chat.hover.content.Text
+import net.md_5.bungee.api.ChatColor as BungeeChatColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.World
@@ -65,17 +66,14 @@ class TimeCommand : CommandBase() {
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
-        val ccWhite = ChatColor.WHITE
+        val ccWhite = BungeeChatColor.WHITE
 
         val label = context.label
-        val help = CommandHelpGenerator(context)
+        val help = CommandHelpBuilder(context)
             .withSubcommand(
-                SubcommandHelp
-                    .compose("add")
+                SubcHelpBuilder("add")
                     .withArgument(
-                        SubcommandArgumentHelp
-                            .compose("#")
-                            .required(true)
+                        SubcParameterBuilder("#", required=true)
                             .hoverText(
                                 "${ccSec}How many ticks to add to the world's time",
                                 "${ccSec}Ticks ${ccTert}= ${ccSec}AmountOfFullSeconds ${ccTert}* ${ccSec}20"
@@ -85,36 +83,29 @@ class TimeCommand : CommandBase() {
                     .withSuggestion("/$label add ")
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("query day")
+                SubcHelpBuilder("query day")
                     .withDescription("Displays the amount of days of the game world")
                     .withSuggestion("/$label query day")
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("query daytime")
+                SubcHelpBuilder("query daytime")
                     .withDescription("Displays the time of day of the game world", "in ticks")
                     .withSuggestion("/$label query daytime")
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("query full")
+                SubcHelpBuilder("query full")
                     .withDescription("Displays the full time of the game world in", "ticks")
                     .withSuggestion("/$label query full")
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("query gametime")
+                SubcHelpBuilder("query gametime")
                     .withDescription("Displays the age of the game world in ticks")
                     .withSuggestion("/$label query gametime")
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("set")
+                SubcHelpBuilder("set")
                     .withArgument(
-                        SubcommandArgumentHelp
-                            .compose("${ccVal}# ${ccTert}or ${ccVal}preset")
-                            .required(true)
+                        SubcParameterBuilder("# or preset", required=true)
                             .hoverText(
                                 "${ccVal}One of the following:",
                                 "${ccWhite}1. ${ccSec}How many ticks to set the world's time to",

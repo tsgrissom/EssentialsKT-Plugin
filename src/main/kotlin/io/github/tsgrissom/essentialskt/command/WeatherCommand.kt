@@ -4,14 +4,15 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.extension.bukkit.clearRain
-import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
-import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
-import io.github.tsgrissom.pluginapi.extension.bukkit.makeRain
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.extension.kt.fmtYesNo
 import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.command.Command
@@ -28,24 +29,35 @@ class WeatherCommand : CommandBase() {
         const val PERM = "essentials.weather"
     }
 
-    private fun getHelpText(context: CommandContext) : Array<String> {
-        val label = context.label
-        return arrayOf(
-            "  &6Command Help &8-> &e/${label}",
-            "&6> &7Aliases&8: &eweather&8, &ewthr",
-            "&6> &7Parameters&8: &c<Required> &7& &a[Optional]",
-            " &8/&e${label} clear &a[World]&8:",
-            "     &7Clear world weather conditions",
-            " &8/&e${label} display &a[World]&8:",
-            "     &7Display world weather statistics",
-            " &8/&e${label} rain &a[World]&8:",
-            "     &7Enable rain for a world",
-            " &8/&e${label} thunder &a[World]&8:",
-            "     &7Enable thunderstorms for a world"
-        ) // TODO Convert to CommandHelpGenerator
+    private fun getHelpAsComponents(context: CommandContext) : Array<BaseComponent> {
+        val optArgWorld = SubcParameterBuilder("World", required=false)
+        return CommandHelpBuilder(context)
+            .withAliases("weather", "wthr")
+            .withSubcommand(
+                SubcHelpBuilder("clear")
+                    .withDescription("Clear world weather conditions")
+                    .withArgument(optArgWorld)
+            )
+            .withSubcommand(
+                SubcHelpBuilder("display")
+                    .withDescription("Display world weather statistics")
+                    .withArgument(optArgWorld)
+            )
+            .withSubcommand(
+                SubcHelpBuilder("rain")
+                    .withDescription("Enable rain for a world")
+                    .withArgument(optArgWorld)
+            )
+            .withSubcommand(
+                SubcHelpBuilder("thunder")
+                    .withDescription("Enable thunderstorms for a world")
+                    .withArgument(optArgWorld)
+            )
+            .toComponents()
     }
+
     private fun sendHelp(context: CommandContext) =
-        getHelpText(context).forEach { context.sender.sendMessage(it) }
+        context.sender.sendChatComponents(getHelpAsComponents(context))
 
     override fun execute(context: CommandContext) {
         val conf = getConfig()

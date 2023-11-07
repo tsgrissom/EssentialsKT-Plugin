@@ -7,11 +7,11 @@ import io.github.tsgrissom.essentialskt.misc.EssPlayer
 import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
-import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
-import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
-import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
@@ -140,32 +140,28 @@ class GameModeCommand : CommandBase() {
         val sender = context.sender
         val descVerbiage = if (sender.hasPermission(PERM_OTHERS)) "a player's" else "your"
         val suggestionPostfix = if (sender.hasPermission(PERM_OTHERS)) " " else ""
-        val subcSurvival = SubcommandHelp
-            .compose("survival")
+        val subcSurvival = SubcHelpBuilder("survival")
             .withAliases("0", "surv", "sur", "s")
             .withDescription(
                 "${ccSec}Set $descVerbiage gamemode to ${ccType}Survival"
             )
             .withPermission(PERM_SURVIVAL)
             .withSuggestion("/gm survival${suggestionPostfix}")
-        val subcCreative = SubcommandHelp
-            .compose("creative")
+        val subcCreative = SubcHelpBuilder("creative")
             .withAliases("1", "create", "creat", "crtv", "crt", "c")
             .withDescription(
                 "${ccSec}Set $descVerbiage gamemode to ${ccType}Creative"
             )
             .withPermission(PERM_CREATIVE)
             .withSuggestion("/gm creative${suggestionPostfix}")
-        val subcAdventure = SubcommandHelp
-            .compose("adventure")
+        val subcAdventure = SubcHelpBuilder("adventure")
             .withAliases("2", "adv", "a")
             .withDescription(
                 "${ccSec}Set $descVerbiage gamemode to ${ccType}Adventure"
             )
             .withPermission(PERM_ADVENTURE)
             .withSuggestion("/gm adventure${suggestionPostfix}")
-        val subcSpectator = SubcommandHelp
-            .compose("spectator")
+        val subcSpectator = SubcHelpBuilder("spectator")
             .withAliases("spect", "spec", "sp")
             .withDescription(
                 "${ccSec}Set $descVerbiage gamemode to ${ccType}Spectator"
@@ -175,9 +171,7 @@ class GameModeCommand : CommandBase() {
 
         if (sender.hasPermission(PERM_OTHERS)) {
             val targetingRequired = context.sender !is Player
-            val targetingArgument = SubcommandArgumentHelp
-                .compose("Target")
-                .required(targetingRequired)
+            val targetingArgument = SubcParameterBuilder("Target", required=targetingRequired)
                 .hoverText(
                     "${ccSec}If provided, will apply the specified",
                     " ${ccSec}gamemode to the targeted player"
@@ -188,7 +182,7 @@ class GameModeCommand : CommandBase() {
             subcSpectator.withArgument(targetingArgument)
         }
 
-        val help = CommandHelpGenerator(context)
+        val help = CommandHelpBuilder(context)
             .withAliases("gamemode", "gm", "egamemode", "egm")
             .withSubcommand(subcSurvival)
             .withSubcommand(subcCreative)

@@ -4,9 +4,9 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.chat.ClickTextBuilder
 import io.github.tsgrissom.pluginapi.command.*
-import io.github.tsgrissom.pluginapi.command.help.CommandHelpGenerator
-import io.github.tsgrissom.pluginapi.command.help.SubcommandArgumentHelp
-import io.github.tsgrissom.pluginapi.command.help.SubcommandHelp
+import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
@@ -45,15 +45,12 @@ class RemoveCommand : CommandBase() {
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         
-        return CommandHelpGenerator(context)
+        return CommandHelpBuilder(context)
             .withAliases("killall", "eremove")
             .withSubcommand(
-                SubcommandHelp
-                    .compose("")
+                SubcHelpBuilder("")
                     .withArgument(
-                        SubcommandArgumentHelp
-                            .compose("Type")
-                            .required(true)
+                        SubcParameterBuilder("Type", required=true)
                             .hoverText(
                                 "${ccSec}Type${ccTert}: ${ccErrDetl}Required",
                                 "${ccSec}Type provided can either be a valid entity type",
@@ -61,9 +58,7 @@ class RemoveCommand : CommandBase() {
                             )
                     )
                     .withArgument(
-                        SubcommandArgumentHelp
-                            .compose("Radius OR World")
-                            .required(false)
+                        SubcParameterBuilder("Radius OR World", required=false)
                             .hoverText(
                                 "${ccSec}Type${ccTert}: ${ccSucc}Optional",
                                 "${ccSec}One of either${ccTert}:",
@@ -79,8 +74,7 @@ class RemoveCommand : CommandBase() {
                     )
             )
             .withSubcommand(
-                SubcommandHelp
-                    .compose("types")
+                SubcHelpBuilder("types")
                     .withDescription("List valid special grouped types")
             )
             .toComponents()

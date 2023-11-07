@@ -61,6 +61,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("time", TimeCommand())
         registerCommand("toggledownfall", ToggleDownfallCommand())
         registerCommand("uniqueid", UniqueIdCommand())
+        registerCommand("weather", WeatherCommand())
         registerCommand("whois", WhoIsCommand())
         registerCommand("worlds", WorldsCommand())
 
