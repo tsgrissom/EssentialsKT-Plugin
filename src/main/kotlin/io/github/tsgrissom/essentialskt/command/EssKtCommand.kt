@@ -44,12 +44,11 @@ class EssKtCommand : CommandBase() {
     // MARK: Text Helper Functions
     private fun getHelpAsComponents(context: CommandContext) : Array<BaseComponent> {
         val help = CommandHelpBuilder(context)
-
-        help.withSubcommand(
-            SubcHelpBuilder("version")
-                .withAliases("v")
-                .withDescription("View plugin version")
-        )
+            .withSubcommands(
+                SubcHelpBuilder("version")
+                    .withAliases("v")
+                    .withDescription("View plugin version")
+            )
 
         return help.toComponents()
     }

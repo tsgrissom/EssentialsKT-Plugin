@@ -67,10 +67,10 @@ class TimeCommand : CommandBase() {
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
         val ccWhite = BungeeChatColor.WHITE
-
         val label = context.label
+
         val help = CommandHelpBuilder(context)
-            .withSubcommand(
+            .withSubcommands(
                 SubcHelpBuilder("add")
                     .withArgument(
                         SubcParameterBuilder("#", required=true)
@@ -80,29 +80,19 @@ class TimeCommand : CommandBase() {
                             )
                     )
                     .withDescription("Add ticks to a world's current time")
-                    .withSuggestion("/$label add ")
-            )
-            .withSubcommand(
+                    .withSuggestion("/$label add "),
                 SubcHelpBuilder("query day")
                     .withDescription("Displays the amount of days of the game world")
-                    .withSuggestion("/$label query day")
-            )
-            .withSubcommand(
+                    .withSuggestion("/$label query day"),
                 SubcHelpBuilder("query daytime")
                     .withDescription("Displays the time of day of the game world", "in ticks")
-                    .withSuggestion("/$label query daytime")
-            )
-            .withSubcommand(
+                    .withSuggestion("/$label query daytime"),
                 SubcHelpBuilder("query full")
                     .withDescription("Displays the full time of the game world in", "ticks")
-                    .withSuggestion("/$label query full")
-            )
-            .withSubcommand(
+                    .withSuggestion("/$label query full"),
                 SubcHelpBuilder("query gametime")
                     .withDescription("Displays the age of the game world in ticks")
-                    .withSuggestion("/$label query gametime")
-            )
-            .withSubcommand(
+                    .withSuggestion("/$label query gametime"),
                 SubcHelpBuilder("set")
                     .withArgument(
                         SubcParameterBuilder("# or preset", required=true)
@@ -218,9 +208,9 @@ class TimeCommand : CommandBase() {
     private fun displayWorldTime(sender: CommandSender) {
         val conf = getConfig()
         val ccDetl = conf.getChatColor(ChatColorKey.Detail)
+        val ccPrim = conf.getChatColor(ChatColorKey.Primary)
         val ccSec = conf.getChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
-        val ccSucc = conf.getChatColor(ChatColorKey.Success)
         val ccVal = conf.getChatColor(ChatColorKey.Value)
 
         val world = sender.getCurrentWorldOrDefault()
@@ -233,7 +223,7 @@ class TimeCommand : CommandBase() {
         val percent = (worldTicks/24000.0) * 100
 
         sender.sendMessage(
-            "${ccSucc}Time info for world ${ccDetl}$wn",
+            "${ccPrim}Time info for world ${ccDetl}$wn",
             "${ccTert}> ${ccVal}$worldTicks${ccSec}/${ccVal}24000 ticks",
             "${ccTert}> ${ccVal}$wtAsSecs${ccSec}/${ccVal}1200 seconds",
             "${ccTert}> ${ccVal}${wtAsMins.roundToDigits(1)}${ccSec}/${ccVal}20 minutes",

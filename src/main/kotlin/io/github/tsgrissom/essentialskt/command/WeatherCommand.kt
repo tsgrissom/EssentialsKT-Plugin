@@ -33,22 +33,16 @@ class WeatherCommand : CommandBase() {
         val optArgWorld = SubcParameterBuilder("World", required=false)
         return CommandHelpBuilder(context)
             .withAliases("weather", "wthr")
-            .withSubcommand(
+            .withSubcommands(
                 SubcHelpBuilder("clear")
                     .withDescription("Clear world weather conditions")
-                    .withArgument(optArgWorld)
-            )
-            .withSubcommand(
+                    .withArgument(optArgWorld),
                 SubcHelpBuilder("display")
                     .withDescription("Display world weather statistics")
-                    .withArgument(optArgWorld)
-            )
-            .withSubcommand(
+                    .withArgument(optArgWorld),
                 SubcHelpBuilder("rain")
                     .withDescription("Enable rain for a world")
-                    .withArgument(optArgWorld)
-            )
-            .withSubcommand(
+                    .withArgument(optArgWorld),
                 SubcHelpBuilder("thunder")
                     .withDescription("Enable thunderstorms for a world")
                     .withArgument(optArgWorld)

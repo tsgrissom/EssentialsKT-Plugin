@@ -182,14 +182,10 @@ class GameModeCommand : CommandBase() {
             subcSpectator.withArgument(targetingArgument)
         }
 
-        val help = CommandHelpBuilder(context)
+        return CommandHelpBuilder(context)
             .withAliases("gamemode", "gm", "egamemode", "egm")
-            .withSubcommand(subcSurvival)
-            .withSubcommand(subcCreative)
-            .withSubcommand(subcAdventure)
-            .withSubcommand(subcSpectator)
-
-        return help.toComponents()
+            .withSubcommands(subcSurvival, subcCreative, subcAdventure, subcSpectator)
+            .toComponents()
     }
 
     // MARK: Command Body

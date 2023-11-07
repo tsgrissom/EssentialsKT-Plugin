@@ -47,7 +47,7 @@ class RemoveCommand : CommandBase() {
         
         return CommandHelpBuilder(context)
             .withAliases("killall", "eremove")
-            .withSubcommand(
+            .withSubcommands(
                 SubcHelpBuilder("")
                     .withArgument(
                         SubcParameterBuilder("Type", required=true)
@@ -71,9 +71,7 @@ class RemoveCommand : CommandBase() {
                         "Kill entities of a specified type. By default all",
                         "that match in the world, otherwise within a set",
                         "radius or another world"
-                    )
-            )
-            .withSubcommand(
+                    ),
                 SubcHelpBuilder("types")
                     .withDescription("List valid special grouped types")
             )
