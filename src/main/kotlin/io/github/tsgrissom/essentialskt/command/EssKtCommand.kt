@@ -1,9 +1,14 @@
 package io.github.tsgrissom.essentialskt.command
 
 import BukkitChatColor
+import BungeeChatColor
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ConfigureChatColorGui
+import io.github.tsgrissom.pluginapi.chat.ClickFormattedListBuilder
+import io.github.tsgrissom.pluginapi.chat.FormattedListBuilder
+import io.github.tsgrissom.pluginapi.chat.HoverFormattedListBuilder
+import io.github.tsgrissom.pluginapi.chat.PlainFormattedListBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
@@ -19,11 +24,9 @@ import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
 import io.github.tsgrissom.pluginapi.extension.kt.fmt
 import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
-import io.github.tsgrissom.pluginapi.utility.StringUtility
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.ComponentBuilder
-import org.bukkit.Bukkit
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -246,12 +249,13 @@ class EssKtCommand : CommandBase() {
 
     private fun handleSubcDebug(context: CommandContext) {
         val conf = getConfig()
-        val ccErr = conf.getChatColor(ChatColorKey.Error)
-        val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
-        val ccSec = conf.getChatColor(ChatColorKey.Secondary)
-        val ccTert = conf.getChatColor(ChatColorKey.Tertiary)
-        val ccVal = conf.getChatColor(ChatColorKey.Value)
-        val ccReset = BukkitChatColor.RESET
+        val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
+        val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
+        val ccPrim = conf.getBungeeChatColor(ChatColorKey.Primary)
+        val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
+        val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
+        val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
+        val ccReset = BungeeChatColor.RESET
 
         val args = context.args
         val len = args.size
@@ -264,14 +268,14 @@ class EssKtCommand : CommandBase() {
 
         fun listDebugSubcommands(negative: Boolean = false) {
             val subc = setOf("toggle", "true", "false")
-            val prim = if (negative) ccErr else ccSec
+            val prim = if (negative) ccErr else ccPrim
+            val sec = if  (negative) ccErr else ccSec
             val punc = if (negative) ccErr else ccTert
             val valu = if (negative) ccErrDetl else ccVal
-            val list = StringUtility.createFormattedList(
-                "Debug Sub-Commands", subc,
-                colorPrimary=prim, colorPunctuation=punc, colorValue=valu
-            )
-            sender.sendMessage(list)
+            val list = FormattedListBuilder("Debug Sub-Commands")
+                .colors(prim, sec, punc, valu)
+                .format(subc)
+            sender.sendChatComponents(list)
         }
 
         fun handleToggle() {
@@ -330,26 +334,6 @@ class EssKtCommand : CommandBase() {
             "conf", "config", "configure" -> handleSubcConfig(context)
             "debug", "d" -> handleSubcDebug(context)
             "reload", "refresh" -> handleSubcReload(context)
-            "test" -> {
-                val hoverableList = StringUtility.createHoverableFormattedList(
-                    collection=listOf("One thing", "another thing", "another thing"),
-                    onHoverElement={
-                        ComponentBuilder("This is line 1 for ")
-                            .color(BungeeChatColor.GRAY)
-                            .appendc(it, BungeeChatColor.GREEN)
-                            .create()
-                    }
-                )
-                sender.sendChatComponents(hoverableList)
-
-                val clickableList = StringUtility.createClickableFormattedList(
-                    collection=listOf("dog", "cat", "rat", "bat"),
-                    onClickAction={ClickEvent.Action.SUGGEST_COMMAND},
-                    onClickValue={it}
-                )
-
-                sender.sendChatComponents(clickableList)
-            }
             "version", "v" -> handleSubcVersion(context)
             else -> {
                 sender.sendMessage("${ccErr}Unknown subcommand: ${ccErrDetl}\"$sub\" ${ccErr}Do ${ccErrDetl}/esskt ${ccErr}for help.")
