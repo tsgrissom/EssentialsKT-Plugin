@@ -25,6 +25,13 @@ class SetRemainingAirCommand : CommandBase(){
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
+    private val suggestedLevels = mutableListOf<String>()
+
+    init {
+        for (i in 10..100 step 10)
+            suggestedLevels.add("$i%")
+    }
+
     companion object {
         const val PERM = "essentialskt.setremainingair"
         const val PERM_OTHERS = "essentialskt.setremainingair.others"
@@ -85,6 +92,7 @@ class SetRemainingAirCommand : CommandBase(){
         val ccErr = conf.getChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccTer = conf.getChatColor(ChatColorKey.Tertiary)
         val ccDetl = conf.getChatColor(ChatColorKey.Detail)
 
         val args = context.args
@@ -99,7 +107,7 @@ class SetRemainingAirCommand : CommandBase(){
 
         val sub = args[0]
         val target: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"${ccErr}.")
 
         if (len == 1) {
             val verbiage = if (sender.hasPermission(PERM_PERCENT))
@@ -107,7 +115,7 @@ class SetRemainingAirCommand : CommandBase(){
             else
                 "amount"
             sender.sendChatComponents(generateUsageAsComponent(context))
-            sender.sendMessage("${ccErr}Please provide an $verbiage to set oxygen level to")
+            sender.sendMessage("${ccErr}Please provide an $verbiage to set oxygen level to.")
             return
         }
 
@@ -121,20 +129,25 @@ class SetRemainingAirCommand : CommandBase(){
         else
             "integer value"
         val arg1d = arg1.toIntOrNull()
-            ?: return sender.sendMessage("${ccErr}Invalid $verbiage for ${ccErrDetl}\"$arg1\"")
+            ?: return sender.sendMessage("${ccErr}Invalid $verbiage for ${ccErrDetl}\"$arg1\"${ccErr}.")
 
         if (arg1d < 0)
-            return sender.sendMessage("${ccErr}New oxygen level should be a positive $verbiage")
+            return sender.sendMessage("${ccErr}New oxygen level should be a positive $verbiage.")
         if (arg1d > 300)
-            return sender.sendMessage("${ccErr}The maximum oxygen level is ${ccErrDetl}300")
+            return sender.sendMessage("${ccErr}The maximum oxygen level is ${ccErrDetl}300${ccErr}.")
 
         if (target == sender && sender.lacksPermission(PERM))
             return context.sendNoPermission(PERM)
         if (target != sender && sender.lacksPermission(PERM_OTHERS))
             return context.sendNoPermission(PERM_OTHERS)
 
+        val targetName = if (target == sender)
+            "your"
+        else
+            "${ccDetl}${target.name}'s"
+
         target.remainingAir = arg1d
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${target.name}'s ${ccPrim}oxygen level to ${ccDetl}$arg1")
+        sender.sendMessage("${ccPrim}You set $targetName ${ccPrim}oxygen level to ${ccDetl}$arg1${ccTer}/${ccDetl}300${ccPrim}.")
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
@@ -147,6 +160,7 @@ class SetRemainingAirCommand : CommandBase(){
         val ccErr = conf.getChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
+        val ccTer = conf.getChatColor(ChatColorKey.Tertiary)
         val ccDetl = conf.getChatColor(ChatColorKey.Detail)
 
         val sansPercent = input.removeSuffix("%")
@@ -154,13 +168,20 @@ class SetRemainingAirCommand : CommandBase(){
             ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value. Must be a positive integer.")
 
         if (value < 0)
-            return sender.sendMessage("${ccErr}A percentage of max oxygen level must be a positive integer")
+            return sender.sendMessage("${ccErr}A percentage of max oxygen level must be a positive integer.")
 
         val chunk = value / 100.0
         val amount = chunk * 300
 
-        target.remainingAir = amount.roundToInt()
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${target.name}'s ${ccPrim}oxygen level to ${ccDetl}${input}")
+        val targetName = if (target == sender)
+            "your"
+        else
+            "${ccDetl}${target.name}'s"
+        val amountRounded = amount.roundToInt()
+        val asPoints = "${ccTer}(${ccDetl}${amountRounded}${ccTer}/${ccDetl}300${ccTer})"
+
+        target.remainingAir = amountRounded
+        sender.sendMessage("${ccPrim}You set $targetName ${ccPrim}oxygen level to ${ccDetl}${input} $asPoints${ccPrim}.")
     }
 
     override fun onTabComplete(
@@ -176,6 +197,8 @@ class SetRemainingAirCommand : CommandBase(){
 
         if (len == 1) {
             StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
+        } else if (len == 2) {
+            StringUtil.copyPartialMatches(args[1], suggestedLevels, tab)
         }
 
         return finish()
