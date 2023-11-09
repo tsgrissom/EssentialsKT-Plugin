@@ -10,10 +10,7 @@ import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
-import io.github.tsgrissom.pluginapi.extension.kt.capitalize
-import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
-import io.github.tsgrissom.pluginapi.extension.kt.isPercentage
-import io.github.tsgrissom.pluginapi.extension.kt.roundToDigits
+import io.github.tsgrissom.pluginapi.extension.kt.*
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -33,8 +30,6 @@ class TimeCommand : CommandBase() {
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
-    private fun getTimeUtility() =
-        getPlugin().getTimeUtility()
 
     // MARK: Static Declarations
     companion object {
@@ -268,10 +263,9 @@ class TimeCommand : CommandBase() {
             return sender.sendChatComponents(getAddUsage())
 
         val arg1 = args[1]
-        val util = getTimeUtility()
-        if (util.isInputInSeconds(arg1))
+        if (arg1.isInputInSeconds())
             return handleAddSeconds(context, arg1)
-        else if (util.isInputInMinutes(arg1))
+        else if (arg1.isInputInMinutes())
             return handleAddMinutes(context, arg1)
 
         val addend: Long
@@ -300,8 +294,8 @@ class TimeCommand : CommandBase() {
         val newTime = world.time
         val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
         val wn = world.name
-        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
-        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
+        val oldTimeF = oldTime.convertTicksTo24Hour(withColor=true)
+        val newTimeF = newTime.convertTicksTo24Hour(withColor=true)
 
         // TODO Move away from withColor var of util function so it can be configured
 
@@ -344,9 +338,8 @@ class TimeCommand : CommandBase() {
         val newTime = world.time
         val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
         val wn = world.name
-        val util = getTimeUtility()
-        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
-        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
+        val oldTimeF = oldTime.convertTicksTo24Hour(withColor=true)
+        val newTimeF = newTime.convertTicksTo24Hour(withColor=true)
 
         // TODO Needs to be converted
 
@@ -390,9 +383,8 @@ class TimeCommand : CommandBase() {
         val newTime = world.time
         val percent = ((newTime / 24000.0) * 100).roundToDigits(2)
         val wn = world.name
-        val util = getTimeUtility()
-        val oldTimeF = util.convertTicksTo24Hour(oldTime, withColor=true)
-        val newTimeF = util.convertTicksTo24Hour(newTime, withColor=true)
+        val oldTimeF = oldTime.convertTicksTo24Hour(withColor=true)
+        val newTimeF = newTime.convertTicksTo24Hour(withColor=true)
 
         // TODO Convert away from using withColor util function
 

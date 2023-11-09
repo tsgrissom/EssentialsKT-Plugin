@@ -355,7 +355,7 @@ class EssKtCommand : CommandBase() {
         val suggestArg0 = mutableListOf("conf", "debug", "reload", "version")
         val suggestConfigAreas = mutableListOf("color")
         val suggestConfigColorSubc = listOf("set", "list", "listcolors", "reset")
-        val suggestDebugSubc = mutableListOf("toggle")
+        val suggestDebugSubc = mutableListOf(" toggle")
         val validSubcDebugAliases = listOf("debug", "d")
         val validSubcConfigureAliases = listOf("conf", "config", "configure")
         val validConfigColorAliases = listOf("colors", "color")
