@@ -25,7 +25,7 @@ class SetRemainingAirCommand : CommandBase(){
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
-    private val suggestedLevels = mutableListOf<String>()
+    private val suggestedLevels = mutableListOf("25%", "75%")
 
     init {
         for (i in 10..100 step 10)
@@ -33,8 +33,8 @@ class SetRemainingAirCommand : CommandBase(){
     }
 
     companion object {
-        const val PERM = "essentialskt.setremainingair"
-        const val PERM_OTHERS = "essentialskt.setremainingair.others"
+        const val PERM         = "essentialskt.setremainingair"
+        const val PERM_OTHERS  = "essentialskt.setremainingair.others"
         const val PERM_PERCENT = "essentialskt.setremainingair.percent"
     }
 

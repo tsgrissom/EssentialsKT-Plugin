@@ -14,7 +14,9 @@ import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.CommandUsageBuilder
 import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.kt.BooleanFormat
 import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
@@ -48,6 +50,15 @@ class EssKtCommand : CommandBase() {
     private fun getHelpAsComponents(context: CommandContext) : Array<BaseComponent> {
         val help = CommandHelpBuilder(context)
             .withSubcommands(
+                SubcHelpBuilder("conf")
+                    .withAliases("config", "configure")
+                    .withDescription("Configure EssKT from in-game"),
+                SubcHelpBuilder("debug")
+                    .withAliases("d")
+                    .withDescription("Change whether to print debug text"),
+                SubcHelpBuilder("reload")
+                    .withAliases("refresh", "load")
+                    .withDescription("Reloads EssKT's configuration"),
                 SubcHelpBuilder("version")
                     .withAliases("v")
                     .withDescription("View plugin version")
@@ -333,8 +344,19 @@ class EssKtCommand : CommandBase() {
         when (sub.lowercase()) {
             "conf", "config", "configure" -> handleSubcConfig(context)
             "debug", "d" -> handleSubcDebug(context)
-            "reload", "refresh" -> handleSubcReload(context)
+            "reload", "load", "refresh" -> handleSubcReload(context)
             "version", "v" -> handleSubcVersion(context)
+            "test" -> {
+                val usage = CommandUsageBuilder(context, "test")
+                    .withParameter(
+                        SubcParameterBuilder("Name", required=true)
+                    )
+                    .withConsoleParameter(
+                        SubcParameterBuilder("Name", required=false)
+                    )
+                    .toComponents()
+                sender.sendChatComponents(usage)
+            }
             else -> {
                 sender.sendMessage("${ccErr}Unknown subcommand: ${ccErrDetl}\"$sub\" ${ccErr}Do ${ccErrDetl}/esskt ${ccErr}for help.")
             }
