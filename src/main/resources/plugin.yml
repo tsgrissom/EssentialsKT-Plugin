@@ -48,6 +48,9 @@ commands:
     aliases: ["sethunger"]
   sethealth:
     description: "Set a player's health."
+  setremainingair:
+    description: "Set a player's remaining air level."
+    aliases: ["setremainingoxygen", "setoxygen", "setoxy", "esetremainignair", "esetoxygen", "esetoxy"]
   time:
     description: "View and set world time."
     aliases: ["etime"]
@@ -103,6 +106,7 @@ permissions:
       essentialskt.renameitem.*: true
       essentialskt.setfoodlevel.*: true
       essentialskt.sethealth.*: true
+      essentialskt.setremainingair.*: true
       essentialskt.toggledownfall: true
       essentialskt.uniqueid: true
       essentialskt.whois: true
@@ -142,6 +146,12 @@ permissions:
       essentialskt.sethealth: true
       essentialskt.sethealth.max: true
       essentialskt.sethealth.percent: true
+  essentialskt.setremainingair.*:
+    description: "Grants access to all /setremainingair permissions."
+    children:
+      essentialskt.setremainingair: true
+      essentialskt.setremainingair.others: true
+      essentialskt.setremainingair.percent: true
   # New Command Permissions
   essentialskt.clearchat:
     description: "Allows you to clear your own chat."
@@ -193,6 +203,12 @@ permissions:
     description: "Allows you to set a player's max health."
   essentialskt.sethealth.percent:
     description: "Allows you to set a player's health to a percent of their max health."
+  essentialskt.setremainingair:
+    description: "Allows you to set your own remaining air."
+  essentialskt.setremainingair.others:
+    description: "Allows you to set another player's remaining air."
+  essentialskt.setremainingair.percent:
+    description: "Allows you set a player's remaining air to a percent of the max value of 300."
   essentialskt.toggledownfall:
     description: "Allows you to toggle the weather."
   essentialskt.uniqueid:

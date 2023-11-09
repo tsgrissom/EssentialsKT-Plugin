@@ -55,6 +55,7 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("renameitem", RenameItemCommand())
         registerCommand("setfoodlevel", SetFoodLevelCommand())
         registerCommand("sethealth", SetHealthCommand())
+        registerCommand("setremainingair", SetRemainingAirCommand())
         registerCommand("time", TimeCommand())
         registerCommand("toggledownfall", ToggleDownfallCommand())
         registerCommand("uniqueid", UniqueIdCommand())
