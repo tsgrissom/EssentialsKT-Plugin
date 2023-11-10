@@ -193,8 +193,8 @@ class GameModeCommand : CommandBase() {
         val conf = getConfig()
         val ccErr = conf.getChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getChatColor(ChatColorKey.ErrorDetail)
-        val ccPrimary = conf.getChatColor(ChatColorKey.Primary)
-        val ccDetail = conf.getChatColor(ChatColorKey.Detail)
+        val ccPri = conf.getChatColor(ChatColorKey.Primary)
+        val ccDetl = conf.getChatColor(ChatColorKey.Detail)
 
         val sender = context.sender
         val args = context.args
@@ -207,7 +207,7 @@ class GameModeCommand : CommandBase() {
 
         if (args.size == 1 && flags.wasPassed("gui")) {
             if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${ccErr}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs.")
             if (sender !is Player)
                 return
 
@@ -227,7 +227,7 @@ class GameModeCommand : CommandBase() {
         } else {
             val tn = args[1]
             Bukkit.getPlayer(tn)
-                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn${ccErr}.")
         }
 
         if (target == sender && sender.lacksPermission(PERM_BASE))
@@ -236,7 +236,7 @@ class GameModeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter")
+            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter.")
 
         val eTarget = EssPlayer(target)
 
@@ -271,7 +271,7 @@ class GameModeCommand : CommandBase() {
                 SPECTATOR
             }
             else -> {
-                sender.sendMessage("${ccErr}Unknown gamemode ${ccErrDetl}\"$sub\"")
+                sender.sendMessage("${ccErr}Unknown gamemode ${ccErrDetl}\"$sub\"${ccErr}.")
                 return sender.spigot().sendMessage(*getAvailableGameModesAsComponent(sender, true))
             }
         }
@@ -281,9 +281,9 @@ class GameModeCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendMessage("${ccPrimary}Your gamemode has been set to ${ccDetail}$mn")
+        target.sendMessage("${ccPri}Your gamemode has been set to ${ccDetl}$mn${ccPri}.")
         if (sender != target)
-            sender.sendMessage("${ccPrimary}You set ${ccDetail}$tn's ${ccPrimary}gamemode to ${ccDetail}$mn")
+            sender.sendMessage("${ccPri}You set ${ccDetl}$tn's ${ccPri}gamemode to ${ccDetl}$mn${ccPri}.")
     }
 
     // MARK: Tab Completion Handler

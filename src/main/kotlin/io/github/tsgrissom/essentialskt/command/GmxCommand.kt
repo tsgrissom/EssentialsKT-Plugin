@@ -50,7 +50,7 @@ class GmxCommand : CommandBase() {
         } else {
             val tn = args[0]
             val t = Bukkit.getPlayer(tn)
-                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn")
+                ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}$tn${ccErr}.")
 
             t
         }
@@ -61,7 +61,7 @@ class GmxCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_OTHERS)
 
         if (target is ConsoleCommandSender)
-            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter")
+            return sender.sendMessage("${ccErr}Console does not have a gamemode to alter.")
 
         val eTarget = EssPlayer(target)
 
@@ -102,9 +102,9 @@ class GmxCommand : CommandBase() {
         val mn = mode.name.capitalizeAllCaps()
         val tn = target.name
 
-        target.sendMessage("${ccPrim}Your gamemode is set to ${ccDetl}$mn")
+        target.sendMessage("${ccPrim}Your gamemode is set to ${ccDetl}$mn${ccPrim}.")
         if (sender != target)
-            sender.sendMessage("${ccPrim}You set ${ccDetl}$tn's ${ccPrim}gamemode to ${ccDetl}$mn")
+            sender.sendMessage("${ccPrim}You set ${ccDetl}$tn's ${ccPrim}gamemode to ${ccDetl}$mn${ccPrim}.")
     }
 
     override fun onTabComplete(
