@@ -38,7 +38,7 @@ open class QuickTimeCommand(
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
         val ccDetl = conf.getChatColor(ChatColorKey.Detail)
 
-        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}time to ${ccDetl}$tn"
+        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}time to ${ccDetl}$tn${ccPrim}."
     }
 
     override fun execute(context: CommandContext) {
@@ -57,7 +57,7 @@ open class QuickTimeCommand(
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$sub\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$sub\"${ccErr}.")
         }
 
         if (TimeCommand.lacksPermissionToSetWorldTime(sender, world))

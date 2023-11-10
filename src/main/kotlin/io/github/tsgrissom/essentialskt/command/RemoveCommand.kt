@@ -144,7 +144,7 @@ class RemoveCommand : CommandBase() {
 
         if (!validGroups.contains(targetedType.lowercase()) && !validMobs.contains(targetedType.lowercase())) {
             sender.sendMessage(
-                "${ccErr}Unknown entity type ${ccErrDetl}\"$targetedType\"",
+                "${ccErr}Unknown entity type ${ccErrDetl}\"$targetedType\"${ccErr}.",
                 "${ccErr}Do ${ccErrDetl}/remove types ${ccErr}to view valid groups, or ${ccErrDetl}/list mobs ${ccErr}to view valid mobs."
             )
             return
@@ -152,7 +152,7 @@ class RemoveCommand : CommandBase() {
 
         val radiusStr: String = if (radius < 0) "infinite" else radius.toString()
 
-        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius")
+        Bukkit.broadcastMessage("TODO: Remove entities in world ${world.name} of type $targetedType within $radiusStr radius.")
         // TODO Implement remove entities in world within radius
     }
 
@@ -227,7 +227,7 @@ class RemoveCommand : CommandBase() {
 
         if (radius < 0) {
             world = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$arg1\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$arg1\"${ccErr}.")
         }
 
         removeEntities(sender, world, sub, radius)

@@ -164,7 +164,7 @@ class ListCommand : CommandBase() {
             handleSubcPlayersText(context)
 
             if (hasGraphicalFlag)
-                sender.sendMessage("${ccErr}Console cannot view GUIs")
+                sender.sendMessage("${ccErr}Console cannot view GUIs.")
 
             return
         }
@@ -191,7 +191,7 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui().show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${ccErr}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs.")
 
         // TODO Send text list of entities
     }
@@ -220,9 +220,9 @@ class ListCommand : CommandBase() {
             if (sender is Player)
                 return ListEntitiesGui(EntityUtility().getMobTypes(), "Mobs").show(sender)
             else if (sender is ConsoleCommandSender)
-                return sender.sendMessage("${ccErr}Console cannot open GUIs")
+                return sender.sendMessage("${ccErr}Console cannot open GUIs.")
 
-        sender.sendMessage("TODO Display mobs as text")
+        sender.sendMessage("TODO Display mobs as text.")
         // TODO Display mobs as text components
     }
 

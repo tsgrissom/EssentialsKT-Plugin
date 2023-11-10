@@ -35,7 +35,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
         val ccDetl = conf.getChatColor(ChatColorKey.Detail)
 
-        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}weather to ${ccDetl}$weatherName"
+        return "${ccPrim}You set world ${ccDetl}${w.name}'s ${ccPrim}weather to ${ccDetl}$weatherName${ccPrim}."
     }
 
     abstract fun setWeather(w: World)
@@ -56,7 +56,7 @@ abstract class QuickWeatherCommand(private val weatherName: String) : CommandBas
         if (args.isNotEmpty()) {
             val sub = args[0]
             world = Bukkit.getWorld(sub)
-                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$sub\"")
+                ?: return sender.sendMessage("${ccErr}Could not find world ${ccErrDetl}\"$sub\"${ccErr}.")
         }
 
         val message = getWeatherSetMessage(world)
