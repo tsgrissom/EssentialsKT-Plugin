@@ -90,10 +90,10 @@ class SetFoodLevelCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"${ccErr}.")
 
         if (len == 1)
-            return sender.sendMessage("${ccErr}Please provide an amount to set food level to")
+            return sender.sendMessage("${ccErr}Please provide an amount to set food level to.")
 
         val arg1 = args[1]
 
@@ -102,16 +102,16 @@ class SetFoodLevelCommand : CommandBase() {
         }
 
         var arg1d = arg1.toIntOrNull()
-            ?: return sender.sendMessage("${ccErr}Invalid integer value for ${ccErrDetl}\"$arg1\"")
+            ?: return sender.sendMessage("${ccErr}Invalid integer value for ${ccErrDetl}\"$arg1\"${ccErr}.")
 
         if (arg1d < 0)
-            return sender.sendMessage("${ccErr}New food level must be a positive number less than 20")
+            return sender.sendMessage("${ccErr}New food level must be a positive number less than 20.")
 
         if (arg1d > 20)
             arg1d = 20
 
         t.foodLevel = arg1d
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}food level to ${ccDetl}$arg1")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}food level to ${ccDetl}$arg1${ccPrim}.")
     }
 
     private fun handlePercentageInput(context: CommandContext, t: Player, input: String) {
@@ -137,7 +137,7 @@ class SetFoodLevelCommand : CommandBase() {
         val amount = chunk * 20
 
         t.foodLevel = amount.roundToInt()
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}food level to ${ccDetl}${input}")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}food level to ${ccDetl}${input}${ccPrim}.")
     }
 
     override fun onTabComplete(

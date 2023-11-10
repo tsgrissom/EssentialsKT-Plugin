@@ -50,10 +50,10 @@ class SetHealthCommand : CommandBase() {
 
         val sub = args[0]
         val t: Player = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"${ccErr}.")
 
         if (len == 1)
-            return sender.sendMessage("${ccErr}Please provide an amount of health to set to")
+            return sender.sendMessage("${ccErr}Please provide an amount of health to set.")
 
         val arg1 = args[1]
 
@@ -62,10 +62,10 @@ class SetHealthCommand : CommandBase() {
         }
 
         val arg1d = arg1.toDoubleOrNull()
-            ?: return sender.sendMessage("${ccErr}Invalid decimal value for ${ccErr}\"$arg1\"")
+            ?: return sender.sendMessage("${ccErr}Invalid decimal value for ${ccErr}\"$arg1\"${ccErr}.")
 
         if (arg1d <= 0)
-            return sender.sendMessage("${ccErr}New health value must be a nonzero positive number")
+            return sender.sendMessage("${ccErr}New health value must be a nonzero positive number.")
 
         if (flags.wasPassed(flagMax)) {
             return handleChangeMaxHealth(context, t, arg1d)
@@ -74,10 +74,10 @@ class SetHealthCommand : CommandBase() {
         val max = EssPlayer(t).getMaxHealth()
 
         if (arg1d > max)
-            return sender.sendMessage("${ccErrDetl}$arg1d ${ccErr}would exceed ${ccErrDetl}${t.name}'s ${ccErr}max health of ${ccErrDetl}$max")
+            return sender.sendMessage("${ccErrDetl}$arg1d ${ccErr}would exceed ${ccErrDetl}${t.name}'s ${ccErr}max health of ${ccErrDetl}$max${ccErr}.")
 
         t.health = arg1d
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}$arg1")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}$arg1${ccPrim}.")
     }
 
     private fun handleChangeMaxHealth(context: CommandContext, t: Player, maxHealth: Double) {
@@ -92,7 +92,7 @@ class SetHealthCommand : CommandBase() {
 
         t.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue = maxHealth
         t.health = maxHealth
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}maximum health to ${ccDetl}$maxHealth")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}maximum health to ${ccDetl}$maxHealth${ccPrim}.")
     }
 
     private fun handlePercentageInput(context: CommandContext, t: Player, input: String) {
@@ -109,10 +109,10 @@ class SetHealthCommand : CommandBase() {
 
         val sansPercent = input.removeSuffix("%")
         val value = sansPercent.toDoubleOrNull()
-            ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value")
+            ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value.")
 
         if (value <= 0)
-            return sender.sendMessage("${ccErr}A percentage of max health must be a positive nonzero number")
+            return sender.sendMessage("${ccErr}A percentage of max health must be a positive nonzero number.")
 
         val chunk = value / 100
         val attr = t.getAttribute(Attribute.GENERIC_MAX_HEALTH)
@@ -120,7 +120,7 @@ class SetHealthCommand : CommandBase() {
         val amount = chunk * max
 
         t.health = amount
-        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}${input} ${ccPrim}of their max health")
+        sender.sendMessage("${ccPrim}You set ${ccDetl}${t.name}'s ${ccPrim}health to ${ccDetl}${input} ${ccPrim}of their max health.")
     }
 
     override fun onTabComplete(

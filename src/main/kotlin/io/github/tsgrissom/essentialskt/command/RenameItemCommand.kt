@@ -16,7 +16,7 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class RenameItemCommand : CommandBase() {
+class  RenameItemCommand : CommandBase() {
 
     private fun getPlugin() =
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
@@ -38,7 +38,7 @@ class RenameItemCommand : CommandBase() {
         val sender = context.sender
 
         if (sender is ConsoleCommandSender)
-            return sender.sendMessage("${ccErr}Console cannot rename items")
+            return sender.sendMessage("${ccErr}Console cannot rename items.")
         if (sender !is Player)
             return
 
@@ -53,7 +53,7 @@ class RenameItemCommand : CommandBase() {
         val stripped = arguments.translateAndStripColorCodes()
 
         if (stripped.length > 32 && sender.lacksPermission(PERM_BYPASS_LENGTH_LIMIT)) {
-            val text = "${ccErr}Item display names must be less than or equal to ${ccErrDetl}32 characters${ccErr}, excluding color codes"
+            val text = "${ccErr}Item display names must be less than or equal to ${ccErrDetl}32 characters${ccErr}, excluding color codes."
             return sender.sendMessage(text)
         }
 
@@ -62,13 +62,13 @@ class RenameItemCommand : CommandBase() {
         val inHand = pi.itemInMainHand
 
         if (inHand.type == Material.AIR)
-            return sender.sendMessage("${ccErr}There is nothing in your hand to rename")
+            return sender.sendMessage("${ccErr}There is nothing in your hand to rename.")
 
         val iS = ItemStack(inHand)
             .name(arguments)
         pi.setItemInMainHand(iS)
 
-        sender.sendColored("${ccPrim}Item name updated to ${ccReset}${arguments}") // sendColored is used to translate arguments
+        sender.sendColored("${ccPrim}Item name updated to ${ccReset}${arguments}${ccPrim}.") // sendColored is used to translate arguments
         // TODO Use sendMessage and translate input's color codes only if they are actually getting a colored name
     }
 
