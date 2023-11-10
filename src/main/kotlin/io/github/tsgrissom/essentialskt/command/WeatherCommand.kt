@@ -115,11 +115,11 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"${ccErr}.")
         }
 
         w.clearRain()
-        sender.sendMessage("${ccPrim}Weather cleared for world ${ccDetl}${w.name}")
+        sender.sendMessage("${ccPrim}Weather cleared for world ${ccDetl}${w.name}${ccPrim}.")
     }
 
     private fun delegateSubcDisplay(context: CommandContext) {
@@ -138,7 +138,7 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"${ccErr}.")
         }
 
         val wTicks = w.weatherDuration
@@ -167,11 +167,11 @@ class WeatherCommand : CommandBase() {
         if (args.size > 1) {
             val arg1 = args[1]
             w = Bukkit.getWorld(arg1)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg1}\"${ccErr}.")
         }
 
         w.makeRain()
-        sender.sendMessage("${ccPrim}Rain turned on for world ${ccDetl}${w.name}")
+        sender.sendMessage("${ccPrim}Rain turned on for world ${ccDetl}${w.name}${ccPrim}.")
     }
 
     private fun delegateSubcThunder(context: CommandContext) {
@@ -179,6 +179,6 @@ class WeatherCommand : CommandBase() {
         val ccPrim = conf.getChatColor(ChatColorKey.Primary)
 
         // TODO Implement thunder
-        context.sender.sendMessage("${ccPrim}Feature is in progress")
+        context.sender.sendMessage("${ccPrim}Feature is in progress.")
     }
 }

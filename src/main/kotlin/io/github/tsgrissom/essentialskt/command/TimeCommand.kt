@@ -241,7 +241,7 @@ class TimeCommand : CommandBase() {
             "add" -> handleAddSubcommand(context)
             "query" -> handleQuerySubcommand(context)
             "set" -> handleSetSubcommand(context)
-            else -> sender.sendMessage("${ccErr}Unknown subcommand ${ccErrDetl}\"$sub\"${ccErr}, do ${ccErrDetl}/time ? ${ccErr}for help")
+            else -> sender.sendMessage("${ccErr}Unknown subcommand ${ccErrDetl}\"$sub\"${ccErr}, do ${ccErrDetl}/time ? ${ccErr}for help.")
         }
     }
 
@@ -273,7 +273,7 @@ class TimeCommand : CommandBase() {
         try {
             addend = arg1.toLong()
         } catch (ignored: NumberFormatException) {
-            return sender.sendMessage("${ccErrDetl}\"$arg1\" ${ccErr}should be an integer as game ticks or a preset")
+            return sender.sendMessage("${ccErrDetl}\"$arg1\" ${ccErr}should be an integer as game ticks or a preset.")
         }
 
         var world = sender.getCurrentWorldOrDefault()
@@ -281,7 +281,7 @@ class TimeCommand : CommandBase() {
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg2}\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"${arg2}\"${ccErr}.")
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
@@ -318,13 +318,13 @@ class TimeCommand : CommandBase() {
         val sender = context.sender
         val sansSuffix = input.lowercase().removeSuffix("s")
         val value = sansSuffix.toIntOrNull()
-            ?: return sender.sendMessage("${ccErr}Time in seconds must be an integer followed by the letter s")
+            ?: return sender.sendMessage("${ccErr}Time in seconds must be an integer followed by the letter ${ccErrDetl}s${ccErr}.")
         var world = sender.getCurrentWorldOrDefault()
 
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"${ccErr}.")
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
@@ -362,14 +362,14 @@ class TimeCommand : CommandBase() {
         val sender = context.sender
         val sansSuffix = input.lowercase().removeSuffix("m")
         val value = sansSuffix.toIntOrNull()
-            ?: return sender.sendMessage("${ccErr}Time in minutes must be an integer followed by the letter m")
+            ?: return sender.sendMessage("${ccErr}Time in minutes must be an integer followed by the letter ${ccErrDetl}m${ccErr}.")
 
         var world = sender.getCurrentWorldOrDefault()
 
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"${ccErr}.")
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
@@ -416,7 +416,7 @@ class TimeCommand : CommandBase() {
         if (len == 3) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"${ccErr}.")
         }
 
         val query = when (arg1.lowercase()) {
@@ -483,13 +483,13 @@ class TimeCommand : CommandBase() {
         }
 
         val newTicks = arg1.toLongOrNull()
-            ?: return sender.sendMessage("${ccErrDetl}\"$arg1\" ${ccErr}should be an integer of game ticks (20 per full second)")
+            ?: return sender.sendMessage("${ccErrDetl}\"$arg1\" ${ccErr}should be an integer of game ticks (${ccErrDetl}20 per full second${ccErr}).")
 
         if (newTicks < 0)
             return sender.sendMessage("${ccErr}New time cannot be negative ticks. Specify a positive value of at least 0.")
 
         if (newTicks > 24000)
-            return sender.sendMessage("${ccErr}New time should not exceed ${ccErrDetl}24,000 ticks${ccErr}, the length of a full day")
+            return sender.sendMessage("${ccErr}New time should not exceed ${ccErrDetl}24,000 ticks${ccErr}, the length of a full day.")
 
         var world = sender.getCurrentWorldOrDefault()
 
@@ -505,7 +505,7 @@ class TimeCommand : CommandBase() {
         val oldTime = world.time
         world.time = newTicks
 
-        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks")
+        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks${ccPrim}.")
     }
 
     private fun handleSetToPresetSubcommand(context: CommandContext) {
@@ -535,7 +535,7 @@ class TimeCommand : CommandBase() {
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"${ccErr}.")
         }
 
         if (lacksPermissionToSetWorldTime(sender, world))
@@ -544,7 +544,7 @@ class TimeCommand : CommandBase() {
         val oldTime = world.time
         world.time = newTicks
 
-        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks")
+        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks${ccPrim}.")
     }
 
     private fun handleSetToPercentage(context: CommandContext) {
@@ -561,11 +561,11 @@ class TimeCommand : CommandBase() {
 
         val sansPercent = input.removeSuffix("%")
         val value = sansPercent.toLongOrNull()
-            ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value (decimal percentages are invalid)")
+            ?: return sender.sendMessage("${ccErrDetl}\"$input\" ${ccErr}is not a valid percentage value (decimal percentages are invalid).")
         if (value <= 0)
-            return sender.sendMessage("${ccErr}Percentage input must be a nonzero positive integer")
+            return sender.sendMessage("${ccErr}Percentage input must be a nonzero positive integer.")
         if (value > 100)
-            return sender.sendMessage("${ccErr}Percentage input must be between 0 -> 100")
+            return sender.sendMessage("${ccErr}Percentage input must be between ${ccErrDetl}0 -> 100${ccErr}.")
 
         val quotient = value / 100.0
         val amount = quotient * 24000
@@ -575,14 +575,14 @@ class TimeCommand : CommandBase() {
         if (args.size > 2) {
             val arg2 = args[2]
             world = Bukkit.getWorld(arg2)
-                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"")
+                ?: return sender.sendMessage("${ccErr}Unknown world ${ccErrDetl}\"$arg2\"${ccErr}.")
         }
 
         val oldTime = world.time
         val newTicks = amount.toLong()
         world.time = newTicks
 
-        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks")
+        sender.sendMessage("${ccPrim}World ${ccDetl}${world.name}'s ${ccPrim}time went from ${ccDetl}$oldTime${ccTert}->${ccDetl}$newTicks${ccPrim}.")
     }
 
     // MARK: Tab Completion Handler

@@ -36,7 +36,7 @@ class ToggleDownfallCommand : CommandBase() {
         val targetCondition = if (w.isClearWeather) "Rain" else "Clear"
 
         w.toggleRain()
-        sender.sendMessage("${ccPrim}Weather of world ${ccDetl}${wn} ${ccPrim}set to ${ccDetl}${targetCondition}")
+        sender.sendMessage("${ccPrim}Weather of world ${ccDetl}${wn} ${ccPrim}set to ${ccDetl}${targetCondition}${ccPrim}.")
     }
 
     override fun onTabComplete(

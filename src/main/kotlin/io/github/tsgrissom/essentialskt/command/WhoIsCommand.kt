@@ -41,7 +41,7 @@ class WhoIsCommand : CommandBase() {
             "whoami", "ewhoami" -> handleWhoAmI(context)
             "whois", "ewhois" -> handleWhoIs(context)
             else -> {
-                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/whois ${ccErr}command label (this should not happen)")
+                sender.sendMessage("${ccErr}Unknown ${ccErrDetl}/whois ${ccErr}command label (this should not happen).")
                 error("Unhandled command label \"$label\" was passed to /whois handler")
             }
         }
@@ -150,7 +150,7 @@ class WhoIsCommand : CommandBase() {
 
         val sub = args[0]
         val t = Bukkit.getPlayer(sub)
-            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"")
+            ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"${ccErr}.")
 
         if (len == 1) {
             displayWhoIs(sender, t)
