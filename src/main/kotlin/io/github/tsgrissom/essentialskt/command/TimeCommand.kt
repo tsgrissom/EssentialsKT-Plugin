@@ -1,10 +1,12 @@
 package io.github.tsgrissom.essentialskt.command
 
+import BungeeChatColor
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
+import io.github.tsgrissom.pluginapi.command.help.CommandUsageBuilder
 import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
 import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.getCurrentWorldOrDefault
@@ -107,95 +109,57 @@ class TimeCommand : CommandBase() {
         return help.toComponents()
     }
 
-    private fun getAddUsage() : Array<BaseComponent> {
+    private fun getAddUsage(context: CommandContext) : Array<BaseComponent> {
         val conf = getConfig()
         val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
-        val ccSucc = conf.getBungeeChatColor(ChatColorKey.Success)
 
-        val comp = TextComponent("${ccErr}Usage: ${ccErrDetl}/time ")
-
-        val subcComp = TextComponent("add ")
-        subcComp.color = ccErrDetl
-        subcComp.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/time add ")
-        subcComp.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${ccSec}Click to suggest command"))
-
-        val arg0Comp = TextComponent("<Amount> ")
-        arg0Comp.color = ccErrDetl
-        arg0Comp.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            Text("${ccSec}Required: ${ccSucc}Yes\n"),
-            Text("${ccTert}- ${ccSec}An amount of time to add to the world's\n"),
-            Text("   ${ccSec}current time\n"),
-            Text("${ccTert}- ${ccSec}Usually ticks, which is full seconds multiplied by 20\n"),
-            Text("${ccTert}- ${ccSec}Otherwise, an amount of time followed by s or m")
-        )
-
-        val arg1Comp = TextComponent("[World]")
-        arg1Comp.color = ccErrDetl
-
-        comp.addExtra(subcComp)
-        comp.addExtra(arg0Comp)
-        comp.addExtra(arg1Comp)
-
-        return ComponentBuilder(comp).create()
+        return CommandUsageBuilder(context, "add")
+            .colors(ccErr, ccErrDetl)
+            .withParameters(
+                SubcParameterBuilder("Amount")
+                    .required()
+                    .hoverText(
+                        "${ccTert}- ${ccSec}An amount of time to add to the world's",
+                        "   ${ccSec}current time",
+                        "${ccTert}- ${ccSec}Usually ticks, which is full seconds multiplied by 20",
+                        "${ccTert}- ${ccSec}Otherwise, an amount of time followed by s or m"
+                    ),
+                SubcParameterBuilder("World")
+                    .optional()
+            )
+            .toComponents()
     }
 
-    private fun getSetUsage() : Array<BaseComponent> {
+    private fun getSetUsage(context: CommandContext) : Array<BaseComponent> {
         val conf = getConfig()
         val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
-        val ccSucc = conf.getBungeeChatColor(ChatColorKey.Success)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
+        val ccUnderline = BungeeChatColor.UNDERLINE
 
-        val comp = TextComponent("${ccErr}Usage: ${ccErrDetl}/time ")
-
-        val subcComp = TextComponent("set ")
-        subcComp.color = ccErrDetl
-        subcComp.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/time set ")
-        subcComp.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, Text("${ccSec}Click to suggest command"))
-
-        val arg0Comp = TextComponent("<")
-        arg0Comp.color = ccErrDetl
-        val arg0FirstComp = TextComponent("Amount")
-        arg0FirstComp.color = ccErrDetl
-        arg0FirstComp.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            Text("${ccSec}Required: ${ccSucc}Yes ${ccSec}or ${ccSucc}Preset\n"),
-            Text("${ccTert}- ${ccSec}An amount of ticks to set the world's\n"),
-            Text("   ${ccSec}current time to\n"),
-            Text("${ccTert}- ${ccSec}Usually ticks, which is full seconds multiplied by 20")
-        )
-        val arg0Between = TextComponent("/")
-        arg0Between.color = ccTert
-        val arg0SecondComp = TextComponent("Preset")
-        arg0SecondComp.color = ccErrDetl
-        arg0SecondComp.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            Text("${ccSec}Required: ${ccSucc}Yes ${ccSec}or ${ccSucc}Amount\n"),
-            Text("${ccSec}One of the following: ${ccVal}day${ccTert},${ccVal}noon${ccTert},${ccVal}sunset\n"),
-            Text("  ${ccVal}night${ccTert},${ccVal}midnight${ccTert},${ccVal}sunrise")
-        )
-        val arg0Postfix = TextComponent("> ")
-        arg0Postfix.color = ccErrDetl
-
-        arg0Comp.addExtra(arg0FirstComp)
-        arg0Comp.addExtra(arg0Between)
-        arg0Comp.addExtra(arg0SecondComp)
-        arg0Comp.addExtra(arg0Postfix)
-
-        val arg1Comp = TextComponent("[World]")
-        arg1Comp.color = ccErrDetl
-
-        comp.addExtra(subcComp)
-        comp.addExtra(arg0Comp)
-        comp.addExtra(arg1Comp)
-
-        return ComponentBuilder(comp).create()
+        return CommandUsageBuilder(context, "set")
+            .colors(ccErr, ccErrDetl)
+            .withParameters(
+                SubcParameterBuilder("Amount OR Preset")
+                    .required()
+                    .hoverText(
+                        "${ccErrDetl}${ccUnderline}AMOUNT${ccSec}:",
+                        "${ccTert}- ${ccSec}An amount of ticks to set the world's",
+                        "   ${ccSec}current time to",
+                        "${ccTert}- ${ccSec}Usually ticks, which is full seconds multiplied by 20",
+                        "${ccErrDetl}${ccUnderline}PRESET${ccSec}:",
+                        "${ccTert}- ${ccSec}One of the following: ${ccVal}day${ccTert},${ccVal}noon${ccTert},${ccVal}sunset",
+                        "   ${ccVal}night${ccTert},${ccVal}midnight${ccTert},${ccVal}sunrise"
+                    ),
+                SubcParameterBuilder("World")
+                    .optional()
+            )
+            .toComponents()
     }
 
     private fun displayWorldTime(sender: CommandSender) {
@@ -260,7 +224,7 @@ class TimeCommand : CommandBase() {
         val sender = context.sender
 
         if (args.size == 1)
-            return sender.sendChatComponents(getAddUsage())
+            return sender.sendChatComponents(getAddUsage(context))
 
         val arg1 = args[1]
         if (arg1.isInputInSeconds())
@@ -470,7 +434,7 @@ class TimeCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_SET)
 
         if (args.size == 1)
-            return sender.sendChatComponents(getSetUsage())
+            return sender.sendChatComponents(getSetUsage(context))
 
         val arg1 = args[1]
 
