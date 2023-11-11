@@ -4,8 +4,12 @@ import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
+import io.github.tsgrissom.pluginapi.command.help.CommandUsageBuilder
+import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
+import io.github.tsgrissom.pluginapi.extension.bukkit.toHoverTextList
+import io.github.tsgrissom.pluginapi.extension.bukkit.toShowTextHoverEvent
 import io.github.tsgrissom.pluginapi.extension.kt.isPercentage
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ComponentBuilder
@@ -25,11 +29,11 @@ class SetRemainingAirCommand : CommandBase(){
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
-    private val suggestedLevels = mutableListOf("25%", "75%")
+    private val suggestedPercentages = mutableListOf("25%", "75%")
 
     init {
         for (i in 10..100 step 10)
-            suggestedLevels.add("$i%")
+            suggestedPercentages.add("$i%")
     }
 
     companion object {
@@ -38,53 +42,39 @@ class SetRemainingAirCommand : CommandBase(){
         const val PERM_PERCENT = "essentialskt.setremainingair.percent"
     }
 
-    private fun generateUsageAsComponent(context: CommandContext) : Array<BaseComponent> {
+    private fun getUsageAsComponents(context: CommandContext) : Array<BaseComponent> {
         val conf = getConfig()
         val ccErr = conf.getBungeeChatColor(ChatColorKey.Error)
         val ccErrDetl = conf.getBungeeChatColor(ChatColorKey.ErrorDetail)
         val ccVal = conf.getBungeeChatColor(ChatColorKey.Value)
         val ccSec = conf.getBungeeChatColor(ChatColorKey.Secondary)
-        val ccSucc = conf.getBungeeChatColor(ChatColorKey.Success)
         val ccTert = conf.getBungeeChatColor(ChatColorKey.Tertiary)
         val sender = context.sender
 
-        val root = TextComponent("${ccErr}Usage: ")
-        root.color = ccErrDetl
-
-        val arg0 = TextComponent("<")
-        val arg0Inner = TextComponent("Target")
-        arg0.color = ccErrDetl
-        arg0Inner.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            Text("${ccSec}Required: ${ccSucc}Yes\n"),
-            Text("${ccSec}The player whose oxygen level to set")
-        )
-        arg0.addExtra(arg0Inner)
-        arg0.addExtra("> ")
-
         val permittedToPercent = sender.hasPermission(PERM_PERCENT)
-        val l3Append = if (permittedToPercent)
+        val lineAppend = if (permittedToPercent)
             " ${ccSec}or a percentage"
         else
             ""
 
-        val arg1 = TextComponent("<")
-        val arg1Inner = TextComponent(if (permittedToPercent) "AmountOrPercent" else "Amount")
-        arg1.color = ccErrDetl
-        arg1Inner.hoverEvent = HoverEvent(
-            HoverEvent.Action.SHOW_TEXT,
-            Text("${ccSec}Required: ${ccSucc}Yes\n"),
-            Text("${ccTert}- ${ccSec}The amount to set the player's oxygen level to\n"),
-            Text("${ccTert}- ${ccSec}Must be a positive integer less than or equal to ${ccVal}300$l3Append")
-        )
-        arg1.addExtra(arg1Inner)
-        arg1.addExtra("> ")
+        val arg1Inner = if (permittedToPercent) "AmountOrPercent" else "Amount"
 
-        root.addExtra("/${context.label} ")
-        root.addExtra(arg0)
-        root.addExtra(arg1)
-
-        return ComponentBuilder(root).create()
+        return CommandUsageBuilder(context)
+            .colors(ccErr, ccErrDetl)
+            .withParameters(
+                SubcParameterBuilder("Target")
+                    .required()
+                    .hoverText(
+                        "${ccSec}The player whose oxygen level to set"
+                    ),
+                SubcParameterBuilder(arg1Inner)
+                    .required()
+                    .hoverText(
+                        "${ccTert}- ${ccSec}The amount to set the player's oxygen level to",
+                        "${ccTert}- ${ccSec}Must be a positive integer less than or equal to ${ccVal}300$lineAppend"
+                    )
+            )
+            .toComponents()
     }
 
     override fun execute(context: CommandContext) {
@@ -103,7 +93,7 @@ class SetRemainingAirCommand : CommandBase(){
             return context.sendNoPermission(sender, PERM)
 
         if (len == 0)
-            return sender.sendChatComponents(generateUsageAsComponent(context))
+            return sender.sendChatComponents(getUsageAsComponents(context))
 
         val sub = args[0]
         val target: Player = Bukkit.getPlayer(sub)
@@ -114,7 +104,7 @@ class SetRemainingAirCommand : CommandBase(){
                 "amount or percentage"
             else
                 "amount"
-            sender.sendChatComponents(generateUsageAsComponent(context))
+            sender.sendChatComponents(getUsageAsComponents(context))
             sender.sendMessage("${ccErr}Please provide an $verbiage to set oxygen level to.")
             return
         }
@@ -198,7 +188,9 @@ class SetRemainingAirCommand : CommandBase(){
         if (len == 1) {
             StringUtil.copyPartialMatches(args[0], getOnlinePlayerNamesToMutableList(), tab)
         } else if (len == 2) {
-            StringUtil.copyPartialMatches(args[1], suggestedLevels, tab)
+            if (sender.hasPermission(PERM_PERCENT)) {
+                StringUtil.copyPartialMatches(args[1], suggestedPercentages, tab)
+            }
         }
 
         return finish()
