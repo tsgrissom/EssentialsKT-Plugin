@@ -75,9 +75,18 @@ class EssKtCommand : CommandBase() {
 
     private fun handleSubcReload(context: CommandContext) {
         val sender = context.sender
-        val ccPrimary = getConfig().getChatColor(ChatColorKey.Primary)
-        sender.sendMessage("${ccPrimary}In progress")
-        // TODO Reload command
+        val ccRed  = BukkitChatColor.RED // Uses hardcoded colors like the GUI for setting chat colors
+        val ccRedD = BukkitChatColor.DARK_RED
+        val ccGree = BukkitChatColor.GREEN
+        try {
+            getPlugin().reloadConfig()
+            // Any more logic that needs to happen on reload
+        } catch (exception: Exception) {
+            sender.sendMessage("${ccRedD}Failed to reload ${ccRed}EssentialsKT${ccRedD}. Please check console for the stacktrace.")
+            exception.printStackTrace()
+            return
+        }
+        sender.sendMessage("${ccGree}EssentialsKT has been reloaded.")
     }
 
     private fun handleSubcConfig(context: CommandContext) {
