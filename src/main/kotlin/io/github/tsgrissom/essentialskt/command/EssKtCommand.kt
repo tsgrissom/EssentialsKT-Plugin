@@ -78,6 +78,8 @@ class EssKtCommand : CommandBase() {
         val ccRed  = BukkitChatColor.RED // Uses hardcoded colors like the GUI for setting chat colors
         val ccRedD = BukkitChatColor.DARK_RED
         val ccGree = BukkitChatColor.GREEN
+
+        sender.sendMessage("Attempting to reload EssentialsKT plugin...")
         try {
             getPlugin().reloadConfig()
             // Any more logic that needs to happen on reload
