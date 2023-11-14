@@ -80,7 +80,6 @@ class ConfigManager {
     private fun getCommandsSection() =
         getSection("Commands")
 
-    // TODO Reload command + logic here
     // MARK: Configurable ChatColor
 
     private fun getDefaultColorMap() =
@@ -134,9 +133,9 @@ class ConfigManager {
 
     private fun getDefaultJoinMessage() : String {
         val ccGreen = BukkitChatColor.GREEN.toString()
-        val ccBold  = BukkitChatColor.BOLD.toString()
         val ccYell  = BukkitChatColor.YELLOW.toString()
         val ccGold  = BukkitChatColor.GOLD.toString()
+        val ccBold  = BukkitChatColor.BOLD.toString()
         return "${ccGreen}${ccBold}+ ${ccYell}%pd% ${ccGold}has joined the server"
     }
 
@@ -148,9 +147,9 @@ class ConfigManager {
 
     private fun getDefaultQuitMessage() : String {
         val ccRed  = BukkitChatColor.RED.toString()
-        val ccBold = BukkitChatColor.BOLD.toString()
         val ccYell = BukkitChatColor.YELLOW.toString()
         val ccGold = BukkitChatColor.GOLD.toString()
+        val ccBold = BukkitChatColor.BOLD.toString()
         return "${ccRed}${ccBold}- ${ccYell}%pd% ${ccGold}has left the server"
     }
 
