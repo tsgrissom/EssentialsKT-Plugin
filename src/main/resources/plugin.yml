@@ -78,12 +78,14 @@ commands:
     description: "Sets a world's time to night."
   noon:
     description: "Sets a world's time to noon."
+  dusk:
+    description: "Sets a world's time to dusk. Alias for /sunset."
   sunset:
     description: "Sets a world's time to sunset."
-    aliases: [ "dusk" ]
+  dawn:
+    description: "Sets a world's time to dawn. Alias for /sunrise."
   sunrise:
     description: "Sets a world's time to sunrise."
-    aliases: [ "dawn" ]
 
 permissions:
   # Grouped Permissions

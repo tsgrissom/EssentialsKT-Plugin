@@ -63,11 +63,13 @@ class EssentialsKTPlugin : JavaPlugin() {
         registerCommand("whois", WhoIsCommand())
         registerCommand("worlds", WorldsCommand())
 
-        /* Time Commands (Early->Late) */
+        /* Quick Time Commands */
         registerCommand("day", DayCommand())
         registerCommand("midnight", MidnightCommand())
         registerCommand("night", NightCommand())
         registerCommand("noon", NoonCommand())
+        registerCommand("dusk", DuskCommand())
+        registerCommand("dawn", DawnCommand())
         registerCommand("sunset", SunsetCommand())
         registerCommand("sunrise", SunriseCommand())
 

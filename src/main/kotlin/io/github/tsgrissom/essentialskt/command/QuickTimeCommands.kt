@@ -15,14 +15,18 @@ class DayCommand
     : QuickTimeCommand(TimeCommand.TIME_DAY, "Day")
 class NoonCommand
     : QuickTimeCommand(TimeCommand.TIME_NOON, "Noon")
-class SunsetCommand
+class DuskCommand
     : QuickTimeCommand(TimeCommand.TIME_SUNSET, "Dusk")
+class SunsetCommand
+    : QuickTimeCommand(TimeCommand.TIME_SUNSET, "Sunset")
 class NightCommand
     : QuickTimeCommand(TimeCommand.TIME_NIGHT, "Night")
 class MidnightCommand
     : QuickTimeCommand(TimeCommand.TIME_MIDNIGHT, "Midnight")
-class SunriseCommand
+class DawnCommand
     : QuickTimeCommand(TimeCommand.TIME_SUNRISE, "Dawn")
+class SunriseCommand
+    : QuickTimeCommand(TimeCommand.TIME_SUNRISE, "Sunrise")
 
 open class QuickTimeCommand(
     private val time: Long,
