@@ -5,30 +5,20 @@ import BungeeChatColor
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
 import io.github.tsgrissom.essentialskt.gui.ConfigureChatColorGui
-import io.github.tsgrissom.pluginapi.chat.ClickFormattedListBuilder
 import io.github.tsgrissom.pluginapi.chat.FormattedListBuilder
-import io.github.tsgrissom.pluginapi.chat.HoverFormattedListBuilder
-import io.github.tsgrissom.pluginapi.chat.PlainFormattedListBuilder
 import io.github.tsgrissom.pluginapi.command.CommandBase
 import io.github.tsgrissom.pluginapi.command.CommandContext
 import io.github.tsgrissom.pluginapi.command.flag.CommandFlagParser
 import io.github.tsgrissom.pluginapi.command.flag.ValidCommandFlag
 import io.github.tsgrissom.pluginapi.command.help.CommandHelpBuilder
-import io.github.tsgrissom.pluginapi.command.help.CommandUsageBuilder
 import io.github.tsgrissom.pluginapi.command.help.SubcHelpBuilder
-import io.github.tsgrissom.pluginapi.command.help.SubcParameterBuilder
-import io.github.tsgrissom.pluginapi.extension.kt.BooleanFormat
-import io.github.tsgrissom.pluginapi.extension.bukkit.appendc
 import io.github.tsgrissom.pluginapi.extension.bukkit.lacksPermission
 import io.github.tsgrissom.pluginapi.extension.bukkit.sendChatComponents
-import io.github.tsgrissom.pluginapi.extension.kt.capitalizeEachWordAllCaps
-import io.github.tsgrissom.pluginapi.extension.kt.equalsIc
-import io.github.tsgrissom.pluginapi.extension.kt.fmt
-import io.github.tsgrissom.pluginapi.extension.kt.resolveChatColor
+import io.github.tsgrissom.pluginapi.extension.kt.*
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import net.md_5.bungee.api.chat.BaseComponent
-import net.md_5.bungee.api.chat.ClickEvent
-import net.md_5.bungee.api.chat.hover.content.Text
+import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.ConsoleCommandSender
@@ -357,17 +347,6 @@ class EssKtCommand : CommandBase() {
             "debug", "d" -> handleSubcDebug(context)
             "reload", "load", "refresh" -> handleSubcReload(context)
             "version", "v" -> handleSubcVersion(context)
-            "test" -> {
-                val usage = CommandUsageBuilder(context, "test")
-                    .withParameter(
-                        SubcParameterBuilder("Name", required=true)
-                    )
-                    .withConsoleParameter(
-                        SubcParameterBuilder("Name", required=false)
-                    )
-                    .toComponents()
-                sender.sendChatComponents(usage)
-            }
             else -> {
                 sender.sendMessage("${ccErr}Unknown subcommand: ${ccErrDetl}\"$sub\" ${ccErr}Do ${ccErrDetl}/esskt ${ccErr}for help.")
             }

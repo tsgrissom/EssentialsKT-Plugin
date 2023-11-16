@@ -5,11 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane
 import io.github.tsgrissom.essentialskt.EssentialsKTPlugin
 import io.github.tsgrissom.essentialskt.config.ChatColorKey
+import io.github.tsgrissom.pluginapi.extension.bukkit.*
 import io.github.tsgrissom.pluginapi.extension.kt.capitalizeEachWordAllCaps
-import io.github.tsgrissom.pluginapi.extension.bukkit.click
-import io.github.tsgrissom.pluginapi.extension.bukkit.getRepresentativeMaterial
-import io.github.tsgrissom.pluginapi.extension.bukkit.lore
-import io.github.tsgrissom.pluginapi.extension.bukkit.name
 import io.github.tsgrissom.pluginapi.func.NonFormattingChatColorPredicate
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -49,26 +46,32 @@ class ConfigureChatColorGui(
             .toList()
         val pane = OutlinePane(0, 0, 9, 2)
 
-        for (color in validColors) {
-            val cc = color.toString()
-            val name = color.name.capitalizeEachWordAllCaps()
-            var material = color.getRepresentativeMaterial()
-            val text = if (currentColor == color) "${ccSucc}Currently set to this color" else "${ccVal}Click to set"
-            val ccName = if (currentColor == color) ChatColor.GREEN else ChatColor.GRAY
+        for (colorOption in validColors) {
+            val cc = colorOption.toString()
+            val displayName = colorOption.name.capitalizeEachWordAllCaps()
+            var material = colorOption.getRepresentativeMaterial()
+            val example = "${ccSec}Example${ccTer}: ${ccSec}\"${cc}Some text${ccSec}\""
+            val description = if (currentColor == colorOption)
+                "${ccSucc}Currently set to this color"
+            else
+                "${ccVal}Click to set"
+            val ccName = if (currentColor == colorOption) ChatColor.GREEN else ChatColor.GRAY
 
-            if (currentColor == color)
+            if (currentColor == colorOption)
                 material = Material.NETHER_STAR
 
             val item = GuiItem(
-                ItemStack(material)
-                    .name("$ccName$name")
-                    .lore(
-                        "${ccSec}Example${ccTer}: ${ccSec}\"${cc}Some text${ccSec}\"",
-                        text
-                    )
+                itemStack(material) {
+                    name(ccName, displayName)
+                    lore {
+                        prependColor=ccSec
+                        +example
+                        +description
+                    }
+                }
             ) {
                 val who = it.whoClicked
-                alterKeyedChatColor(who, color)
+                alterKeyedChatColor(who, colorOption)
             }
             pane.addItem(item)
         }
