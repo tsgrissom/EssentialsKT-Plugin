@@ -12,13 +12,13 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class ConfigureChatColorGui(
     private val key: ChatColorKey
 ) : ChestGui(2, "New color of ${key.name}") {
 
     private fun getPlugin() =
+
         EssentialsKTPlugin.instance ?: error("plugin instance is null")
     private fun getConfig() = getPlugin().getConfigManager()
 
@@ -51,11 +51,16 @@ class ConfigureChatColorGui(
             val displayName = colorOption.name.capitalizeEachWordAllCaps()
             var material = colorOption.getRepresentativeMaterial()
             val example = "${ccSec}Example${ccTer}: ${ccSec}\"${cc}Some text${ccSec}\""
-            val description = if (currentColor == colorOption)
+            val desc = if (currentColor==colorOption) {
                 "${ccSucc}Currently set to this color"
-            else
+            } else {
                 "${ccVal}Click to set"
-            val ccName = if (currentColor == colorOption) ChatColor.GREEN else ChatColor.GRAY
+            }
+            val ccName = if (currentColor==colorOption) {
+                ChatColor.GREEN
+            } else {
+                ChatColor.GRAY
+            }
 
             if (currentColor == colorOption)
                 material = Material.NETHER_STAR
@@ -66,7 +71,7 @@ class ConfigureChatColorGui(
                     lore {
                         prependColor=ccSec
                         +example
-                        +description
+                        +desc
                     }
                 }
             ) {

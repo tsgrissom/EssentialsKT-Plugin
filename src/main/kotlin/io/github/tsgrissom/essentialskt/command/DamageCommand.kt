@@ -34,8 +34,9 @@ class DamageCommand : CommandBase() {
         val sender = context.sender
         val paramTarget = SubcParameterBuilder("Target", required=true)
         var paramAmountName = "Amount"
-        if (sender.hasPermission(PERM_PERCENT))
+        if (sender.hasPermission(PERM_PERCENT)) {
             paramAmountName += " OR Percentage"
+        }
         val paramAmount = SubcParameterBuilder(paramAmountName, required=true)
 
         return CommandUsageBuilder(context)
@@ -66,12 +67,13 @@ class DamageCommand : CommandBase() {
             return sendUsage(context)
 
         val sub = args[0]
-        val t: Player = Bukkit.getPlayer(sub)
+        val target: Player = Bukkit.getPlayer(sub)
             ?: return sender.sendMessage("${ccErr}Could not find player ${ccErrDetl}\"$sub\"${ccErr}.")
 
         if (args.size == 1) {
-            if (sub.equalsIc("help", "h", "?", "usage"))
+            if (sub.equalsIc("help", "h", "?", "usage")) {
                 return sendUsage(context)
+            }
 
             return sender.sendMessage("${ccErr}You must specify an amount of damage.")
         }
@@ -79,22 +81,23 @@ class DamageCommand : CommandBase() {
         val arg1 = args[1]
 
         if (arg1.isPercentage()) {
-            return handlePercentageInput(context, t, arg1)
+            return handlePercentageInput(context, target, arg1)
         }
 
-        val amount: Double
-
-        try {
-            amount = arg1.toDouble()
-
-            if (amount <= 0)
-                return sender.sendMessage("${ccErr}Your damage amount must be a positive nonzero number.")
-        } catch (ignored: NumberFormatException) {
-            return sender.sendMessage("${ccErr}Your damage amount must be a decimal or integer value.")
+        if (arg1.toDoubleOrNull() == null) {
+            return sender.sendMessage("${ccErr}Your damage amount must be a positive nonzero number.")
         }
 
-        t.damage(amount)
-        sender.sendMessage("${ccPrimary}Damaged ${ccDetail}${t.name} ${ccPrimary}for ${ccDetail}${amount} hearts${ccPrimary}.")
+        val amount = arg1.toDouble()
+
+        if (amount <= 0) {
+            return sender.sendMessage("${ccErr}Your damage amount must be a positive nonzero number.")
+        }
+
+        target.damage(amount)
+
+        val text = "${ccPrimary}Damaged ${ccDetail}${target.name} ${ccPrimary}for ${ccDetail}${amount} hearts${ccPrimary}."
+        sender.sendMessage(text)
     }
 
     private fun handlePercentageInput(context: CommandContext, target: Player, input: String) {
@@ -110,15 +113,16 @@ class DamageCommand : CommandBase() {
             return context.sendNoPermission(sender, PERM_PERCENT)
 
         val sansPercent = input.removeSuffix("%")
-        val percent: Double
 
-        try {
-            percent = sansPercent.toDouble()
-
-            if (percent <= 0)
-                return sender.sendMessage("${ccErr}A percent of max health to damage must be a positive nonzero number.")
-        } catch (ignored: NumberFormatException) {
+        if (sansPercent.toDoubleOrNull() == null) {
             val text = "${ccErr}Your damage percentage must be a decimal or integer value followed by a percent symbol."
+            return sender.sendMessage(text)
+        }
+
+        val percent = sansPercent.toDouble()
+
+        if (percent <= 0) {
+            val text = "${ccErr}A percent of max health to damage must be a positive nonzero number."
             return sender.sendMessage(text)
         }
 
@@ -128,7 +132,9 @@ class DamageCommand : CommandBase() {
         val amount = chunk * maxHealth
 
         target.damage(amount)
-        sender.sendMessage("${ccPrimary}You damaged ${ccDetail}${target.name} ${ccPrimary}for ${ccDetail}${percent}% ${ccPrimary}of their max health ${ccTert}(${ccDetail}${amount.roundToDigits(2)}${ccTert})${ccPrimary}.")
+
+        val text = "${ccPrimary}You damaged ${ccDetail}${target.name} ${ccPrimary}for ${ccDetail}${percent}% ${ccPrimary}of their max health ${ccTert}(${ccDetail}${amount.roundToDigits(2)}${ccTert})${ccPrimary}."
+        sender.sendMessage(text)
     }
 
     override fun onTabComplete(
@@ -137,8 +143,7 @@ class DamageCommand : CommandBase() {
         label: String,
         args: Array<out String>
     ) : MutableList<String> {
-
-        val tab =  mutableListOf<String>()
+        val tab = mutableListOf<String>()
         val len = args.size
 
         if (len > 0) {
