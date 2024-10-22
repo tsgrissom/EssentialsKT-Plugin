@@ -1,4 +1,4 @@
-# EssentialsKT
+# EssentialsKT Plugin
 
 An addon for EssentialsX written for modern CraftBukkit servers. Replaces and adds many Essentials-like commands.
 
